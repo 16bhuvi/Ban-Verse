@@ -1,0 +1,367 @@
+/* Full-screen background with blur */
+/* Reset */
+body, html {
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  font-family: 'Poppins', sans-serif;
+
+}
+
+/* Background */
+.App {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.App::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+ background-image: url("./banasthali-logo.jpg"); /* Replace with your image */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  filter: blur(10px);
+  opacity: 0.6;
+  z-index: -1;
+}
+
+
+/* Sticky Navbar */
+.navbar {
+  position: sticky;
+  top: 0;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+  color:#333;
+  display: flex;
+  align-items: center;
+  padding: 10px 30px;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+.nav-right {
+  display: flex;
+  gap: 15px;
+  margin-left: auto;
+}
+
+.nav-logo {
+  font-weight: bold;
+  font-size: 22px;
+  color: #4a148c;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+.nav-links li a::after {
+  content: '';
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  color:#6A1B9A;
+  background-color: #4a148c;
+  transition: width 0.3s ease;
+}
+.nav-links li a:hover::after {
+  width: 100%;
+}
+
+
+.nav-links li a:hover {
+  color: #6a1b9a;
+}
+
+/* Section Styling */
+.section {
+  padding: 0;
+  margin: 0;
+}
+
+.card {
+  width: 100vw; /* Full viewport width */
+  max-width: 100vw;
+  margin: 0;
+  padding: 60px 80px;
+  background-color: rgba(156, 143, 203, 0.95);
+  color:#2C2C2C;
+  border-radius: 0;
+  box-shadow: none;
+  text-align: center;
+  animation: fadeInUp 0.8s ease;
+   border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+
+}
+#about .card {
+  background-color: #FAF5FF; /* light lavender */
+}
+
+#contact .card {
+  background-color: #F7F7F7; /* soft gray */
+}
+.full-width {
+  width: 100vw;
+  max-width: none;
+  border-radius: 0;
+  margin: 0;
+}
+.section:not(:last-child)::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  width: 80%;
+}
+.logo {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%; /* Makes it circular */
+  display: block;
+  margin: 0 auto 20px auto; /* Centers it */
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Header Content */
+.App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: rgba(125, 96, 174, 0.85);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  position: relative;
+  max-width: 700px;
+  margin-top: 80px;
+}
+
+.logo {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto 20px auto;
+}
+.nav-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #4a148c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.nav-btn:hover {
+  background-color: #6a1b9a;
+}
+
+
+.register-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-image: ("./background-image.jpeg");
+  padding: 20px;
+}
+
+.register-card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.register-card .logo {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 20px;
+}
+
+.register-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.register-card input,
+.register-card select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.register-card .btn {
+  background-color: #4a148c;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.register-card .btn:hover {
+  background-color: #6a1b9a;
+}
+
+.login-link {
+  margin-top: 15px;
+  font-size: 14px;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.form input,
+.form select {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.form button {
+  background-color: #092f79;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom:15px;
+}
+
+.form button:hover {
+  background-color: hsl(236, 32%, 58%);
+}
+.login-page {
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ background-image:("./background-image.jpeg");
+}
+
+.login-card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-card h2 {
+  margin-bottom: 20px;
+  color: #4a148c;
+}
+
+.login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-card input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.login-card .btn {
+  background-color: #4a148c;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-card .btn:hover {
+  background-color: #6a1b9a;
+}
+
+.signup-link {
+  margin-top: 15px;
+  font-size: 14px;
+}
+.forgot-link {
+  color: #4f46e5;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+  color: #3730a3;
+}

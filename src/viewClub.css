@@ -1,0 +1,147 @@
+body {
+    background: url("./background-image.jpeg") no-repeat center center fixed;
+    background-size: cover;
+    font-family: "Poppins", sans-serif;
+    color: #1f2937;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.header {
+    height: 80px;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-circle img {
+    width: 28px;
+}
+
+.brand-name {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.dashboard-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #4f46e5;
+    color: white;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.dashboard-circle:hover {
+    transform: scale(1.1);
+}
+
+.club-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 15px;
+}
+
+.club-card {
+    background: rgba(255,255,255,0.95);
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    margin-bottom: 30px;
+}
+
+.club-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.club-logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.club-card h2 {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.club-desc, .club-email {
+    font-size: 15px;
+    margin-bottom: 8px;
+    color: #4b5563;
+}
+
+/* =========================
+   RELATED POSTS
+========================= */
+.related-posts-title {
+    margin-left: 15px;
+    font-size: 20px;
+    color: #4f46e5;
+    margin-bottom: 15px;
+}
+
+.related-posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.related-post {
+    background: rgba(255,255,255,0.95);
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.related-post:hover {
+    transform: translateY(-4px);
+}
+
+.related-post img {
+    width: 100%;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+.related-post h4 {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.related-post a {
+    color: #4f46e5;
+    text-decoration: underline;
+}
