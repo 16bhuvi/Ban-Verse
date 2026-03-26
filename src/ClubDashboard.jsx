@@ -70,7 +70,12 @@ const ClubDashboard = () => {
       setMembers(memberRes.data);
     } catch (error) {
       console.error("Club fetch error:", error);
-      if (error.response?.status === 403) navigate("/login");
+      if (error.response?.status === 403 || error.response?.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
+        navigate("/login");
+      }
     } finally {
       setLoading(false);
     }
@@ -137,9 +142,51 @@ const ClubDashboard = () => {
   }, [activeTab, fetchApplications]);
 
 
+  const [announcementText, setAnnouncementText] = useState("");
+  const [announcements, setAnnouncements] = useState([]);
+
   const openModal = (type) => {
     setModalType(type);
     setShowModal(true);
+  };
+
+  const handleDeleteEvent = async (eventId) => {
+    if (!window.confirm("Are you sure you want to delete this event?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API}/api/club-leader/delete-event/${eventId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      showToast('Event deleted successfully');
+      fetchClubData();
+    } catch (err) {
+      showToast('Deletion failed', 'error');
+    }
+  };
+
+  const handlePostAnnouncement = async () => {
+    if (!announcementText.trim()) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(`${API}/api/club-leader/notify`, {
+        message: announcementText,
+        target: "members"
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      showToast('Announcement broadcasted to all members');
+      setShowModal(false);
+      setAnnouncementText("");
+      // Add to local state for instant feedback
+      setAnnouncements(prev => [{
+        title: "New Announcement",
+        sender: "You",
+        date: "Just now",
+        text: announcementText
+      }, ...prev]);
+    } catch (err) {
+      showToast('Broadcast failed', 'error');
+    }
   };
 
   if (loading) return (
@@ -280,7 +327,7 @@ const ClubDashboard = () => {
               className="nav-item"
               style={{ color: '#6366f1', marginBottom: '0.5rem', background: 'rgba(99, 102, 241, 0.1)' }}
             >
-              <Users size={20} /> <span>Student View</span>
+              <Users size={20} /> <span>Student Dashboard</span>
             </button>
           )}
           <button
@@ -511,11 +558,11 @@ const ClubDashboard = () => {
                             <span><Users size={14} /> {event.participants.length} Joined</span>
                           </div>
                           <div className="event-footer">
-                            <button className="btn-view" onClick={() => navigate(`/events/${event._id}`)}>Details</button>
+                            <button className="btn-view" onClick={() => navigate(`/viewpost/${event._id}`)}>Details</button>
                             {canManageEvents && (
                               <div className="admin-actions">
-                                <button className="icon-btn"><Edit3 size={16} /></button>
-                                <button className="icon-btn danger"><Trash2 size={16} /></button>
+                                <button className="icon-btn" onClick={() => navigate("/createpost", { state: { editEvent: event } })}><Edit3 size={16} /></button>
+                                <button className="icon-btn danger" onClick={() => handleDeleteEvent(event._id)}><Trash2 size={16} /></button>
                               </div>
                             )}
                           </div>
@@ -765,10 +812,7 @@ const ClubDashboard = () => {
                       <button className="btn-primary" onClick={() => openModal('notify')}>Post New Announcement</button>
                     </div>
                     <div className="announcement-list">
-                      {[
-                        { title: "New Core Selection Results", sender: "Club Leader", date: "24 Oct", text: "Congratulations to the new core members..." },
-                        { title: "Hackathon Guidelines Updated", sender: "Tech Domain", date: "22 Oct", text: "Important update regarding the team sizes..." },
-                      ].map((ann, i) => (
+                      {announcements.length > 0 ? announcements.map((ann, i) => (
                         <div key={i} className="announcement-card-full">
                           <div className="ann-header">
                             <h4>{ann.title}</h4>
@@ -777,7 +821,12 @@ const ClubDashboard = () => {
                           <p>{ann.text}</p>
                           <div className="ann-footer">Posted by {ann.sender}</div>
                         </div>
-                      ))}
+                      )) : (
+                        <div className="empty-apps" style={{ padding: '3rem' }}>
+                          <Megaphone size={40} style={{ opacity: 0.3, marginBottom: '1rem' }} />
+                          <p>No recent announcements. Broadcast updates to your members.</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -827,10 +876,15 @@ const ClubDashboard = () => {
               )}
               {modalType === 'notify' && (
                 <div className="announcement-form">
-                  <textarea placeholder="Write your announcement here..." rows={5}></textarea>
+                  <textarea
+                    placeholder="Write your announcement here..."
+                    rows={5}
+                    value={announcementText}
+                    onChange={(e) => setAnnouncementText(e.target.value)}
+                  ></textarea>
                   <div className="form-actions">
                     <button className="btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
-                    <button className="btn-primary">Post to Club</button>
+                    <button className="btn-primary" onClick={handlePostAnnouncement}>Post to Club</button>
                   </div>
                 </div>
               )}

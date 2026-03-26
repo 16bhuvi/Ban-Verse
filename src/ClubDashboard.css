@@ -38,6 +38,18 @@
   top: 0;
   z-index: 100;
   color: white;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.club-layout .club-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.club-layout .club-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
 }
 
 .club-layout .sidebar-brand {
@@ -557,12 +569,76 @@
   gap: 12px;
 }
 
-.club-layout .user-profile-sm img {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  object-fit: cover;
+.club-layout .events-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.club-layout .event-card-premium {
+  flex: 1 1 300px;
+  max-width: 350px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition: all 0.3s;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.club-layout .event-card-premium:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.club-layout .event-image {
+  height: 180px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
   background: #f1f5f9;
+}
+
+.club-layout .event-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.club-layout .event-card-premium:hover .event-image img {
+  transform: scale(1.05);
+}
+
+.club-layout .event-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.club-layout .event-body {
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.club-layout .event-body h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0 0 0.75rem 0;
+  color: #0f172a;
 }
 
 .club-layout .user-info .name {

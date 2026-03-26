@@ -424,6 +424,111 @@ body {
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 0 0 30px rgba(255, 255, 255, 0.4);
 }
 
+/* FAQ Section */
+.faq-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  background: var(--lp-white);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.faq-item summary {
+  padding: 1.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: '+';
+  font-size: 1.5rem;
+  color: var(--lp-primary);
+  transition: transform 0.3s;
+}
+
+.faq-item[open] summary::after {
+  transform: rotate(45deg);
+}
+
+.faq-answer {
+  padding: 0 1.5rem 1.5rem;
+  color: var(--lp-text-muted);
+  line-height: 1.7;
+}
+
+/* Legal & Contact Sections */
+.legal-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--lp-white);
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: var(--lp-card-shadow);
+  text-align: left;
+}
+
+.legal-container h3 {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: var(--lp-text-main);
+}
+
+.legal-container h3:first-child {
+  margin-top: 0;
+}
+
+.legal-container p {
+  color: var(--lp-text-muted);
+  margin-bottom: 1rem;
+  line-height: 1.8;
+}
+
+.contact-card {
+  text-align: center;
+  padding: 4rem 3rem;
+  background: var(--lp-white);
+  border-radius: 20px;
+  box-shadow: var(--lp-card-shadow);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.contact-card a {
+  display: inline-block;
+  margin-top: 1.5rem;
+  font-size: 1.25rem;
+  color: var(--lp-primary);
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.contact-card a:hover {
+  color: var(--lp-secondary);
+}
+
 /* Footer */
 footer {
   background: #0f172a;

@@ -44,8 +44,26 @@ const Counter = ({ endValue, suffix = "" }) => {
 const Welcome = () => {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
+  const [stats, setStats] = useState({ students: 5000, eventsMonthly: 10, departments: 15 });
 
   useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch("http://localhost:5001/api/dashboard/public-stats");
+        if (response.ok) {
+          const data = await response.json();
+          setStats({
+            students: data.students ?? 0,
+            eventsMonthly: data.eventsMonthly ?? 0,
+            departments: data.departments ?? 0
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch stats", error);
+      }
+    };
+    fetchStats();
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
 
@@ -134,15 +152,15 @@ const Welcome = () => {
       <section className="lp-section stats-section">
         <div className="stats-grid reveal reveal-up">
           <div className="stat-item">
-            <Counter endValue={5000} suffix="+" />
+            <Counter endValue={stats.students} suffix="+" />
             <p>Students</p>
           </div>
           <div className="stat-item">
-            <Counter endValue={10} suffix="+" />
+            <Counter endValue={stats.eventsMonthly} suffix="+" />
             <p>Events Monthly</p>
           </div>
           <div className="stat-item">
-            <Counter endValue={15} suffix="+" />
+            <Counter endValue={stats.departments} suffix="+" />
             <p>Departments</p>
           </div>
         </div>
@@ -249,6 +267,58 @@ const Welcome = () => {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section id="faq" className="lp-section">
+        <div className="lp-section-header reveal reveal-up">
+          <h2>Frequently Asked Questions</h2>
+          <p>Everything you need to know about the product and billing.</p>
+        </div>
+        <div className="faq-container reveal reveal-up delay-1">
+          <details className="faq-item">
+            <summary>Is Ban-verse free for students?</summary>
+            <div className="faq-answer">Yes, Ban-verse is completely free for all Banasthali Vidyapith students. Simply sign up with your university email address.</div>
+          </details>
+          <details className="faq-item">
+            <summary>How do I become a Club Leader?</summary>
+            <div className="faq-answer">Club Leaders are designated by the administration or existing club faculty. If you are representing an official club, please use the Contact Us section or talk to your faculty coordinator.</div>
+          </details>
+          <details className="faq-item">
+            <summary>How do the AI recommendations work?</summary>
+            <div className="faq-answer">Our recommendation engine analyzes the interests, course details, and past activity you provide to match you with the most relevant clubs and upcoming events on campus.</div>
+          </details>
+        </div>
+      </section>
+
+      {/* Privacy Policy Section */}
+      <section id="privacy" className="lp-section" style={{ background: 'var(--lp-surface)' }}>
+        <div className="lp-section-header reveal reveal-up">
+          <h2>Privacy Policy</h2>
+          <p>Your data is secure and handled with care.</p>
+        </div>
+        <div className="legal-container reveal reveal-up delay-1">
+          <h3>Information Collection</h3>
+          <p>We only collect information directly related to your academic and extracurricular profile at Banasthali Vidyapith, ensuring a personalized experience.</p>
+          <h3>Data Usage</h3>
+          <p>Your data is used strictly for internal platform features (such as personalized recommendations) and is never shared with third-party advertisers.</p>
+          <h3>Security</h3>
+          <p>We implement strict security measures to ensure your data stays safe and is accessible only by authorized administrators.</p>
+        </div>
+      </section>
+
+      {/* Contact Us Section */}
+      <section id="contact" className="lp-section">
+        <div className="lp-section-header reveal reveal-up">
+          <h2>Contact Us</h2>
+          <p>Have questions or need to get your club registered?</p>
+        </div>
+        <div className="contact-card reveal reveal-up delay-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ margin: '0 auto 1rem' }}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+          <h3>Send us an email</h3>
+          <p>We're here to help and answer any question you might have.</p>
+          <a href="mailto:banverse.app@gmail.com">banverse.app@gmail.com</a>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="cta-section reveal reveal-up">
         <h2>Ready to Explore Your Campus?</h2>
@@ -279,9 +349,9 @@ const Welcome = () => {
             <div className="footer-links">
               <h4>Support</h4>
               <ul>
-                <li><span onClick={() => navigate("/faq")} style={{ cursor: 'pointer' }}>FAQ</span></li>
-                <li><span onClick={() => navigate("/contact")} style={{ cursor: 'pointer' }}>Contact Us</span></li>
-                <li><span onClick={() => navigate("/privacy")} style={{ cursor: 'pointer' }}>Privacy Policy</span></li>
+                <li><ScrollLink to="faq" smooth={true} duration={500} style={{ cursor: 'pointer' }}>FAQ</ScrollLink></li>
+                <li><ScrollLink to="contact" smooth={true} duration={500} style={{ cursor: 'pointer' }}>Contact Us</ScrollLink></li>
+                <li><ScrollLink to="privacy" smooth={true} duration={500} style={{ cursor: 'pointer' }}>Privacy Policy</ScrollLink></li>
               </ul>
             </div>
             <div className="footer-links">

@@ -4,7 +4,10 @@ import axios from "axios";
 import "./StudentDashboard.css";
 import logo from "./banasthali-logo.jpg";
 import ChatBot from "./ChatBot";
+import { RefreshCw } from "lucide-react";
 
+const API = "http://localhost:5001";
+const AI_API = "http://localhost:8000";
 const CATEGORIES = ["Technical", "Cultural", "Workshop", "Hackathon", "Seminar", "Sports", "Entrepreneurship"];
 
 const StudentDashboard = () => {
@@ -14,10 +17,14 @@ const StudentDashboard = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [activeTab, setActiveTab] = useState("dashboard");
   const [searchQuery, setSearchQuery] = useState("");
+  const [eventTabSearch, setEventTabSearch] = useState("");
   const [searchResults, setSearchResults] = useState({ events: [], clubs: [] });
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [pastEvents, setPastEvents] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [notifications, setNotifications] = useState([]);
+  const [aiRecommendations, setAiRecommendations] = useState(null);
+  const [isRefreshingAI, setIsRefreshingAI] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editProfileData, setEditProfileData] = useState({
     fullName: "",
@@ -25,8 +32,7 @@ const StudentDashboard = () => {
     year: "",
     bio: "",
     interests: [],
-    profileImage: "",
-    resume: ""
+    profileImage: ""
   });
 
   const handleFileChange = (e, field) => {
@@ -49,22 +55,24 @@ const StudentDashboard = () => {
           return;
         }
 
-        const response = await axios.get("http://localhost:5001/api/dashboard", {
+        const response = await axios.get(`${API}/api/dashboard`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         setData(response.data);
 
         // Fetch Notifications Count
-        const notifRes = await axios.get("http://localhost:5001/api/notifications", {
+        const notifRes = await axios.get(`${API}/api/notifications`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUnreadNotifications(notifRes.data.unreadCount);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
-        const url = error.config?.url || "unknown URL";
-        setErrorMessage(`${url} failed: ${error.response?.status || error.message}`);
+        setErrorMessage(`Connection failed: ${error.response?.status || error.message}`);
         if (error.response?.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          localStorage.removeItem("role");
           navigate("/login");
         }
       } finally {
@@ -76,11 +84,51 @@ const StudentDashboard = () => {
   }, [navigate]);
 
   useEffect(() => {
+    const fetchAIRecommendations = async () => {
+      const studentId = data?.user?._id || data?.user?.id;
+      if (studentId) {
+        try {
+          const res = await axios.get(`${AI_API}/recommendations/${studentId}`);
+          setAiRecommendations(res.data);
+        } catch (err) {
+          console.error("AI Recommendations error:", err);
+        }
+      }
+    };
+    fetchAIRecommendations();
+  }, [data]);
+
+  const handleRefreshAI = async () => {
+    const studentId = data?.user?._id || data?.user?.id;
+    if (studentId) {
+      setIsRefreshingAI(true);
+      try {
+        const res = await axios.get(`${AI_API}/recommendations/${studentId}`);
+        setAiRecommendations(res.data);
+      } catch (err) {
+        console.error("AI Recommendations refresh error:", err);
+      } finally {
+        setTimeout(() => setIsRefreshingAI(false), 1000);
+      }
+    }
+  };
+
+  const logActivity = async (actionType, itemId, itemType) => {
+    if (data?.user?._id) {
+      try {
+        await axios.post(`${AI_API}/log-activity?studentId=${data.user._id}&action_type=${actionType}&item_id=${itemId}&item_type=${itemType}`);
+      } catch (err) {
+        console.error("Error logging activity:", err);
+      }
+    }
+  };
+
+  useEffect(() => {
     const timer = setTimeout(async () => {
       if (searchQuery.length > 2) {
         try {
           const token = localStorage.getItem("token");
-          const res = await axios.get(`http://localhost:5001/api/search?q=${searchQuery}`, {
+          const res = await axios.get(`${API}/api/search?q=${searchQuery}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setSearchResults(res.data);
@@ -99,9 +147,19 @@ const StudentDashboard = () => {
     navigate("/login");
   };
 
+  const handleClubClick = (e, clubName) => {
+    e.stopPropagation();
+    if (clubName && clubName !== "Independent Event") {
+      setSelectedCategories([]); // Clear category filters to show the specific club cluster
+      setActiveTab("events");
+      setEventTabSearch(clubName);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const renderDashboard = () => {
     if (!data) return null;
-    const { user, stats, upcomingEvents, recommendedClubs } = data;
+    const { user, stats, upcomingEvents } = data;
 
     return (
       <>
@@ -136,49 +194,89 @@ const StudentDashboard = () => {
         </section>
 
         <div className="dashboard-sections-grid">
+          {/* AI Recommended Section */}
           <section className="section-card">
             <div className="section-header">
-              <h3 className="section-title">Upcoming Events</h3>
-              <button className="text-btn" onClick={() => setActiveTab("events")}>View All</button>
+              <h3 className="section-title">✨ Recommended for You (AI) <RefreshCw size={14} className={isRefreshingAI ? "spin" : ""} style={{ marginLeft: '10px', cursor: 'pointer', color: '#6366f1' }} onClick={handleRefreshAI} /></h3>
+              <button className="text-btn" onClick={() => setActiveTab("events")}>Full List</button>
             </div>
             <div className="event-list">
-              {upcomingEvents.length > 0 ? (
-                upcomingEvents.map(event => (
-                  <div className="event-item-modern" key={event._id}>
-                    <div className="event-date-box">
-                      <div className="month">{new Date(event.date).toLocaleString('default', { month: 'short' })}</div>
-                      <div className="day">{new Date(event.date).getDate()}</div>
-                    </div>
+              {aiRecommendations?.recommended_events?.length > 0 ? (
+                aiRecommendations.recommended_events.map(event => (
+                  <div className="event-item-modern" key={event._id || event.name} onClick={() => { logActivity("click", event._id || event.name, "event"); navigate(`/viewpost/${event._id || event.name}`); }}>
                     <div className="event-info">
-                      <h4>{event.title}</h4>
-                      <p>{event.club?.name || "Independent Event"}</p>
+                      <h4>{event.name || event.title} <span className="match-badge">{(event.match_score * 100).toFixed(0)}% Match</span></h4>
+                      <p>
+                        <span onClick={(e) => handleClubClick(e, event.clubName)} style={{ cursor: "pointer", color: "#6366f1", fontWeight: "600" }} className="hover-underline">
+                          {event.clubName || "Personalized Match"}
+                        </span> • {event.category}
+                      </p>
                     </div>
-                    <button className="register-btn">Register</button>
+                    <button className="register-btn" onClick={(e) => { e.stopPropagation(); navigate(`/viewpost/${event._id || event.name}`); }}>Details</button>
                   </div>
                 ))
               ) : (
-                <p>No upcoming events found.</p>
+                <div className="empty-ai-box">
+                  <p>✨ To see AI-powered matches tailored to YOU, try joining some clubs or adding skills to your profile!</p>
+                  <button className="text-btn" onClick={() => setActiveTab("profile")}>Enhance My Profile</button>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* General Upcoming Section */}
+          <section className="section-card">
+            <div className="section-header">
+              <h3 className="section-title">📅 General Upcoming Events</h3>
+              <button className="text-btn" onClick={() => setActiveTab("events")}>Full List</button>
+            </div>
+            <div className="event-list">
+              {upcomingEvents?.length > 0 ? (
+                upcomingEvents.slice(0, 3).map(event => (
+                  <div className="event-item-modern" key={event._id} onClick={() => { logActivity("view", event._id, "event"); navigate(`/viewpost/${event._id}`); }}>
+                    <div className="event-info">
+                      <h4>{event.title}</h4>
+                      <p onClick={(e) => handleClubClick(e, event.club?.name)} style={{ cursor: "pointer", color: "#6366f1", fontWeight: "600" }} className="hover-underline">
+                        {event.club?.name || "Independent Event"}
+                      </p>
+                    </div>
+                    <button className="register-btn" onClick={(e) => { e.stopPropagation(); navigate(`/viewpost/${event._id}`); }}>Details</button>
+                  </div>
+                ))
+              ) : (
+                <p>No general events found.</p>
               )}
             </div>
           </section>
 
           <section className="section-card">
             <div className="section-header">
-              <h3 className="section-title">Explore Clubs</h3>
+              <h3 className="section-title">🛡️ Discover Clubs <RefreshCw size={14} className={isRefreshingAI ? "spin" : ""} style={{ marginLeft: '10px', cursor: 'pointer', color: '#6366f1' }} onClick={handleRefreshAI} /></h3>
             </div>
             <div className="club-list">
-              {recommendedClubs.length > 0 ? (
-                recommendedClubs.map(club => (
-                  <div className="club-item-modern" key={club._id}>
+              {aiRecommendations?.recommended_clubs?.length > 0 ? (
+                aiRecommendations.recommended_clubs.map(club => (
+                  <div className="club-item-modern" key={club.name} onClick={() => logActivity("view", club.name, "club")}>
                     <div className="club-logo-modern">{club.name.charAt(0)}</div>
-                    <div className="club-info"><h4>{club.name}</h4></div>
+                    <div className="club-info">
+                      <h4>{club.name} <span className="match-badge">{(club.match_score * 100).toFixed(0)}% Match</span></h4>
+                      <p style={{ fontSize: '12px', color: '#6366f1' }}>{club.reason}</p>
+                    </div>
                     <button className="join-btn-small">Join</button>
                   </div>
                 ))
               ) : (
-                <p>All caught up!</p>
+                <div className="empty-ai-box">
+                  <p>No specific club matches found.</p>
+                </div>
               )}
             </div>
+            {aiRecommendations?.recommended_domains?.length > 0 && (
+              <div className="interest-tags" style={{ marginTop: '1.5rem', padding: '10px', background: 'rgba(99, 102, 241, 0.05)', borderRadius: '12px' }}>
+                <p style={{ fontSize: '13px', fontWeight: '600', marginBottom: '8px' }}>Based on your interests:</p>
+                {aiRecommendations.recommended_domains.map(d => <span key={d} className="tag" onClick={() => logActivity("explore", d, "domain")}>{d}</span>)}
+              </div>
+            )}
           </section>
         </div>
       </>
@@ -226,32 +324,50 @@ const StudentDashboard = () => {
       <div className="section-card">
         <div className="section-header">
           <h2 className="section-title">Campus Events</h2>
-          <div className="category-filters">
-            {CATEGORIES.map(cat => (
-              <button
-                key={cat}
-                className={`filter-chip ${selectedCategories.includes(cat) ? 'active' : ''}`}
-                onClick={() => toggleCategory(cat)}
-              >
-                {cat}
-              </button>
-            ))}
+          <div className="category-filters-container">
+            <div className="category-filters">
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat}
+                  className={`filter-chip ${selectedCategories.includes(cat) ? 'active' : ''}`}
+                  onClick={() => toggleCategory(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+            <div className="tab-search">
+              <input
+                type="text"
+                placeholder="Search all events..."
+                value={eventTabSearch}
+                onChange={(e) => setEventTabSearch(e.target.value)}
+                className="tab-search-input"
+              />
+            </div>
           </div>
         </div>
         <div className="event-list">
-          {data?.upcomingEvents.filter(e => selectedCategories.length === 0 || selectedCategories.includes(e.category)).map(event => (
-            <div className="event-item-modern" key={event._id}>
-              <div className="event-date-box">
-                <div className="month">{new Date(event.date).toLocaleString('default', { month: 'short' })}</div>
-                <div className="day">{new Date(event.date).getDate()}</div>
+          {data?.upcomingEvents
+            .filter(e => selectedCategories.length === 0 || selectedCategories.includes(e.category))
+            .filter(e => e.title.toLowerCase().includes(eventTabSearch.toLowerCase()) ||
+              e.description?.toLowerCase().includes(eventTabSearch.toLowerCase()) ||
+              e.club?.name?.toLowerCase().includes(eventTabSearch.toLowerCase()))
+            .map(event => (
+              <div className="event-item-modern" key={event._id} onClick={() => navigate(`/viewpost/${event._id}`)}>
+                <div className="event-date-box">
+                  <div className="month">{new Date(event.date).toLocaleString('default', { month: 'short' })}</div>
+                  <div className="day">{new Date(event.date).getDate()}</div>
+                </div>
+                <div className="event-info">
+                  <h4>{event.title} <span className="cat-badge">{event.category}</span></h4>
+                  <p onClick={(e) => handleClubClick(e, event.club?.name)} style={{ cursor: "pointer", color: "#6366f1", fontWeight: "600" }} className="hover-underline">
+                    {event.club?.name || "Independent Event"}
+                  </p>
+                </div>
+                <button className="register-btn" onClick={(e) => { e.stopPropagation(); navigate(`/viewpost/${event._id}`); }}>View Details</button>
               </div>
-              <div className="event-info">
-                <h4>{event.title} <span className="cat-badge">{event.category}</span></h4>
-                <p>{event.club?.name || "Independent Event"}</p>
-              </div>
-              <button className="register-btn" onClick={() => handleRegister(event._id)}>Register</button>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     );
@@ -262,7 +378,7 @@ const StudentDashboard = () => {
       const fetchPastEvents = async () => {
         try {
           const token = localStorage.getItem("token");
-          const res = await axios.get("http://localhost:5001/api/events/past", {
+          const res = await axios.get(`${API}/api/events/past`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setPastEvents(res.data);
@@ -379,17 +495,6 @@ const StudentDashboard = () => {
               />
             </div>
             <div className="form-group">
-              <label>Resume (PDF/Image)</label>
-              <div className="file-input-wrapper">
-                <input
-                  type="file"
-                  accept=".pdf,image/*"
-                  onChange={(e) => handleFileChange(e, "resume")}
-                />
-                {editProfileData.resume && <span className="file-status">✅ Resume Attached</span>}
-              </div>
-            </div>
-            <div className="form-group">
               <label>Interests (comma separated)</label>
               <input
                 type="text"
@@ -406,51 +511,60 @@ const StudentDashboard = () => {
       );
     }
 
+    const profileUser = data?.user || {};
+    const stats = data?.stats || { points: 0, registeredEventsCount: 0, joinedClubsCount: 0 };
+    
     return (
-      <div className="profile-edit-container">
-        <div className="profile-header-card">
-          <img src={user.profileImage} alt="Profile" className="profile-main-img" />
-          <div className="profile-info-main">
-            <h2>{user.fullName}</h2>
-            <p className="email">{user.email}</p>
-            <div className="user-badges">
-              <span className="badge">Year {user.year}</span>
-              <span className="badge">{user.department}</span>
-            </div>
-          </div>
-          <button className="primary-btn" onClick={() => {
-            setEditProfileData({
-              fullName: user.fullName,
-              department: user.department || "",
-              year: user.year || "",
-              bio: user.bio || "",
-              interests: user.interests || [],
-              profileImage: user.profileImage,
-              resume: user.resume || ""
-            });
-            setIsEditingProfile(true);
-          }}>Edit Profile</button>
+      <div className="profile-pro-container">
+        <div className="profile-banner-premium">
+          <div className="banner-glow"></div>
         </div>
-        <div className="profile-details-grid">
-          <div className="detail-card">
-            <h3>Bio</h3>
-            <p>{user.bio || "No bio added yet."}</p>
-          </div>
-          <div className="detail-card">
-            <h3>Interests</h3>
-            <div className="interest-tags">
-              {user.interests.length > 0 ? user.interests.map(i => <span key={i} className="tag">{i}</span>) : <p>Add interests to find better clubs!</p>}
+        <div className="profile-main-card">
+          <div className="profile-left-col">
+            <div className="profile-avatar-wrapper">
+              <img src={profileUser.profileImage || "https://cdn-icons-png.flaticon.com/512/847/847969.png"} alt="Profile" className="profile-avatar-pro" />
+              <button className="edit-img-overlay" onClick={() => setIsEditingProfile(true)}>✎ Edit Photo</button>
+            </div>
+            <div className="profile-stats-mini">
+               <div className="mini-stat">
+                  <strong>{stats.points}</strong>
+                  <span>Pts</span>
+               </div>
+               <div className="mini-stat">
+                  <strong>{stats.joinedClubsCount}</strong>
+                  <span>Clubs</span>
+               </div>
             </div>
           </div>
-          <div className="detail-card">
-            <h3>Resume</h3>
-            {user.resume ? (
-              <a href={user.resume} target="_blank" rel="noopener noreferrer" className="view-resume-link">
-                📄 View Resume
-              </a>
-            ) : (
-              <p className="text-muted">No resume uploaded yet.</p>
-            )}
+          <div className="profile-right-col">
+            <div className="profile-id-section">
+              <div className="name-group">
+                <h2 className="profile-user-name">{profileUser.fullName || "Student Name"}</h2>
+                <div className="dept-badge-pro">{profileUser.department} • Year {profileUser.year}</div>
+              </div>
+              <button className="btn-edit-experience" onClick={() => {
+                setEditProfileData({
+                  fullName: profileUser.fullName || "",
+                  department: profileUser.department || "",
+                  year: profileUser.year || "",
+                  bio: profileUser.bio || "",
+                  interests: profileUser.interests || [],
+                  profileImage: profileUser.profileImage || ""
+                });
+                setIsEditingProfile(true);
+              }}>Edit Profile</button>
+            </div>
+            
+            <div className="profile-bio-summary">
+                <p>{profileUser.bio || "Enthusiastic student at Banasthali ready to explore new opportunities!"}</p>
+            </div>
+
+            <div className="profile-meta-grid">
+              <div className="meta-card-pro">
+                 <div className="meta-label">Total Engagement</div>
+                 <div className="meta-value-pro">{stats.points} Points</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -461,12 +575,16 @@ const StudentDashboard = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.put("http://localhost:5001/api/user/update-profile", editProfileData, {
+      const res = await axios.put(`${API}/api/user/update-profile`, editProfileData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert(res.data.message);
+      // Ensure the dashboard state is updated immediately with the new user data
+      if (res.data.user) {
+        setData(prev => ({ ...prev, user: res.data.user }));
+      }
       setIsEditingProfile(false);
-      window.location.reload();
+      window.location.reload(); // Refresh to pull fresh statistics from backend
     } catch (error) {
       alert("Failed to update profile.");
     }
@@ -481,41 +599,75 @@ const StudentDashboard = () => {
   const renderClubs = () => {
     const clubs = data?.joinedClubs || [];
     return (
-      <div className="section-card">
-        <h2 className="section-title">My Joined Clubs</h2>
-        <div className="club-grid-premium" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+      <div className="section-card" style={{ background: 'transparent', boxShadow: 'none', padding: '0' }}>
+        <h2 className="section-title" style={{ marginBottom: '1.5rem', fontSize: '1.4rem' }}>My Joined Clubs</h2>
+        <div className="club-grid-premium">
           {clubs.length > 0 ? clubs.map(club => (
-            <div key={club._id} className="club-item-modern">
-              <div className="club-logo-modern">{club.name.charAt(0)}</div>
-              <div className="club-info">
-                <h4>{club.name}</h4>
-                <p>{club.category} Member</p>
+            <div key={club._id} className="club-flex-card">
+              <div className="club-card-image-wrapper">
+                <img src={club.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(club.name)}&background=6366f1&color=fff&bold=true`} alt={club.name} />
               </div>
-              <button className="join-btn-small" onClick={() => navigate(`/viewclub?id=${club._id}`)}>View</button>
+              <div className="club-card-content">
+                <h4 className="club-card-name">{club.name}</h4>
+                <span className="club-card-role">{club.category || "General"} Member</span>
+              </div>
+              <div className="club-card-actions-vertical">
+                <button className="btn-flex-secondary" onClick={() => navigate(`/viewclub?id=${club._id}`)}>
+                  View Club Info
+                </button>
+                <button className="btn-flex-primary" onClick={(e) => handleClubClick(e, club.name)}>
+                  See All Events
+                </button>
+              </div>
             </div>
-          )) : <p>You haven't joined any clubs yet. Explore and join some!</p>}
+          )) : (
+            <div className="empty-state" style={{ background: 'white', borderRadius: '16px', width: '100%' }}>
+              <p>You haven't joined any clubs yet. Explore and join some!</p>
+            </div>
+          )}
         </div>
       </div>
     );
   };
 
   const renderExplore = () => {
-    const clubs = data?.recommendedClubs || [];
+    const clubs = data?.allClubs || []; // Fixed to use allClubs for the explore tab
     return (
       <div className="section-card">
         <h2 className="section-title">Discover Clubs</h2>
-        <p className="subtitle">Based on your interests: {data?.user.interests.join(", ") || "General"}</p>
-        <div className="club-list" style={{ marginTop: '1.5rem' }}>
-          {clubs.map(club => (
-            <div key={club._id} className="club-item-modern">
-              <div className="club-logo-modern">{club.name.charAt(0)}</div>
-              <div className="club-info">
-                <h4>{club.name}</h4>
-                <p>{club.description?.substring(0, 60)}...</p>
+        <p className="subtitle" style={{ marginBottom: '1.5rem' }}>Find your tribe. Hover to see what each club is about.</p>
+        <div className="club-grid-premium">
+          {clubs.map(club => {
+            const isJoined = data?.joinedClubs?.some(jc => {
+              const jcId = jc._id || jc.id;
+              const clubId = club._id || club.id;
+              return jcId && clubId && jcId.toString() === clubId.toString();
+            });
+            return (
+              <div key={club._id} className="club-flex-card">
+                <div className="club-card-image-wrapper">
+                  <img src={club.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(club.name)}&background=6366f1&color=fff&bold=true`} alt={club.name} />
+                </div>
+                <div className="club-card-content">
+                  <h4 className="club-card-name">{club.name}</h4>
+                  <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>{club.category}</p>
+                  <p style={{ fontSize: '13px', color: '#475569', height: '40px', overflow: 'hidden' }}>{club.description?.substring(0, 60)}...</p>
+                </div>
+                <div className="club-card-actions-vertical">
+                  {isJoined ? (
+                    <button className="btn-flex-secondary" disabled style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }}>
+                      Member ✅
+                    </button>
+                  ) : (
+                    <button className="btn-flex-primary" onClick={() => handleJoinClub(club._id)}>
+                      Join Club
+                    </button>
+                  )}
+                </div>
               </div>
-              <button className="join-btn-small" onClick={() => handleJoinClub(club._id)}>Join Club</button>
-            </div>
-          ))}
+            );
+          })}
+          {clubs.length === 0 && <p>No clubs available to join at this moment.</p>}
         </div>
       </div>
     );
@@ -524,29 +676,63 @@ const StudentDashboard = () => {
   const handleJoinClub = async (clubId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post(`http://localhost:5001/api/clubs/join/${clubId}`, {}, {
+      await axios.post(`${API}/api/clubs/join/${clubId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      // Fire and forget logActivity to avoid blocking the UI
+      logActivity("join", clubId, "club").catch(e => console.error(e));
+      
       alert("Successfully joined club! +10 points.");
       window.location.reload();
     } catch (err) {
+      console.error("Join error:", err);
       alert("Failed to join club.");
     }
   };
+
+  const fetchNotifications = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API}/api/notifications`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNotifications(res.data.notifications || []);
+      setUnreadNotifications(res.data.unreadCount || 0);
+    } catch (err) {
+      console.error("Notifications fetch error:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "notifications") {
+      fetchNotifications();
+    }
+  }, [activeTab]);
 
   const renderNotifications = () => {
     return (
       <div className="section-card">
         <h2 className="section-title">Your Notifications</h2>
-        <div className="notification-list" style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {unreadNotifications > 0 ? (
-            <div className="notif-item highlight" style={{ padding: '15px', background: '#f0f4ff', borderRadius: '12px', borderLeft: '4px solid #4f46e5' }}>
-              <strong>New Announcement</strong>
-              <p>Check out the new hackathon event from Tech Club!</p>
-              <span style={{ fontSize: '12px', color: '#64748b' }}>Just now</span>
-            </div>
+        <div className="notification-list" style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {notifications.length > 0 ? (
+            notifications.map((n, i) => (
+              <div key={n._id || i} className={`notif-item ${!n.read ? 'highlight' : ''}`} style={{
+                padding: '16px',
+                background: n.read ? '#f8fafc' : '#f0f4ff',
+                borderRadius: '16px',
+                borderLeft: n.read ? 'none' : '4px solid #4f46e5',
+                boxShadow: '0 2px 10px rgba(0,0,0,0.02)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <strong>{n.type === 'announcement' ? '📢 Announcement' : '🔔 Notification'}</strong>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>{new Date(n.createdAt).toLocaleString()}</span>
+                </div>
+                <p style={{ margin: '8px 0 0 0', color: '#475569', fontSize: '14px', lineHeight: '1.5' }}>{n.message}</p>
+              </div>
+            ))
           ) : (
-            <div className="empty-state">
+            <div className="empty-state" style={{ textAlign: 'center', padding: '3rem' }}>
+              <div style={{ fontSize: '40px', marginBottom: '10px' }}>🧘</div>
               <p>All caught up! No unread notifications.</p>
             </div>
           )}
@@ -561,18 +747,7 @@ const StudentDashboard = () => {
     );
   };
 
-  const handleRegister = async (eventId) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post(`http://localhost:5001/api/events/register/${eventId}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      alert("Registration Successful! +20 points.");
-      window.location.reload(); // Refresh to update points
-    } catch (error) {
-      alert("Failed to register.");
-    }
-  };
+
 
   return (
     <div className="dashboard-container">
@@ -619,9 +794,17 @@ const StudentDashboard = () => {
                 {searchQuery.length > 2 && (
                   <div className="search-dropdown">
                     {searchResults.events.length > 0 && <h4>Events</h4>}
-                    {searchResults.events.map(e => <div key={e._id} className="search-item">{e.title}</div>)}
+                    {searchResults.events.map(e => (
+                      <div key={e._id} className="search-item" onClick={() => { navigate(`/viewpost/${e._id}`); setSearchQuery(""); }}>
+                        <span>📅</span> {e.title}
+                      </div>
+                    ))}
                     {searchResults.clubs.length > 0 && <h4>Clubs</h4>}
-                    {searchResults.clubs.map(c => <div key={c._id} className="search-item">{c.name}</div>)}
+                    {searchResults.clubs.map(c => (
+                      <div key={c._id} className="search-item" onClick={() => { navigate(`/viewclub?id=${c._id}`); setSearchQuery(""); }}>
+                        <span>🛡️</span> {c.name}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>

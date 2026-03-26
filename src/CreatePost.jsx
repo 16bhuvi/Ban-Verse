@@ -1,23 +1,26 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "./createPost.css";
 import { ArrowLeft, AlertCircle, Calendar, Clock, MapPin, Award, PlusCircle, Link as LinkIcon, Phone } from "lucide-react";
 
 export default function CreatePost() {
   const navigate = useNavigate();
-  const [poster, setPoster] = useState("");
+  const locationState = useLocation();
+  const editEvent = locationState.state?.editEvent;
+
+  const [poster, setPoster] = useState(editEvent?.poster || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
-    title: "",
-    description: "",
-    date: "",
-    time: "",
-    location: "",
-    category: "Technical",
-    regLink: "",
-    contact: ""
+    title: editEvent?.title || "",
+    description: editEvent?.description || "",
+    date: editEvent?.date ? new Date(editEvent.date).toISOString().split('T')[0] : "",
+    time: editEvent?.time || "",
+    location: editEvent?.location || "",
+    category: editEvent?.category || "Technical",
+    regLink: editEvent?.regLink || "",
+    contact: editEvent?.contact || ""
   });
 
   const categories = ["Technical", "Cultural", "Workshop", "Hackathon", "Seminar", "Sports", "Entrepreneurship"];
@@ -38,13 +41,20 @@ export default function CreatePost() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://localhost:5001/api/club-leader/create-event",
-        { ...form, poster },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      if (editEvent) {
+        await axios.put(`http://localhost:5001/api/club-leader/edit-event/${editEvent._id}`,
+          { ...form, poster },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } else {
+        await axios.post("http://localhost:5001/api/club-leader/create-event",
+          { ...form, poster },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
       navigate("/clubdashboard");
     } catch (err) {
-      setError(err.response?.data?.error || "Error creating event. Please try again.");
+      setError(err.response?.data?.error || `Error ${editEvent ? 'updating' : 'creating'} event. Please try again.`);
     } finally {
       setLoading(false);
     }
@@ -66,8 +76,8 @@ export default function CreatePost() {
       <main className="create-content">
         <div className="create-card">
           <div className="create-header">
-            <h2>Create New Event</h2>
-            <p>Publish an event to the Banverse community</p>
+            <h2>{editEvent ? `Edit Event: ${editEvent.title}` : 'Create New Event'}</h2>
+            <p>{editEvent ? 'Update the details of your event below.' : 'Publish an event to the Banverse community'}</p>
           </div>
 
           <form onSubmit={submit} className="event-form">
@@ -114,6 +124,7 @@ export default function CreatePost() {
                     type="date"
                     value={form.date}
                     onChange={(e) => setForm({ ...form, date: e.target.value })}
+                    min={new Date().toISOString().split('T')[0]}
                     required
                   />
                 </div>
@@ -196,7 +207,7 @@ export default function CreatePost() {
             <div className="form-actions">
               <button type="button" className="btn-secondary" onClick={handleCancel}>Cancel</button>
               <button type="submit" className="btn-primary" disabled={loading}>
-                {loading ? "Publishing..." : "Publish Event"}
+                {loading ? (editEvent ? "Updating..." : "Publishing...") : (editEvent ? "Update Event" : "Publish Event")}
               </button>
             </div>
           </form>

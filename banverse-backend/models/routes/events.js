@@ -22,6 +22,18 @@ router.get("/", authenticate, async (req, res) => {
   }
 });
 
+// ✅ Get individual event detail
+router.get("/:id", authenticate, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const event = await Event.findById(id).populate("club");
+    if (!event) return res.status(404).json({ error: "Event not found" });
+    res.json(event);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch event details" });
+  }
+});
+
 // ✅ Get past events grouped by month
 router.get("/past", authenticate, async (req, res) => {
   const { year, month } = req.query;

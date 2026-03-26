@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Auth.css';
 import logo from './banasthali-logo.jpg';
+import eyeIcon from './images/eye.png';
+import hiddenIcon from './images/hidden.png';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,6 +15,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [emailWarning, setEmailWarning] = useState('');
 
   React.useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -21,14 +24,27 @@ const Login = () => {
 
     if (user && token && role) {
       if (user.globalRole === "admin") navigate("/admindashboard");
-      else if (role === "club" || role === "core") navigate("/clubdashboard");
+      else if (role === "club") navigate("/clubdashboard");
       else navigate("/studentdashboard");
     }
   }, [navigate]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
     setError('');
+    if (name === 'email') {
+      if (value.includes('@')) {
+        const domain = value.split('@')[1];
+        if (!'banasthali.in'.startsWith(domain)) {
+          setEmailWarning('Invalid domain. Only @banasthali.in is allowed.');
+        } else {
+          setEmailWarning('');
+        }
+      } else {
+        setEmailWarning('');
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -47,35 +63,24 @@ const Login = () => {
 
       if (response.ok) {
         console.log("Login successful:", data);
-        const { globalRole, isClubLeader, membershipType, clubId } = data.user;
-
-        // Store full user object (includes membershipType, clubId for routing)
+        const globalRole = data.user.globalRole;
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", data.token);
 
-        // ── LOGIN REDIRECTION LOGIC (as per spec) ──
-        // 1. Admin → Admin Dashboard
+        // Map role for Home.jsx and redirection
+        let redirectRole = globalRole;
+        if (data.user.isClubLeader) {
+          redirectRole = "club";
+        }
+        localStorage.setItem("role", redirectRole);
+
+        console.log("Redirecting to dashboard for role:", redirectRole);
+
         if (globalRole === "admin") {
-          localStorage.setItem("role", "admin");
           navigate("/admindashboard");
-        }
-        // 2. Student who is Club Leader → Club Leader Dashboard
-        else if (isClubLeader) {
-          localStorage.setItem("role", "club");
+        } else if (data.user.isClubLeader) {
           navigate("/clubdashboard");
-        }
-        // 3. Core Member → Club Dashboard (core role view)
-        else if (membershipType === "Core Member") {
-          localStorage.setItem("role", "core");
-          if (clubId) {
-            navigate(`/club/${clubId}/dashboard`);
-          } else {
-            navigate("/clubdashboard");
-          }
-        }
-        // 4. General Member / Unaffiliated Student → Student Dashboard
-        else {
-          localStorage.setItem("role", "student");
+        } else {
           navigate("/studentdashboard");
         }
       } else {
@@ -108,6 +113,8 @@ const Login = () => {
             <label>University Email</label>
           </div>
 
+          {emailWarning && <p className="error-msg">{emailWarning}</p>}
+
           <div className="input-group">
             <input
               type={showPassword ? "text" : "password"}
@@ -118,9 +125,13 @@ const Login = () => {
               required
             />
             <label>Password</label>
-            <span className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? "Hide" : "Show"}
-            </span>
+            <img
+              src={showPassword ? hiddenIcon : eyeIcon}
+              alt={showPassword ? "Hide password" : "Show password"}
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{ cursor: 'pointer', width: '20px', height: '20px' }}
+            />
           </div>
 
           <div style={{ textAlign: 'right', marginTop: '-10px' }}>
@@ -136,6 +147,8 @@ const Login = () => {
 
         <div className="auth-footer">
           Don't have an account? <Link to="/signup">Create one now</Link>
+          <br /><br />
+          <Link to="/" style={{ color: '#6366f1', textDecoration: 'none', fontWeight: '500' }}>← Back to Welcome Page</Link>
         </div>
       </div>
     </div>

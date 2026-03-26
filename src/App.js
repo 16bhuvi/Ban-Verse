@@ -52,6 +52,7 @@ function App() {
         <Route path="/createpost" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
         <Route path="/studentdashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
         <Route path="/studentprofile" element={<ProtectedRoute><StudentProfile /></ProtectedRoute>} />
+        <Route path="/viewpost/:id" element={<ProtectedRoute><ViewPost /></ProtectedRoute>} />
         <Route path="/viewpost" element={<ProtectedRoute><ViewPost /></ProtectedRoute>} />
         <Route path="/viewclub" element={<ProtectedRoute><ViewClub /></ProtectedRoute>} />
         <Route path="/admindashboard" element={<RoleRoute roles={['admin']}><AdminDashboard /></RoleRoute>} />

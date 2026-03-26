@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bot, Send, X, MessageSquare, User } from 'lucide-react';
+import { Bot, Send, X, MessageSquare } from 'lucide-react';
 import './ChatBot.css';
 
 const ChatBot = () => {
@@ -24,20 +24,36 @@ const ChatBot = () => {
     const handleSend = async (e) => {
         e.preventDefault();
         if (!inputValue.trim()) return;
-
+    
         const userMsg = { id: Date.now(), type: 'user', text: inputValue };
         setMessages(prev => [...prev, userMsg]);
         setInputValue('');
         setIsTyping(true);
-
-        // Simulate Bot Response
-        setTimeout(() => {
+    
+        try {
+            const res = await fetch("http://localhost:8000/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_input: inputValue })
+            });
+            const data = await res.json();
+            
+            setMessages(prev => [...prev, { 
+                id: Date.now() + 1, 
+                type: 'bot', 
+                text: data.bot_response || getBotResponse(inputValue) 
+            }]);
+        } catch (err) {
+            console.error("ChatBot error:", err);
+            // Fallback to local logic if server is down
             const botResponse = getBotResponse(inputValue);
             setMessages(prev => [...prev, { id: Date.now() + 1, type: 'bot', text: botResponse }]);
+        } finally {
             setIsTyping(false);
-        }, 1000);
+        }
     };
-
+    
+    // Fallback logic for basic queries
     const getBotResponse = (input) => {
         const text = input.toLowerCase();
 

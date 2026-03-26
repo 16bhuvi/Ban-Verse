@@ -4,8 +4,8 @@ import axios from "axios";
 import logo from "./banasthali-logo.jpg";
 import {
   Users, Calendar, UserPlus, TrendingUp, LogOut, LayoutDashboard,
-  PlusCircle, Building2, X, ChevronDown, CheckCircle2, XCircle,
-  BarChart2, Shield, Layers, Eye, EyeOff, Search, RefreshCw
+  PlusCircle, Building2, X, CheckCircle2, XCircle,
+  Shield, Layers, Eye, EyeOff, Search, RefreshCw
 } from "lucide-react";
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -158,16 +158,87 @@ const ClubFormModal = ({ students, onClose, onSuccess }) => {
   );
 };
 
+// ─── Make Admin Modal ────────────────────────────────────────────────────────
+const MakeAdminModal = ({ onClose, onSuccess }) => {
+  const [form, setForm] = useState({ email: "", fullName: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.email) { setError("Email is required"); return; }
+    setLoading(true);
+    setError("");
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.put(`${API}/api/admin/make-admin`, form, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      onSuccess(res.data.message);
+      onClose();
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to make admin");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content-premium" onClick={e => e.stopPropagation()} style={{ maxWidth: "450px" }}>
+        <div className="modal-header">
+          <h3><Shield size={20} style={{ marginRight: "8px", verticalAlign: "middle" }} />Grant Admin Role</h3>
+          <button onClick={onClose} className="close-btn"><X size={20} /></button>
+        </div>
+        <div className="modal-body" style={{ padding: "1.5rem" }}>
+          <div className="admin-notice" style={{ background: "rgba(239, 68, 68, 0.1)", color: "#ef4444", borderColor: "rgba(239, 68, 68, 0.2)" }}>
+            <Shield size={16} />
+            <span>If the user is not registered, providing their Name and a Password will instantly create their Admin account.</span>
+          </div>
+          {error && <div className="form-error"><XCircle size={16} /> {error}</div>}
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Staff/HOD Email *</label>
+              <input type="email" placeholder="e.g. director@banasthali.in"
+                value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
+            </div>
+            <div className="form-group">
+              <label>Full Name (Required if new)</label>
+              <input type="text" placeholder="e.g. Dr. Ramesh"
+                value={form.fullName} onChange={e => setForm({ ...form, fullName: e.target.value })} />
+            </div>
+            <div className="form-group">
+              <label>Initial Password (Required if new)</label>
+              <input type="text" placeholder="Minimum 8 characters"
+                value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
+            </div>
+            <div className="modal-footer-actions" style={{ marginTop: "2rem" }}>
+              <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
+              <button type="submit" className="btn-primary" disabled={loading} style={{ background: "#ef4444", borderColor: "#ef4444" }}>
+                {loading ? <RefreshCw size={16} className="spin" /> : <Shield size={16} />}
+                {loading ? "Processing..." : "Create Admin"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ─── Main Dashboard ─────────────────────────────────────────────────────────────
 const AdminDashboard = () => {
   const [data, setData] = useState(null);
   const [users, setUsers] = useState([]);
   const [clubs, setClubs] = useState([]);
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [showClubModal, setShowClubModal] = useState(false);
+  const [showAdminModal, setShowAdminModal] = useState(false);
   const [userSearch, setUserSearch] = useState("");
   const [clubSearch, setClubSearch] = useState("");
+  const [eventSearch, setEventSearch] = useState("");
   const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
@@ -181,18 +252,23 @@ const AdminDashboard = () => {
       const token = localStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
 
-      const [statsRes, usersRes, clubsRes] = await Promise.all([
+      const [statsRes, usersRes, clubsRes, eventsRes] = await Promise.all([
         axios.get(`${API}/api/admin/analytics`, { headers }),
         axios.get(`${API}/api/admin/users`, { headers }),
-        axios.get(`${API}/api/admin/clubs`, { headers })
+        axios.get(`${API}/api/admin/clubs`, { headers }),
+        axios.get(`${API}/api/admin/events`, { headers })
       ]);
 
       setData(statsRes.data);
       setUsers(usersRes.data);
       setClubs(clubsRes.data);
+      setEvents(eventsRes.data);
     } catch (error) {
       console.error("Admin fetch error:", error);
       if (error.response?.status === 403 || error.response?.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
         navigate("/login");
       } else {
         setData({
@@ -234,6 +310,28 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleClubEventsClick = (clubName) => {
+    if (clubName && clubName !== "Unknown Club") {
+      setActiveTab("events");
+      setEventSearch(clubName);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleDeleteEvent = async (eventId) => {
+    if (!window.confirm("Are you sure you want to permanently delete this event? This action cannot be undone.")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API}/api/admin/events/${eventId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      showToast("Event deleted successfully!");
+      fetchData();
+    } catch (error) {
+      showToast("Failed to delete event.", "error");
+    }
+  };
+
   const handleExport = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -262,12 +360,16 @@ const AdminDashboard = () => {
     c.name?.toLowerCase().includes(clubSearch.toLowerCase())
   );
 
+  const filteredEvents = events.filter(e =>
+    e.title?.toLowerCase().includes(eventSearch.toLowerCase()) ||
+    e.club?.name?.toLowerCase().includes(eventSearch.toLowerCase())
+  );
+
   const sidebarLinks = [
     { id: "overview", label: "Dashboard Overview", icon: LayoutDashboard },
     { id: "clubs", label: "Club Management", icon: Building2 },
     { id: "users", label: "User Directory", icon: Users },
     { id: "events", label: "Events Control", icon: Calendar },
-    { id: "analytics", label: "Analytics", icon: BarChart2 },
   ];
 
   const renderOverview = () => (
@@ -420,6 +522,13 @@ const AdminDashboard = () => {
             </div>
             <div className="club-card-actions">
               <button
+                className="btn-secondary-sm"
+                onClick={() => handleClubEventsClick(club.name)}
+                style={{ marginRight: "auto" }}
+              >
+                <Calendar size={14} /> View Events
+              </button>
+              <button
                 className={club.isActive ? "btn-danger-sm" : "btn-success-sm"}
                 onClick={() => handleDeactivateClub(club._id, club.isActive)}
               >
@@ -450,7 +559,10 @@ const AdminDashboard = () => {
             <input type="text" placeholder="Search users..." value={userSearch}
               onChange={e => setUserSearch(e.target.value)} />
           </div>
-          <button onClick={handleExport} className="btn-secondary">Export CSV</button>
+          <button onClick={() => setShowAdminModal(true)} className="btn-primary" style={{ background: "#ef4444", borderColor: "#ef4444", whiteSpace: "nowrap" }}>
+            <Shield size={16} /> Add Admin
+          </button>
+          <button onClick={handleExport} className="btn-secondary" style={{ whiteSpace: "nowrap" }}>Export CSV</button>
         </div>
       </div>
       <div className="table-wrapper" style={{ overflowX: "auto" }}>
@@ -545,7 +657,7 @@ const AdminDashboard = () => {
               {activeTab === "overview" ? "Dashboard Overview" :
                 activeTab === "clubs" ? "Club Management" :
                   activeTab === "users" ? "User Directory" :
-                    activeTab === "events" ? "Events Control" : "Analytics"}
+                    "Events Control"}
             </h1>
             <p>Welcome back, Platform Administrator.</p>
           </div>
@@ -563,18 +675,90 @@ const AdminDashboard = () => {
         {activeTab === "users" && renderUsers()}
         {activeTab === "events" && (
           <div className="data-table-container">
-            <div className="table-header"><h2>Events Control</h2></div>
-            <div style={{ padding: "3rem", textAlign: "center", color: "#64748b" }}>
-              <Calendar size={48} style={{ marginBottom: "1rem", opacity: 0.4 }} />
-              <h3>Global Event Moderation</h3>
-              <p>Platform-wide event oversight coming soon. Club leaders manage their own events.</p>
+            <div className="table-header">
+              <div>
+                <h2>{eventSearch ? `Clustered: ${eventSearch} Events` : "Global Event Control"}</h2>
+                <p style={{ color: "#94a3b8", fontSize: "0.85rem", marginTop: "4px" }}>
+                  {eventSearch ? `Showing all events belonging to the "${eventSearch}" cluster.` : "Monitor and moderate all campus events created by Club Leaders."}
+                </p>
+              </div>
+              <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                {eventSearch && (
+                  <button 
+                    onClick={() => setEventSearch("")} 
+                    className="btn-secondary-sm"
+                    style={{ background: "rgba(255,255,255,0.05)", padding: "8px 12px", borderRadius: "8px" }}
+                  >
+                    <RefreshCw size={14} style={{ marginRight: '6px' }} /> Show All
+                  </button>
+                )}
+                <div className="admin-search-box">
+                  <Search size={16} />
+                  <input type="text" placeholder="Search events or clubs..." value={eventSearch}
+                    onChange={e => setEventSearch(e.target.value)} />
+                </div>
+              </div>
             </div>
-          </div>
-        )}
-        {activeTab === "analytics" && (
-          <div className="data-table-container">
-            <div className="table-header"><h2>Advanced Analytics</h2></div>
-            {renderOverview()}
+            <div className="table-wrapper" style={{ overflowX: "auto" }}>
+              <table className="responsive-table">
+                <thead>
+                  <tr>
+                    <th>Event Info</th>
+                    <th>Club</th>
+                    <th>Date</th>
+                    <th>Created By</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredEvents.map(event => (
+                    <tr key={event._id}>
+                      <td>
+                        <div className="user-cell" style={{ maxWidth: "250px" }}>
+                          {event.image ? (
+                            <img src={event.image} className="user-avatar" alt="" style={{ borderRadius: '8px', objectFit: 'cover' }} />
+                          ) : (
+                            <div style={{ width: 40, height: 40, borderRadius: 8, background: 'rgba(99, 102, 241, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 15, flexShrink: 0 }}>
+                              <Calendar size={20} color="#6366f1" />
+                            </div>
+                          )}
+                          <div style={{ overflow: "hidden" }}>
+                            <span className="user-name" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "block" }}>{event.title}</span>
+                            <span className="user-email" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "block" }}>{event.category || "General"}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td style={{ fontWeight: "600" }}>
+                        <span 
+                          onClick={() => handleClubEventsClick(event.club?.name)}
+                          style={{ cursor: "pointer", color: "#6366f1" }} className="hover-underline"
+                        >
+                          {event.club?.name || "Unknown Club"}
+                        </span>
+                      </td>
+                      <td style={{ color: "#94a3b8", fontSize: "0.85rem" }}>
+                        {new Date(event.date).toLocaleDateString()} at {event.time || "TBD"}
+                      </td>
+                      <td style={{ color: "#94a3b8", fontSize: "0.85rem" }}>{event.createdBy?.fullName || "Leader"}</td>
+                      <td>
+                        <button onClick={() => handleDeleteEvent(event._id)} className="action-btn" style={{ color: "#ef4444", borderColor: "rgba(239, 68, 68, 0.2)" }}>
+                          <XCircle size={14} /> Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredEvents.length === 0 && (
+                    <tr>
+                      <td colSpan="5" style={{ textAlign: "center", padding: "4rem", color: "#64748b" }}>
+                        <Calendar size={48} style={{ opacity: 0.2, marginBottom: "1rem", display: "inline-block" }} />
+                        <h3 style={{ color: "#94a3b8" }}>No Events Found</h3>
+                        <p style={{ fontSize: "0.9rem" }}>Clubs haven't posted any events matching your search.</p>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </main>
@@ -584,6 +768,13 @@ const AdminDashboard = () => {
         <ClubFormModal
           students={users}
           onClose={() => setShowClubModal(false)}
+          onSuccess={(msg) => { showToast(msg); fetchData(); }}
+        />
+      )}
+      {/* Make Admin Modal */}
+      {showAdminModal && (
+        <MakeAdminModal
+          onClose={() => setShowAdminModal(false)}
           onSuccess={(msg) => { showToast(msg); fetchData(); }}
         />
       )}

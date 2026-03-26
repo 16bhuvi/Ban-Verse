@@ -275,6 +275,51 @@ router.put("/promote/:id", adminOnly, async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// PUT /api/admin/make-admin  - Grant full Admin privileges by email
+// ─────────────────────────────────────────────────────────────────────────────
+router.put("/make-admin", adminOnly, async (req, res) => {
+    try {
+        const { email, fullName, password } = req.body;
+        if (!email) return res.status(400).json({ error: "Email is required" });
+
+        let user = await User.findOne({ email: email.toLowerCase() });
+
+        if (user) {
+            // User exists, simply promote
+            user.globalRole = "admin";
+            user.isVerified = true;
+            await user.save();
+            return res.json({ message: "Existing user successfully promoted to Admin", user });
+        } else {
+            // Creates the brand new admin account
+            if (!fullName || !password) {
+                return res.status(400).json({ error: "User is not registered. Please provide Full Name and a default Password to create their Admin account." });
+            }
+            if (password.length < 8) {
+                return res.status(400).json({ error: "Password must be at least 8 characters." });
+            }
+
+            const bcrypt = require("bcryptjs");
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            user = new User({
+                fullName,
+                email: email.toLowerCase(),
+                password: hashedPassword,
+                globalRole: "admin",
+                isVerified: true
+            });
+            await user.save();
+
+            return res.status(201).json({ message: "New Admin account created successfully", user });
+        }
+    } catch (error) {
+        console.error("Make admin error:", error);
+        res.status(500).json({ error: "Failed to promote/create Admin" });
+    }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // POST /api/admin/announcement  - Send Global Announcement
 // ─────────────────────────────────────────────────────────────────────────────
 router.post("/announcement", adminOnly, async (req, res) => {
@@ -293,6 +338,35 @@ router.post("/announcement", adminOnly, async (req, res) => {
         res.json({ message: "Global announcement sent successfully" });
     } catch (error) {
         res.status(500).json({ error: "Failed to send announcement" });
+    }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GET /api/admin/events  - Get all events platform-wide
+// ─────────────────────────────────────────────────────────────────────────────
+router.get("/events", adminOnly, async (req, res) => {
+    try {
+        const events = await Event.find()
+            .populate("club", "name")
+            .populate("createdBy", "fullName")
+            .sort("-date");
+        res.json(events);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch events" });
+    }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DELETE /api/admin/events/:id  - Delete an event
+// ─────────────────────────────────────────────────────────────────────────────
+router.delete("/events/:id", adminOnly, async (req, res) => {
+    try {
+        const event = await Event.findByIdAndDelete(req.params.id);
+        if (!event) return res.status(404).json({ error: "Event not found" });
+        res.json({ message: "Event deleted successfully" });
+    } catch (error) {
+        console.error("Delete event admin error:", error);
+        res.status(500).json({ error: "Failed to delete event" });
     }
 });
 
