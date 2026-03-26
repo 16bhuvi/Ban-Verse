@@ -1,0 +1,1990 @@
+
+--- NEW REQUEST: 69a508e2a65131d65a8082f7 ---
+DB: test, Users: 4
+Student: suprabha sah, Interests: ['technical', 'ai', 'robotics', '']
+Found 1 clubs and 2 events
+
+--- NEW REQUEST: 69a508e2a65131d65a8082f7 ---
+DB: test, Users: 4
+Student: suprabha sah, Interests: ['technical', 'ai', 'robotics', '']
+Found 1 clubs and 2 events
+
+--- NEW AI REQUEST: 69a508e2a65131d65a8082f7 ---
+Student: suprabha sah, Interests: ['technical', 'ai', 'robotics', '']
+DB Data: 1 clubs, 2 events
+
+--- NEW AI REQUEST: 69a508e2a65131d65a8082f7 ---
+Student: suprabha sah, Interests: ['technical', 'ai', 'robotics', '']
+DB Data: 1 clubs, 2 events
+
+--- NEW AI REQUEST: 69a508e2a65131d65a8082f7 ---
+Student: suprabha sah, Interests: ['technical', 'ai', 'robotics', '']
+DB Data: 1 clubs, 2 events
+✅ AI Backend successfully connected to DB: 'test'
+✅ AI Backend successfully connected to DB: 'test'
+✅ AI Backend successfully connected to DB: 'test'
+✅ AI Backend successfully connected to DB: 'test'
+✅ AI Backend successfully connected to DB: 'test'
+✅ AI Backend successfully connected to DB: 'test'
+✅ AI Backend successfully connected to DB: 'test'
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', ''], Registered: 3
+Found 3 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.00
+Event 'Robotics workshop': Match Score 1.00
+Returning 1 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', ''], Registered: 3
+Found 3 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.00
+Event 'Robotics workshop': Match Score 1.00
+Returning 1 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', ''], Registered: 3
+Found 3 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.00
+Event 'Robotics workshop': Match Score 1.00
+Returning 1 recommended events.
+✅ AI Backend successfully connected to DB: 'test'
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', ''], Registered: 3
+Found 3 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.00
+Event 'Robotics workshop': Match Score 1.00
+Returning 1 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', ''], Registered: 3
+Found 3 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.00
+Event 'Robotics workshop': Match Score 1.00
+Returning 1 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', ''], Registered: 3
+Found 3 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.00
+Event 'Robotics workshop': Match Score 1.00
+Returning 1 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', ''], Registered: 3
+Found 3 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.00
+Event 'Robotics workshop': Match Score 1.00
+Returning 1 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 3 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 3 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 3 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 3 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 3 recommended events.
+✅ AI Backend successfully connected to DB: 'test'
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 6 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'finance workshop': Match Score 1.00
+Returning 4 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 6 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'finance workshop': Match Score 1.00
+Returning 4 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 6 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'finance workshop': Match Score 1.00
+Returning 4 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 6 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Cultural audition': Match Score 0.46
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'finance workshop': Match Score 1.00
+Returning 4 recommended events.
+✅ AI Backend successfully connected to DB: 'test'
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.46
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.46
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.46
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics', 'dance', 'cultural'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.46
+Returning 3 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69b15a8614c7271d15d7a12c ---
+User: bhuvi vishwakarma, Interests: [], Registered: 0
+Found 5 events in database 'test'
+Event 'AI hackathon': Match Score 0.00
+Event 'Robotics workshop': Match Score 0.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 0.00
+Event 'cultural Audition': Match Score 0.00
+Returning 0 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69b15a8614c7271d15d7a12c ---
+User: bhuvi vishwakarma, Interests: [], Registered: 0
+Found 5 events in database 'test'
+Event 'AI hackathon': Match Score 0.00
+Event 'Robotics workshop': Match Score 0.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 0.00
+Event 'cultural Audition': Match Score 0.00
+Returning 0 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69b15a8614c7271d15d7a12c ---
+User: bhuvi vishwakarma, Interests: [], Registered: 0
+Found 5 events in database 'test'
+Event 'AI hackathon': Match Score 0.00
+Event 'Robotics workshop': Match Score 0.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 0.00
+Event 'cultural Audition': Match Score 0.00
+Returning 0 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69b15a8614c7271d15d7a12c ---
+User: bhuvi vishwakarma, Interests: [], Registered: 0
+Found 5 events in database 'test'
+Event 'AI hackathon': Match Score 0.00
+Event 'Robotics workshop': Match Score 0.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 0.00
+Event 'cultural Audition': Match Score 0.00
+Returning 0 recommended events.
+✅ AI Backend successfully connected to DB: 'test'
+✅ AI Backend successfully connected to DB: 'test'
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 5 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'sports competition': Match Score 0.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+User: suprabha sah, Interests: ['technical', 'ai', 'robotics'], Registered: 3
+Found 4 events in database 'test'
+SKIPPING 'AI hackathon': User already registered.
+Event 'Robotics workshop': Match Score 1.00
+Event 'AI summit workshop': Match Score 1.00
+Event 'cultural Audition': Match Score 0.00
+Returning 2 recommended events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+ERROR: Student 69a508e2a65131d65a8082f7 not found
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 4 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+PROMOTING Behavioral Discovery: Event 'Workshop' from your club.
+Returning 1 behavioral events.
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 4 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+PROMOTING Behavioral Discovery: Event 'Workshop' from your club.
+Returning 1 behavioral events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 4 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+PROMOTING Behavioral Discovery: Event 'AI hackathon' from your club.
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+PROMOTING Behavioral Discovery: Event 'Robotics workshop' from your club.
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+PROMOTING Behavioral Discovery: Event 'AI summit workshop' from your club.
+Returning 3 behavioral events.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 4 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+PROMOTING Behavioral Discovery: Event 'AI hackathon' from your club.
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+PROMOTING Behavioral Discovery: Event 'Robotics workshop' from your club.
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+PROMOTING Behavioral Discovery: Event 'AI summit workshop' from your club.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 4 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+PROMOTING Behavioral Discovery: Event 'AI hackathon' from your club.
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+PROMOTING Behavioral Discovery: Event 'Robotics workshop' from your club.
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+PROMOTING Behavioral Discovery: Event 'AI summit workshop' from your club.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 4 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+PROMOTING Behavioral Discovery: Event 'AI hackathon' from your club.
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+PROMOTING Behavioral Discovery: Event 'Robotics workshop' from your club.
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+PROMOTING Behavioral Discovery: Event 'AI summit workshop' from your club.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+PROMOTING Behavioral Discovery: Event 'AI hackathon' from your club.
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+PROMOTING Behavioral Discovery: Event 'Robotics workshop' from your club.
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+PROMOTING Behavioral Discovery: Event 'AI summit workshop' from your club.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+PROMOTING Behavioral Discovery: Event 'Cultural auditions' from your club.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+PROMOTING Behavioral Discovery: Event 'AI hackathon' from your club.
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+PROMOTING Behavioral Discovery: Event 'Robotics workshop' from your club.
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+PROMOTING Behavioral Discovery: Event 'AI summit workshop' from your club.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+PROMOTING Behavioral Discovery: Event 'Cultural auditions' from your club.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+PROMOTING Behavioral Discovery: Event 'AI hackathon' from your club.
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.47
+PROMOTING Behavioral Discovery: Event 'Robotics workshop' from your club.
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.47
+PROMOTING Behavioral Discovery: Event 'AI summit workshop' from your club.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+PROMOTING Behavioral Discovery: Event 'Cultural auditions' from your club.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+PROMOTING Behavioral Discovery: Event 'AI hackathon' from your club.
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.47
+PROMOTING Behavioral Discovery: Event 'Robotics workshop' from your club.
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.47
+PROMOTING Behavioral Discovery: Event 'AI summit workshop' from your club.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+PROMOTING Behavioral Discovery: Event 'Cultural auditions' from your club.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+PROMOTING Behavioral Discovery: Event 'AI hackathon' from your club.
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.47
+PROMOTING Behavioral Discovery: Event 'Robotics workshop' from your club.
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.47
+PROMOTING Behavioral Discovery: Event 'AI summit workshop' from your club.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+PROMOTING Behavioral Discovery: Event 'Cultural auditions' from your club.
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+CAT MATCH: AI hackathon
+CLUB MATCH: AI hackathon
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.47
+CLUB MATCH: Robotics workshop
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.47
+CLUB MATCH: AI summit workshop
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+CLUB MATCH: Cultural auditions
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+CAT MATCH: AI hackathon
+CLUB MATCH: AI hackathon
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.47
+CLUB MATCH: Robotics workshop
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.47
+CLUB MATCH: AI summit workshop
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+CLUB MATCH: Cultural auditions
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+CAT MATCH: AI hackathon
+CLUB MATCH: AI hackathon
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.47
+CLUB MATCH: Robotics workshop
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.47
+CLUB MATCH: AI summit workshop
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+CLUB MATCH: Cultural auditions
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.47
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.47
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.47
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.47
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.47
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.47
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.47
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.47
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.47
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.47
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.03
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.47
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.47
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 1.84
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 1.84
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 1.84
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 1.84
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 1.84
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 1.84
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 1.84
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.99
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.44
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 1.84
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+Event 'AI hackathon': Match 1.00
+Event 'Robotics workshop': Match 0.45
+Event 'AI summit workshop': Match 1.00
+Event 'Cultural auditions': Match 0.45
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+Event 'AI hackathon': Match 1.00
+Event 'Robotics workshop': Match 0.45
+Event 'AI summit workshop': Match 1.00
+Event 'Cultural auditions': Match 0.45
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+Event 'AI hackathon': Match 1.00
+Event 'Robotics workshop': Match 0.45
+Event 'AI summit workshop': Match 1.00
+Event 'Cultural auditions': Match 0.45
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 2.10
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.90
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.50
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.90
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+✅ Chatbot Engine Initialized
+✅ Chatbot Engine Initialized
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+--- CHAT REQUEST: 'tell me about AI hackathon' ---
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+--- CHAT REQUEST: 'tell me about AI hackathon ' ---
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+--- CHAT REQUEST: 'tell me about AI hackathon' ---
+Scanning 5 events for match.
+MATCH FOUND: Event 'ai hackathon'
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+Scanning 5 events for match.
+MATCH FOUND: Event 'ai hackathon'
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+Scanning 5 events for match.
+MATCH FOUND: Event 'ai hackathon'
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+--- CHAT REQUEST: 'hey ' ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+Scanning 5 events for match.
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+--- CHAT REQUEST: 'can you tell me about all the clubs ' ---
+Scanning 5 events for match.
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+--- CHAT REQUEST: 'tell me about the clubs here' ---
+Scanning 5 events for match.
+--- CHAT REQUEST: 'tell about AI hackathon ' ---
+Scanning 5 events for match.
+MATCH FOUND: Event 'ai hackathon'
+--- CHAT REQUEST: 'tell me about all the clubs ' ---
+Scanning 5 events for match.
+✅ Chatbot Engine Initialized
+✅ Chatbot Engine Initialized
+--- CHAT REQUEST: 'tell me about build cv club ' ---
+Loaded 5 events and 2 clubs from DB.
+SPECIFIC CLUB MATCH: 'build cv' (score=1.00)
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
