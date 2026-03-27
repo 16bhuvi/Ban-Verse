@@ -1,4 +1,5 @@
 from bson import ObjectId
+from datetime import datetime, timezone
 from recommendation.content_filter import get_club_content_score, get_event_content_score
 
 def log_to_file(msg):
@@ -56,16 +57,22 @@ async def get_hybrid_recommendations(db, studentId):
     interests = list(set([str(i).lower().strip() for i in (user_interests + club_keywords + event_keywords) if i]))
     registered = [str(rid) for rid in (reg_event_ids or [])]
     
-    # 3. FETCH EVENTS & MATCH
-    all_events = await db[event_coll].find().to_list(200)
-    log_to_file(f"Analyzing {len(all_events)} events for user activity matching.")
+    # 3. FETCH ONLY UPCOMING EVENTS (today and future) & MATCH
+    today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    all_events = await db[event_coll].find({"date": {"$gte": today}}).sort("date", 1).to_list(200)
+    log_to_file(f"Analyzing {len(all_events)} upcoming events (from {today.date()}) for user activity matching.")
     
     # 3. Recommendation Logic
     recs = []
     for event in all_events:
         eid = str(event['_id'])
         title = event.get('title', 'Event')
-        
+
+        # Skip events the user has already registered for
+        if eid in registered:
+            log_to_file(f"SKIPPING '{title}': User already registered.")
+            continue
+
         # Ensure we use lowercase for matching
         low_interests = [i.lower().strip() for i in interests if i]
         
@@ -127,10 +134,10 @@ async def get_hybrid_recommendations(db, studentId):
             "clubName": club_name
         })
         
-    # --- FINAL FALLBACK: If no behavioral matches, show top events ---
+    # --- FINAL FALLBACK: If no behavioral matches, show top upcoming events ---
     if not recs:
-        log_to_file("FALLBACK: No personalized matches. Returning top active events.")
-        top_events = await db[event_coll].find({"isActive": True}).sort("date", 1).to_list(10)
+        log_to_file("FALLBACK: No personalized matches. Returning top upcoming events.")
+        top_events = await db[event_coll].find({"date": {"$gte": today}}).sort("date", 1).to_list(10)
         for event in top_events:
             recs.append({
                 "_id": str(event['_id']),

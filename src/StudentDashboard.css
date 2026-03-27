@@ -592,21 +592,38 @@ body {
   display: flex;
   align-items: center;
   gap: 15px;
-  padding-left: 10px;
-  position: relative;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  transition: background 0.2s;
+}
+
+.past-event-item:hover {
+  background: #f1f5f9;
 }
 
 .past-event-item .dot {
   width: 10px;
   height: 10px;
-  background: var(--primary-color);
   border-radius: 50%;
   flex-shrink: 0;
+  background: var(--primary-color);
+}
+
+.past-event-item .dot.dot-registered {
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+}
+
+.past-event-item .dot.dot-missed {
+  background: #cbd5e1;
 }
 
 .past-event-info {
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 .past-event-info strong {

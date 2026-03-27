@@ -403,7 +403,7 @@ const StudentDashboard = () => {
     return (
       <div className="section-card">
         <h2 className="section-title">Past Events History</h2>
-        <p className="subtitle">Your participation record from the last 1 year.</p>
+        <p className="subtitle">All campus events — see which ones you attended.</p>
         <div className="history-timeline">
           {Object.keys(grouped).length > 0 ? Object.entries(grouped).map(([month, events]) => (
             <div key={month} className="month-group">
@@ -411,16 +411,34 @@ const StudentDashboard = () => {
               <div className="month-events">
                 {events.map(event => (
                   <div key={event._id} className="past-event-item">
-                    <div className="dot"></div>
+                    <div className={`dot ${event.isRegistered ? 'dot-registered' : 'dot-missed'}`}></div>
                     <div className="past-event-info">
                       <strong>{event.title}</strong>
-                      <span>{event.club?.name} • Participated</span>
+                      <span style={{ color: '#64748b', fontSize: '13px' }}>
+                        {event.club?.name || 'Campus Event'} &bull; {event.category}
+                      </span>
                     </div>
+                    <span
+                      className="past-event-badge"
+                      style={{
+                        marginLeft: 'auto',
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        whiteSpace: 'nowrap',
+                        background: event.isRegistered ? '#dcfce7' : '#f1f5f9',
+                        color: event.isRegistered ? '#16a34a' : '#94a3b8',
+                        border: event.isRegistered ? '1px solid #86efac' : '1px solid #e2e8f0'
+                      }}
+                    >
+                      {event.isRegistered ? '✅ Registered' : '○ Not Registered'}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
-          )) : <p className="empty-state">No past events recorded yet. Start participating to earn points!</p>}
+          )) : <p className="empty-state">No past events found yet.</p>}
         </div>
       </div>
     );

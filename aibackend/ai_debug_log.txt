@@ -1998,3 +1998,261 @@ Event 'Workshop': Final Match Score 0.40
 Analyzing 5 events for user activity matching.
 BEHAVIORAL MATCH: Event 'Workshop' from joined club.
 Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+--- CHAT REQUEST: 'hello' ---
+Loaded 5 events and 2 clubs from DB.
+--- CHAT REQUEST: 'what is this platform about ?' ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+Loaded 5 events and 2 clubs from DB.
+--- CHAT REQUEST: 'can you tell me about all the clubs in this' ---
+Loaded 5 events and 2 clubs from DB.
+LISTING ALL 2 clubs.
+--- CHAT REQUEST: 'can you tell me events of the club build cv' ---
+Loaded 5 events and 2 clubs from DB.
+SPECIFIC CLUB MATCH: 'build cv' (score=1.00)
+--- CHAT REQUEST: 'whata re all the events on this platform' ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Loaded 5 events and 2 clubs from DB.
+LISTING ALL 5 events.
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'AI hackathon' from joined club.
+Event 'AI hackathon': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Robotics workshop' from joined club.
+Event 'Robotics workshop': Final Match Score 0.40
+BEHAVIORAL MATCH: Event 'AI summit workshop' from joined club.
+Event 'AI summit workshop': Final Match Score 1.00
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 5 events for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+✅ Chatbot Engine Initialized
+✅ Chatbot Engine Initialized
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+--- CHAT REQUEST: 'hello' ---
+Loaded 5 events and 2 clubs from DB.
+--- CHAT REQUEST: 'tell me about all the clubs ' ---
+Loaded 5 events and 2 clubs from DB.
+LISTING ALL 2 clubs.
+--- CHAT REQUEST: 'what is banverse all about ?' ---
+Loaded 5 events and 2 clubs from DB.
+--- CHAT REQUEST: 'can you tell me  all the events in the build cv club ' ---
+Loaded 5 events and 2 clubs from DB.
+SPECIFIC CLUB MATCH: 'build cv' (score=1.00)
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+--- CHAT REQUEST: 'list all the evnents of the build cv club ' ---
+❌ CHATBOT ERROR: ac-dptz8gk-shard-00-02.yph1gnu.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-dptz8gk-shard-00-00.yph1gnu.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-dptz8gk-shard-00-01.yph1gnu.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 69c51138d822a0a7269e741c, topology_type: ReplicaSetNoPrimary, servers: [<ServerDescription ('ac-dptz8gk-shard-00-00.yph1gnu.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-dptz8gk-shard-00-00.yph1gnu.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-dptz8gk-shard-00-01.yph1gnu.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-dptz8gk-shard-00-01.yph1gnu.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-dptz8gk-shard-00-02.yph1gnu.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-dptz8gk-shard-00-02.yph1gnu.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+Traceback (most recent call last):
+  File "D:\banverse1\banverse\aibackend\chatbot\chatbot_engine.py", line 54, in get_response
+    collection_names = await db.list_collection_names()
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\database.py", line 1241, in list_collection_names
+    return self._list_collection_names(session, filter, comment, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\database.py", line 1206, in _list_collection_names
+    result["name"] for result in self._list_collections_helper(session=session, **kwargs)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\database.py", line 1144, in _list_collections_helper
+    return self._client._retryable_read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 2048, in _retryable_read
+    return self._retry_internal(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\_csot.py", line 125, in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 2014, in _retry_internal
+    ).run()
+      ^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 2763, in run
+    return self._read() if self._is_read else self._write()
+           ^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 2908, in _read
+    self._server = self._get_server()
+                   ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 2856, in _get_server
+    return self._client._select_server(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1833, in _select_server
+    server = topology.select_server(
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\topology.py", line 428, in select_server
+    server = self._select_server(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\topology.py", line 402, in _select_server
+    servers = self.select_servers(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\topology.py", line 298, in select_servers
+    server_descriptions = self._select_servers_loop(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Suprabha Sah\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymongo\synchronous\topology.py", line 359, in _select_servers_loop
+    raise ServerSelectionTimeoutError(
+pymongo.errors.ServerSelectionTimeoutError: ac-dptz8gk-shard-00-02.yph1gnu.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-dptz8gk-shard-00-00.yph1gnu.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-dptz8gk-shard-00-01.yph1gnu.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 69c51138d822a0a7269e741c, topology_type: ReplicaSetNoPrimary, servers: [<ServerDescription ('ac-dptz8gk-shard-00-00.yph1gnu.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-dptz8gk-shard-00-00.yph1gnu.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-dptz8gk-shard-00-01.yph1gnu.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-dptz8gk-shard-00-01.yph1gnu.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-dptz8gk-shard-00-02.yph1gnu.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-dptz8gk-shard-00-02.yph1gnu.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+--- CHAT REQUEST: 'list all the evnents of the build cv club' ---
+Loaded 5 events and 2 clubs from DB.
+SPECIFIC CLUB MATCH: 'build cv' (score=1.00)
+--- CHAT REQUEST: 'events list ' ---
+Loaded 5 events and 2 clubs from DB.
+LISTING ALL 5 events.
+--- CHAT REQUEST: 'tell the events of the build cv club only ' ---
+Loaded 5 events and 2 clubs from DB.
+SPECIFIC CLUB MATCH: 'build cv' (score=1.00)
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69c2e8ccf0d0351645302331 ---
+Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
+BEHAVIORAL MATCH: Event 'Workshop' from joined club.
+Event 'Workshop': Final Match Score 0.40

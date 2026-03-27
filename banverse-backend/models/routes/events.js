@@ -22,6 +22,57 @@ router.get("/", authenticate, async (req, res) => {
   }
 });
 
+// ✅ Get ALL past events, with isRegistered flag for the current user
+// NOTE: Must be defined BEFORE /:id — otherwise Express catches "past" as an id
+router.get("/past", authenticate, async (req, res) => {
+  const { year, month } = req.query;
+  const userId = req.user.userId;
+
+  try {
+    const now = new Date();
+    let dateFilter;
+
+    if (year && month) {
+      const start = new Date(year, month - 1, 1);
+      const end = new Date(year, month, 0, 23, 59, 59);
+      dateFilter = { $gte: start, $lte: end };
+    } else {
+      dateFilter = { $lt: now };
+    }
+
+    // Fetch ALL past events: either date < now, OR isPast flag, OR date is null/missing
+    const query = year && month
+      ? { date: dateFilter }
+      : {
+          $or: [
+            { date: { $lt: now } },
+            { isPast: true },
+            { date: null },
+            { date: { $exists: false } }
+          ]
+        };
+
+    const events = await Event.find(query)
+      .populate("club", "name logo")
+      .sort({ date: -1 })
+      .lean();
+
+    // Attach isRegistered flag to each event
+    const eventsWithFlag = events.map(event => ({
+      ...event,
+      isRegistered: event.participants?.some(
+        p => p.toString() === userId.toString()
+      ) ?? false
+    }));
+
+    res.json(eventsWithFlag);
+  } catch (err) {
+    console.error("Past events error:", err);
+    res.status(500).json({ error: "Failed to fetch past events" });
+  }
+});
+
+
 // ✅ Get individual event detail
 router.get("/:id", authenticate, async (req, res) => {
   try {
@@ -31,30 +82,6 @@ router.get("/:id", authenticate, async (req, res) => {
     res.json(event);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch event details" });
-  }
-});
-
-// ✅ Get past events grouped by month
-router.get("/past", authenticate, async (req, res) => {
-  const { year, month } = req.query;
-  const userId = req.user.userId;
-
-  try {
-    let dateQuery = { $lt: new Date() };
-    if (year && month) {
-      const start = new Date(year, month - 1, 1);
-      const end = new Date(year, month, 0);
-      dateQuery = { $gte: start, $lte: end };
-    }
-
-    const events = await Event.find({
-      participants: userId,
-      date: dateQuery
-    }).populate("club").sort({ date: -1 });
-
-    res.json(events);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch past events" });
   }
 });
 
