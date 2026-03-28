@@ -884,3 +884,235 @@
     align-items: center;
   }
 }
+
+/* ── Advanced Insights ─────────────────────────── */
+.insights-header-card {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 24px;
+  padding: 2.5rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.insight-title-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.insight-title-group h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  background: linear-gradient(to right, #f8fafc, #6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.insight-card-premium {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.insight-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.insight-card-header h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.insight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.insight-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.insight-item:hover {
+  transform: scale(1.02);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.item-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-title {
+  font-weight: 700;
+  color: #f8fafc;
+  font-size: 1rem;
+}
+
+.item-meta {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+.item-stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.mini-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.item-reason {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+  padding: 8px 12px;
+  border-radius: 10px;
+  line-height: 1.4;
+}
+
+.best-time-display {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.time-value {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #f59e0b;
+  margin-bottom: 0.5rem;
+}
+
+.time-desc {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  max-width: 250px;
+}
+
+.recommendation-box {
+  margin-top: 1.5rem;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.recommendation-box p {
+  font-size: 0.82rem;
+  color: #a5b4fc;
+  line-height: 1.5;
+}
+
+.low-perf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.low-perf-item {
+  background: rgba(244, 63, 94, 0.05);
+  border: 1px solid rgba(244, 63, 94, 0.1);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.area-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #f43f5e;
+}
+
+.area-stats {
+  display: flex;
+  gap: 1rem;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.suggestion-badge {
+  background: #f43f5e;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.recommendation-list-premium {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.rec-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  padding: 1.25rem;
+  border-radius: 16px;
+  font-weight: 500;
+  color: #f8fafc;
+  transition: transform 0.2s ease;
+}
+
+.rec-item:hover {
+  transform: translateX(8px);
+  background: rgba(139, 92, 246, 0.15);
+}
+
+.rec-item svg {
+  color: #8b5cf6;
+  flex-shrink: 0;
+}

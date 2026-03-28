@@ -5,7 +5,7 @@ import './ChatBot.css';
 const ChatBot = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { id: 1, type: 'bot', text: "Hello! I'm BanBot, your Banasthali campus assistant. How can I help you today? 👋" }
+        { id: 1, type: 'bot', text: "Hi! I'm BanBot, your friendly campus guide. 🎓 Whether it's finding events, joining clubs, or just navigating Banverse, I'm here to help you grow. How can I assist you today? ✨" }
     ]);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -57,22 +57,22 @@ const ChatBot = () => {
     const getBotResponse = (input) => {
         const text = input.toLowerCase();
 
-        if (text.includes('hello') || text.includes('hi')) {
-            return "Hi there! Feel free to ask me anything about clubs, events, or your dashboard.";
+        if (text.includes('hello') || text.includes('hi ')) {
+            return "Hi there! I'm so excited to help you explore campus life. Ask me about clubs, events, or points! 🌟";
         } else if (text.includes('club') || text.includes('join')) {
-            return "To join a club, head over to the 'Explore Clubs' tab in your sidebar. You can browse through various categories and click 'Join'. Joining a club earns you 10 activity points!";
-        } else if (text.includes('event') || text.includes('register')) {
-            return "Check the 'Events' tab for upcoming campus activities. Click the 'Register' button on any event to participate. You'll get 20 points for every registration!";
-        } else if (text.includes('points') || text.includes('activity')) {
-            return "Activity points are earned by joining clubs, registering for events, and participating in campus activities. These points show your engagement levels on campus!";
+            return "Finding the right club is a game-changer! Head to 'Explore Clubs' to join your favorites and start earning 10 AP. You've got this! 💪";
+        } else if (text.includes('event') || text.includes('register') || text.includes('happening')) {
+            return "There's always something cool happening! Check the 'Events' tab to register, discover new skills, and bag 20 AP. See you there! 🚀";
+        } else if (text.includes('points') || text.includes('ap ') || text.includes('activity')) {
+            return "Activity Points (AP) are your campus super-power! They build your digital resume as you engage in more activities. Keep growing! 💎";
         } else if (text.includes('profile') || text.includes('resume')) {
-            return "You can update your bio, interests, and profile picture in the 'Profile' section. You can also upload your resume there for club leaders to see.";
+            return "Your profile is your digital showcase! Personalize it to let club leaders know your interests. It's the first step to a great career! 📄";
         } else if (text.includes('thank')) {
-            return "You're very welcome! Let me know if you need anything else.";
+            return "Anytime! I'm always here to root for you. Let me know if you need anything else! 😊";
         } else if (text.includes('who are you') || text.includes('your name')) {
-            return "I'm BanBot, the official AI assistant for Banverse. My goal is to help you navigate your student life more easily!";
+            return "I'm BanBot, your smart and friendly campus buddy! My mission is to make your student journey simple and motivating. 🌈";
         } else {
-            return "That's a great question! For more specific information, you can always reach out to the respective club leaders or check the 'Notifications' tab for official updates.";
+            return "That's an interesting question! While I'm still learning, I recommend checking the Dashboard or chatting with your club leaders for the latest scoop! ✨";
         }
     };
 

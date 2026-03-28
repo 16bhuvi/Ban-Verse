@@ -5,7 +5,8 @@ import logo from "./banasthali-logo.jpg";
 import {
   Users, Calendar, UserPlus, TrendingUp, LogOut, LayoutDashboard,
   PlusCircle, Building2, X, CheckCircle2, XCircle,
-  Shield, Layers, Eye, EyeOff, Search, RefreshCw
+  Shield, Layers, Eye, EyeOff, Search, RefreshCw,
+  Zap, Clock, ShieldAlert, ArrowUpRight
 } from "lucide-react";
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -232,6 +233,7 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [clubs, setClubs] = useState([]);
   const [events, setEvents] = useState([]);
+  const [advancedStats, setAdvancedStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [showClubModal, setShowClubModal] = useState(false);
@@ -263,6 +265,15 @@ const AdminDashboard = () => {
       setUsers(usersRes.data);
       setClubs(clubsRes.data);
       setEvents(eventsRes.data);
+
+      // Fetch advanced stats independently so it doesn't block the UI
+      try {
+        const advRes = await axios.get(`${API}/api/analytics/advanced`, { headers });
+        setAdvancedStats(advRes.data);
+      } catch (advErr) {
+        console.warn("Advanced stats fetch failed:", advErr);
+      }
+
     } catch (error) {
       console.error("Admin fetch error:", error);
       if (error.response?.status === 403 || error.response?.status === 401) {
@@ -270,11 +281,6 @@ const AdminDashboard = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("role");
         navigate("/login");
-      } else {
-        setData({
-          stats: { totalStudents: 0, totalClubs: 0, totalEvents: 0, totalMembers: 0 },
-          userGrowth: [], eventsPerClub: [], memberDistribution: [], eventsByCategory: []
-        });
       }
     } finally {
       setLoading(false);
@@ -370,6 +376,7 @@ const AdminDashboard = () => {
     { id: "clubs", label: "Club Management", icon: Building2 },
     { id: "users", label: "User Directory", icon: Users },
     { id: "events", label: "Events Control", icon: Calendar },
+    { id: "insights", label: "Advanced Insights", icon: TrendingUp },
   ];
 
   const renderOverview = () => (
@@ -459,6 +466,107 @@ const AdminDashboard = () => {
                 <Bar dataKey="count" fill="#10b981" radius={[6, 6, 0, 0]} barSize={40} />
               </BarChart>
             </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderInsights = () => (
+    <div className="dashboard-content">
+      <div className="insights-header-card">
+        <div className="insight-title-group">
+          <TrendingUp size={24} className="text-indigo" />
+          <h2>Predictive Analytics & Event Insights</h2>
+        </div>
+        <p>Data-driven recommendations to optimize campus engagement and event success.</p>
+      </div>
+
+      <div className="insights-grid">
+        <div className="insight-card-premium">
+          <div className="insight-card-header">
+            <CheckCircle2 size={20} className="text-green" />
+            <h3>Best Performing Events</h3>
+          </div>
+          <div className="insight-list">
+            {(advancedStats?.bestEvents || []).map((event, i) => (
+              <div key={i} className="insight-item">
+                <div className="item-main">
+                  <span className="item-title">{event.title}</span>
+                  <span className="item-meta">{event.clubName} • {event.category}</span>
+                </div>
+                <div className="item-stats">
+                  <div className="mini-stat">
+                    <Users size={12} /> {event.registrations} Reg.
+                  </div>
+                  <div className="mini-stat">
+                    <TrendingUp size={12} /> {event.attendanceRate.toFixed(0)}% Turnout
+                  </div>
+                </div>
+                <div className="item-reason">
+                  <Zap size={12} /> {event.reason}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="insight-card-premium">
+          <div className="insight-card-header">
+            <Clock size={20} className="text-orange" />
+            <h3>Optimal Scheduling</h3>
+          </div>
+          <div className="best-time-display">
+            <div className="time-value">{advancedStats?.bestTime || "Friday Evenings"}</div>
+            <p className="time-desc">Historical data suggests this window yields higher engagement than average.</p>
+          </div>
+          <div className="recommendation-box">
+            <Shield size={16} />
+            <p>Recommendation: Schedule flagship technical workshops during this period to maximize student turnout.</p>
+          </div>
+        </div>
+
+        <div className="insight-card-premium" style={{ gridColumn: "1 / -1" }}>
+          <div className="insight-card-header">
+            <ShieldAlert size={20} className="text-red" />
+            <h3>Low-Performing Areas & Suggestions</h3>
+          </div>
+          <div className="low-perf-grid">
+            {(advancedStats?.lowPerforming || []).map((area, i) => (
+              <div key={i} className="low-perf-item">
+                <div className="low-perf-main">
+                  <span className="area-name">{area.name} Events</span>
+                  <div className="area-stats">
+                    <span>Avg. Reg: {Math.round(area.avgReg)}</span>
+                    <span>Avg. Turnout: {Math.round(area.avgAttRate)}%</span>
+                  </div>
+                </div>
+                <div className="suggestion-badge">
+                   {area.suggestion}
+                </div>
+              </div>
+            ))}
+            {(!advancedStats?.lowPerforming || advancedStats.lowPerforming.length === 0) && (
+              <div className="empty-insights" style={{ textAlign: "center", padding: "1rem", gridColumn: "1/-1" }}>
+                <CheckCircle2 size={32} className="text-green" style={{ marginBottom: "0.5rem" }} />
+                <p>All categories are performing above average!</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="insight-card-premium actionable-card" style={{ gridColumn: "1 / -1" }}>
+          <div className="insight-card-header">
+            <Zap size={20} className="text-purple" />
+            <h3>Actionable Recommendations</h3>
+          </div>
+          <div className="recommendation-list-premium">
+            {(advancedStats?.recommendations || []).map((rec, i) => (
+              <div key={i} className="rec-item">
+                <ArrowUpRight size={18} />
+                <span>{rec}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -656,10 +764,11 @@ const AdminDashboard = () => {
             <h1>
               {activeTab === "overview" ? "Dashboard Overview" :
                 activeTab === "clubs" ? "Club Management" :
-                  activeTab === "users" ? "User Directory" :
-                    "Events Control"}
+                activeTab === "users" ? "User Directory" :
+                activeTab === "events" ? "Events Control" :
+                "Advanced Insights"}
             </h1>
-            <p>Welcome back, Platform Administrator.</p>
+            <p>{activeTab === "insights" ? "Analytical breakdown of platform performance." : "Welcome back, Platform Administrator."}</p>
           </div>
           <div className="header-actions">
             {activeTab === "clubs" && (
@@ -673,6 +782,7 @@ const AdminDashboard = () => {
         {activeTab === "overview" && renderOverview()}
         {activeTab === "clubs" && renderClubs()}
         {activeTab === "users" && renderUsers()}
+        {activeTab === "insights" && renderInsights()}
         {activeTab === "events" && (
           <div className="data-table-container">
             <div className="table-header">

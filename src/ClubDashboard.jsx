@@ -32,6 +32,7 @@ const ClubDashboard = () => {
   const [applications, setApplications] = useState([]);
   const [appLoading, setAppLoading] = useState(false);
   const [members, setMembers] = useState([]);
+  const [advancedStats, setAdvancedStats] = useState(null);
   const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
@@ -63,11 +64,15 @@ const ClubDashboard = () => {
       });
       setData(res.data);
 
-      // Fetch members separately
       const memberRes = await axios.get(`${API}/api/club-leader/members`, {
         headers: { Authorization: `Bearer ${token}` }
       }).catch(() => ({ data: [] }));
       setMembers(memberRes.data);
+
+      const advRes = await axios.get(`${API}/api/analytics/advanced`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }).catch(() => ({ data: null }));
+      setAdvancedStats(advRes.data);
     } catch (error) {
       console.error("Club fetch error:", error);
       if (error.response?.status === 403 || error.response?.status === 401) {
@@ -687,6 +692,62 @@ const ClubDashboard = () => {
                             <Bar dataKey="attended" fill="#10b981" radius={[4, 4, 0, 0]} />
                           </BarChart>
                         </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Advanced Insights Section */}
+                  <div className="advanced-insights-section" style={{ marginTop: "2rem" }}>
+                    <div className="dash-card">
+                      <div className="card-header" style={{ padding: '1.5rem 1.5rem 0.5rem' }}>
+                        <div className="header-text-group">
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Zap size={20} color="#6366f1" fill="#6366f1" fillOpacity={0.15} />
+                            <h3 className="chart-title" style={{ margin: 0 }}>Advanced Insights & Growth</h3>
+                          </div>
+                          <p className="chart-subtitle" style={{ color: '#64748b', fontSize: '0.75rem', marginTop: '4px' }}>AI-driven analysis of your club's historical data</p>
+                        </div>
+                      </div>
+                      
+                      <div className="insights-cluster-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', padding: '1.5rem' }}>
+                        <div className="cluster-item" style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                          <h4 className="cluster-label" style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Success Highlight</h4>
+                          {advancedStats?.bestEvents?.[0] ? (
+                            <div className="best-event-highlight">
+                              <span className="event-name" style={{ fontWeight: '700', color: '#1e293b', fontSize: '1rem' }}>{advancedStats.bestEvents[0].title}</span>
+                              <p className="event-reason" style={{ fontSize: '0.85rem', color: '#10b981', marginTop: '6px', fontWeight: '500' }}>{advancedStats.bestEvents[0].reason}</p>
+                            </div>
+                          ) : <p style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Complete more events to see success metrics.</p>}
+                        </div>
+                        
+                        <div className="cluster-item" style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                          <h4 className="cluster-label" style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Peak Engagement Time</h4>
+                          <div className="time-highlight" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#1e293b', fontWeight: '700', fontSize: '1rem' }}>
+                            <Clock size={18} color="#6366f1" />
+                            <span>{advancedStats?.bestTime || "Analyzing..."}</span>
+                          </div>
+                          <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '8px' }}>Based on registration patterns across previous events.</p>
+                        </div>
+                      </div>
+
+                      <div className="recommendations-container" style={{ padding: '0 1.5rem 1.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '1px solid #f1f5f9' }}>
+                          <TrendingUp size={16} color="#6366f1" />
+                          <h4 style={{ fontSize: '0.875rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>Actionable Recommendations</h4>
+                        </div>
+                        <div className="rec-stack" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                          {(advancedStats?.recommendations || []).map((rec, i) => (
+                            <div key={i} className="rec-tile" style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px 16px', background: 'white', borderRadius: '12px', border: '1px solid #f1f5f9', boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+                              <div style={{ marginTop: '2px', color: '#6366f1' }}>
+                                <ArrowUpRight size={14} />
+                              </div>
+                              <span style={{ fontSize: '0.85rem', color: '#444', lineHeight: '1.4' }}>{rec}</span>
+                            </div>
+                          ))}
+                          {(advancedStats?.recommendations || []).length === 0 && (
+                            <p style={{ fontSize: '0.85rem', color: '#94a3b8', fontStyle: 'italic', padding: '1rem', textAlign: 'center' }}>No recommendations yet. Keep hosting events to gather insights!</p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

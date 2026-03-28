@@ -21,6 +21,7 @@ const notificationRoutes = require("./models/routes/notifications");
 const adminRoutes = require("./models/routes/admin");
 const clubLeaderRoutes = require("./models/routes/clubLeader");
 const clubManagementRoutes = require("./models/routes/clubManagement");
+const analyticsRoutes = require("./models/routes/analytics");
 
 // Ensure ClubApplication model is registered
 require("./models/ClubApplication");
@@ -87,6 +88,7 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/club-leader", clubLeaderRoutes);
 app.use("/api/club", clubManagementRoutes);
+app.use("/api/analytics", analyticsRoutes);
 console.log("✅ Routes mounted");
 
 const createAdmin = require("./utils/createAdmin");
@@ -118,7 +120,7 @@ app.use((req, res) => {
 // Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📡 Registered Routes: /api/auth, /api/dashboard, /api/clubs, /api/events, /api/search, /api/user, /api/notifications`);
+  console.log(`📡 Registered Routes: /api/auth, /api/dashboard, /api/clubs, /api/events, /api/search, /api/user, /api/notifications, /api/admin, /api/club-leader, /api/analytics`);
 }).on('error', (err) => {
   console.error("❌ Server failed to start:");
   console.error(err);

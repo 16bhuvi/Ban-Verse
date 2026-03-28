@@ -2256,3 +2256,76 @@ Event 'Workshop': Final Match Score 0.40
 Analyzing 2 upcoming events (from 2026-03-26) for user activity matching.
 BEHAVIORAL MATCH: Event 'Workshop' from joined club.
 Event 'Workshop': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-27) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-27) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-27) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-27) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-27) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-27) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-27) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+✅ Chatbot Engine Initialized
+✅ Chatbot Engine Initialized
+✅ Chatbot Engine Initialized
+✅ BanBot (Friendly Guide) Initialized
+✅ BanBot AI (distilgpt2) Loaded Successfully
+✅ BanBot AI (distilgpt2) Loaded Successfully
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-27) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-27) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+--- BANBOT REQUEST: 'hello' ---
+--- BANBOT REQUEST: 'how are you' ---
+--- BANBOT REQUEST: 'can you please help me explore the clubs and suggest me which club is good ' ---
+--- BANBOT REQUEST: 'and what about events what are best for me ' ---
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-27) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-27) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+
+--- AI RECOMMENDATION REQUEST: 69a508e2a65131d65a8082f7 ---
+Analyzing 2 upcoming events (from 2026-03-27) for user activity matching.
+BEHAVIORAL MATCH: Event 'Cultural auditions' from joined club.
+Event 'Cultural auditions': Final Match Score 0.40
+--- BANBOT REQUEST: 'hello' ---
+--- BANBOT REQUEST: 'which event can i register in ?' ---
+--- BANBOT REQUEST: 'list all the vents' ---
