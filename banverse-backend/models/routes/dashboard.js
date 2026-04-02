@@ -3,6 +3,8 @@ const router = express.Router();
 const User = require("../User");
 const Event = require("../Event");
 const Club = require("../Club");
+const ClubMember = require("../ClubMember");
+const ClubRole = require("../ClubRole");
 const { authenticate } = require("../../middleware/authMiddleware");
 
 // GET /api/dashboard/public-stats
@@ -13,13 +15,12 @@ router.get("/public-stats", async (req, res) => {
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         const monthlyEvents = await Event.countDocuments({ date: { $gte: thirtyDaysAgo } });
         
-        const departments = await User.distinct("department");
-        const validDepartments = departments.filter(d => d && d.trim() !== "");
+        const activeClubs = await Club.countDocuments({ isActive: true });
 
         res.json({
             students: totalUsers,
             eventsMonthly: monthlyEvents,
-            departments: validDepartments.length
+            activeClubs: activeClubs
         });
     } catch (error) {
         console.error("❌ Public stats error details:", error);
@@ -59,6 +60,52 @@ router.get("/", authenticate, async (req, res) => {
         // Get all clubs for exploration
         const allClubs = await Club.find({ isActive: true }).lean();
 
+        // Unified Membership & Authorization Lookup for the student's main club access
+        const membership = await ClubMember.findOne({
+            userId: req.user.userId,
+            $or: [
+                { isLeader: true }, 
+                { membershipType: "Core Member" },
+                { roleId: { $ne: null } }
+            ]
+        }).populate("roleId").lean();
+
+        const isClubLeader = !!membership;
+        let membershipType = membership?.membershipType || "General Member";
+        let clubId = membership?.clubId || null;
+
+        // OPTIMIZATION: Prefetch ALL of the user's club memberships to avoid N+1 queries in the enrichment loop
+        const userMemberships = await ClubMember.find({ userId: user._id })
+            .populate("roleId")
+            .lean();
+        
+        // Create a fast lookup map: clubId string -> membership object
+        const membershipsMap = new Map();
+        userMemberships.forEach(m => {
+            membershipsMap.set(m.clubId?.toString(), m);
+        });
+
+        // Enrich joinedClubs with the specific member's title/role for each club
+        console.log("💎 Fast-Enriching", (user.joinedClubs || []).length, "joined clubs...");
+        const finalEnrichedClubs = (user.joinedClubs || []).filter(c => c !== null).map((club) => {
+            if (!club || !club._id) return null;
+            
+            const m = membershipsMap.get(club._id.toString());
+            let displayRole = "Member";
+            if (m) {
+                if (m.customTitle) displayRole = m.customTitle;
+                else if (m.roleId) displayRole = m.roleId.roleName;
+                else displayRole = m.membershipType || "Member";
+            }
+            
+            return {
+                ...club,
+                memberRole: displayRole
+            };
+        }).filter(c => c !== null);
+
+        console.log("✅ Optimized dashboard prepared for", user.fullName);
+
         res.json({
             user: {
                 _id: user._id,
@@ -70,19 +117,39 @@ router.get("/", authenticate, async (req, res) => {
                 bio: user.bio,
                 interests: user.interests,
                 profileImage: user.profileImage,
-                resume: user.resume, // CRITICAL FIX: Include resume
+                resume: user.resume, 
                 globalRole: user.globalRole,
+                isClubLeader,
+                membershipType,
+                clubId,
+                permissions: membership?.isLeader ? {
+                    canCreateEvents: true,
+                    canEditEvents: true,
+                    canSendNotifications: true,
+                    canManageMembers: true,
+                    canEditClubProfile: true,
+                    canUploadPhotos: true,
+                    canViewAnalytics: true
+                } : (membership?.roleId?.permissions || {
+                   canCreateEvents: false,
+                   canEditEvents: false,
+                   canSendNotifications: false,
+                   canManageMembers: false,
+                   canEditClubProfile: false,
+                   canUploadPhotos: false,
+                   canViewAnalytics: false
+                })
             },
             stats: {
-                joinedClubsCount: (user.joinedClubs || []).length,
+                joinedClubsCount: finalEnrichedClubs.length,
                 upcomingEventsCount: upcomingEvents.length,
                 registeredEventsCount: (user.registeredEvents || []).length,
                 points: user.points || 0,
             },
             upcomingEvents,
             registeredEvents: user.registeredEvents || [],
-            joinedClubs: user.joinedClubs || [],
-            allClubs, // Corrected from recommendedClubs to allClubs
+            joinedClubs: finalEnrichedClubs,
+            allClubs, 
         });
     } catch (error) {
         console.error("❌ Dashboard error:", error);

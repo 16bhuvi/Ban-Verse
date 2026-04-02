@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import logo from "./banasthali-logo.jpg";
 import {
@@ -7,9 +7,9 @@ import {
   LogOut, ShieldAlert, TrendingUp, ClipboardList,
   Mail, Settings,
   Trash2, Edit3, X, RefreshCw,
-  LayoutDashboard, Layers, CheckSquare, Megaphone,
+  LayoutDashboard, Layers, Megaphone,
   UserPlus, ChevronRight, Search, Filter, ArrowUpRight,
-  Clock, CheckCircle2, Zap, XCircle
+  Clock, CheckCircle2, Zap, XCircle, Image as ImageIcon
 } from "lucide-react";
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -32,15 +32,35 @@ const ClubDashboard = () => {
   const [applications, setApplications] = useState([]);
   const [appLoading, setAppLoading] = useState(false);
   const [members, setMembers] = useState([]);
+  const [rolesData, setRolesData] = useState([]);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [membersSubTab, setMembersSubTab] = useState('applicants');
+  const [modalData, setModalData] = useState(null); // Used for dynamic modal forms
+  const [editingRole, setEditingRole] = useState(null);
   const [advancedStats, setAdvancedStats] = useState(null);
   const [toast, setToast] = useState(null);
+  const [memberToEdit, setMemberToEdit] = useState(null);
+  const [showMemberModal, setShowMemberModal] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
 
   const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 4000);
+  };
+
+  const openModal = (type) => {
+    setModalType(type);
+    setShowModal(true);
+    setModalData(null); // Reset data when opening new modal
   };
 
   const fetchClubData = useCallback(async () => {
@@ -139,21 +159,26 @@ const ClubDashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clubId]);
 
-  // Auto-fetch applications when tab changes
-  useEffect(() => {
-    if (activeTab === 'applications') {
-      fetchApplications();
+  const fetchRolesData = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API}/api/club-leader/roles`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setRolesData(res.data);
+    } catch (err) {
+      console.error("Roles fetch error:", err);
     }
-  }, [activeTab, fetchApplications]);
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'applications') fetchApplications();
+    if (['roles', 'roles-core', 'roles-subcore', 'members'].includes(activeTab)) fetchRolesData();
+  }, [activeTab, fetchApplications, fetchRolesData]);
 
 
   const [announcementText, setAnnouncementText] = useState("");
   const [announcements, setAnnouncements] = useState([]);
-
-  const openModal = (type) => {
-    setModalType(type);
-    setShowModal(true);
-  };
 
   const handleDeleteEvent = async (eventId) => {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
@@ -194,35 +219,96 @@ const ClubDashboard = () => {
     }
   };
 
+  const handleSaveRole = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
+      if (editingRole?._id) {
+        await axios.put(`${API}/api/club-leader/roles/${editingRole._id}`, editingRole, { headers: { Authorization: `Bearer ${token}` } });
+        showToast('Role updated successfully');
+      } else {
+        await axios.post(`${API}/api/club-leader/roles`, editingRole, { headers: { Authorization: `Bearer ${token}` } });
+        showToast('Role created successfully');
+      }
+      setShowRoleModal(false);
+      fetchRolesData();
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to save role', 'error');
+    }
+  };
+
+  const handlePromoteMember = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(`${API}/api/club-leader/members/${memberToEdit._id}/promote`, {
+        roleId: memberToEdit.assignedRoleId || null,
+        customTitle: memberToEdit.customTitle || ""
+      }, { headers: { Authorization: `Bearer ${token}` } });
+      showToast('Member assigned to team successfully');
+      setShowMemberModal(false);
+      fetchClubData();
+    } catch (err) {
+      console.error("Promote error:", err.response?.data || err.message);
+      showToast(err.response?.data?.error || 'Assign action failed', 'error');
+    }
+  };
+
+  const handleDeletePhoto = async (photoId) => {
+    if (!window.confirm("Remove this moment from the gallery?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API}/api/club-leader/gallery/photo/${photoId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      showToast('Moment removed');
+      fetchClubData();
+    } catch (err) {
+      showToast('Failed to delete photo', 'error');
+    }
+  };
+
   if (loading) return (
     <div className="loading-screen">
       <div className="custom-spinner"></div>
     </div>
   );
-
   const stats = data?.stats || {};
   const charts = data?.charts || {};
   const events = data?.events || [];
   const club = data?.club;
+  const permissions = data?.permissions || {}; // From our new backend logic
 
-  // Role permissions
-  const canManageMembers = ["leader"].includes(userRole);
-  const canManageEvents = ["leader", "core"].includes(userRole);
-  const canViewAnalytics = ["leader", "core"].includes(userRole);
+  // Dynamic permissions
+  const user = JSON.parse(localStorage.getItem("user"));
+  const isDirectLeader = userRole === 'leader' || club?.leaderId?.email === user?.email || club?.leader?.email === user?.email || club?.email === user?.email;
+  
+  const canManageMembers = isDirectLeader || permissions.canManageMembers;
+  const canManageEvents = isDirectLeader || permissions.canCreateEvents;
+  const canViewAnalytics = isDirectLeader || permissions.canViewAnalytics;
+  const canSendNotifs = isDirectLeader || permissions.canSendNotifications;
+  const canUploadPhotos = isDirectLeader || permissions.canUploadPhotos;
 
-  const sidebarLinks = [
+  const mainLinks = [
     { id: "overview", label: "Overview", icon: LayoutDashboard, roles: ["leader", "core", "subcore", "member"] },
-    { id: "applications", label: "Applications", icon: ClipboardList, roles: ["leader"] },
-    { id: "members", label: "Members", icon: Users, roles: ["leader", "core", "subcore"] },
-    { id: "domains", label: "Domains", icon: Layers, roles: ["leader", "core"] },
     { id: "events", label: "Events", icon: Calendar, roles: ["leader", "core", "subcore", "member"] },
-    { id: "tasks", label: "Tasks", icon: CheckSquare, roles: ["leader", "core", "subcore"] },
     { id: "analytics", label: "Analytics", icon: BarChart3, roles: ["leader", "core"] },
-    { id: "announcements", label: "Announcements", icon: Megaphone, roles: ["leader", "core", "subcore", "member"] },
-    { id: "settings", label: "Settings", icon: Settings, roles: ["leader"] },
+    { id: "announcements", label: "Broadcast", icon: Megaphone, roles: ["leader", "core", "subcore", "member"] },
+    { id: "gallery", label: "Gallery", icon: ImageIcon, roles: ["leader", "core", "subcore", "member"] },
   ];
 
-  const filteredLinks = sidebarLinks.filter(link => link.roles.includes(userRole));
+  const adminLinks = [
+    { id: "members", label: "Members", icon: Users },
+    { id: "roles-core", label: "Add Core Team", icon: ShieldAlert },
+    { id: "roles-subcore", label: "Add Subcore Team", icon: Layers },
+    { id: "club-profile", label: "Club Profile", icon: Settings },
+  ];
+
+  const isAnyStaff = ["leader", "core", "subcore"].includes(userRole) || isDirectLeader;
+  const filteredMainLinks = mainLinks.filter(link => {
+    if (link.id === "analytics") return canViewAnalytics;
+    return isAnyStaff || link.roles.includes(userRole);
+  });
 
   // ── Application row component (inline) ──────────────────────
   const ApplicationRow = ({ app }) => {
@@ -314,7 +400,7 @@ const ClubDashboard = () => {
 
         <div className="nav-section">
           <h4 className="nav-label">Dashboard</h4>
-          {filteredLinks.map(link => (
+          {filteredMainLinks.map(link => (
             <button
               key={link.id}
               onClick={() => setActiveTab(link.id)}
@@ -324,6 +410,27 @@ const ClubDashboard = () => {
             </button>
           ))}
         </div>
+
+        {canManageMembers && (
+          <div className="nav-section" style={{ marginTop: '2rem' }}>
+            <h4 className="nav-label">Leader Settings</h4>
+            {adminLinks.map(link => (
+              <button
+                key={link.id}
+                onClick={() => {
+                  if (link.id === 'club-profile') {
+                    navigate("/clubprofile");
+                  } else {
+                    setActiveTab(link.id);
+                  }
+                }}
+                className={`nav-item ${activeTab === link.id ? 'active' : ''}`}
+              >
+                <link.icon size={20} /> <span>{link.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="logout-container">
           {JSON.parse(localStorage.getItem("user"))?.globalRole === "student" && (
@@ -399,10 +506,9 @@ const ClubDashboard = () => {
                     <div className="stat-card">
                       <div className="stat-header">
                         <Users size={20} className="text-indigo" />
-                        <span className="stat-trend positive">+12% <ArrowUpRight size={14} /></span>
                       </div>
                       <div className="stat-value">{stats.totalMembers}</div>
-                      <div className="stat-label">Total Members</div>
+                      <div className="stat-label">Verified Members</div>
                     </div>
                     <div className="stat-card">
                       <div className="stat-header">
@@ -413,18 +519,17 @@ const ClubDashboard = () => {
                     </div>
                     <div className="stat-card">
                       <div className="stat-header">
-                        <CheckSquare size={20} className="text-orange" />
+                        <TrendingUp size={20} className="text-purple" />
                       </div>
-                      <div className="stat-value">85%</div>
-                      <div className="stat-label">Task Completion</div>
+                      <div className="stat-value">{stats.engagementScore}</div>
+                      <div className="stat-label">Engagement Score</div>
                     </div>
                     <div className="stat-card">
                       <div className="stat-header">
-                        <TrendingUp size={20} className="text-purple" />
-                        <span className="live-indicator"><Zap size={10} /> Live</span>
+                        <ShieldAlert size={20} className="text-orange" />
                       </div>
-                      <div className="stat-value">{stats.engagementScore}</div>
-                      <div className="stat-label">Real-time Engagement</div>
+                      <div className="stat-value">{applications.filter(a => a.status === 'pending').length}</div>
+                      <div className="stat-label">Pending Apps</div>
                     </div>
                   </div>
 
@@ -432,23 +537,14 @@ const ClubDashboard = () => {
                     <div className="grid-left">
                       <div className="dash-card">
                         <div className="card-header">
-                          <h3>Recent Activity</h3>
-                          <button className="text-btn">View All</button>
+                          <h3>Club Insights</h3>
                         </div>
-                        <div className="activity-list">
-                          {[
-                            { user: "Priya Sharma", action: "joined as Subcore", time: "2h ago", icon: UserPlus },
-                            { user: "Tech Domain", action: "updated task status", time: "5h ago", icon: CheckCircle2 },
-                            { user: "Admin", action: "posted new announcement", time: "1d ago", icon: Megaphone },
-                          ].map((item, i) => (
-                            <div key={i} className="activity-item">
-                              <div className="activity-icon"><item.icon size={16} /></div>
-                              <div className="activity-text">
-                                <strong>{item.user}</strong> {item.action}
-                                <span className="activity-time">{item.time}</span>
-                              </div>
-                            </div>
-                          ))}
+                        <div className="activity-list" style={{ padding: '1.5rem' }}>
+                          <p style={{ color: '#64748b', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                            Welcome to your club management dashboard. From here, you can manage <strong>{stats.totalMembers} members</strong>, 
+                            oversee <strong>{events.length} events</strong>, and track student engagement in real-time. 
+                            Use the sidebar to post announcements or review new membership applications.
+                          </p>
                         </div>
                       </div>
 
@@ -512,18 +608,20 @@ const ClubDashboard = () => {
 
                       <div className="dash-card">
                         <div className="card-header">
-                          <h3>My Tasks</h3>
+                          <h3>Club Information</h3>
+                          <button className="text-btn" onClick={() => navigate("/clubprofile")}>Edit Profile</button>
                         </div>
-                        <div className="task-mini-list">
-                          {[
-                            { title: "Review Event Poster", status: "In Progress" },
-                            { title: "Email Participants", status: "Pending" },
-                          ].map((task, i) => (
-                            <div key={i} className="task-mini-item">
-                              <div className={`status-dot ${task.status.toLowerCase().replace(' ', '-')}`}></div>
-                              <span>{task.title}</span>
-                            </div>
-                          ))}
+                        <div className="activity-list" style={{ padding: '1.5rem' }}>
+                           <div style={{ marginBottom: '1rem' }}>
+                              <strong style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase' }}>Category</strong>
+                              <span style={{ fontSize: '1rem', fontWeight: 600 }}>{club.category} Society</span>
+                           </div>
+                           <div>
+                              <strong style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase' }}>Status</strong>
+                              <span style={{ color: '#10b981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                 <CheckCircle2 size={16} /> Verified Active Club
+                              </span>
+                           </div>
                         </div>
                       </div>
                     </div>
@@ -531,21 +629,96 @@ const ClubDashboard = () => {
                 </div>
               )}
 
+              {['roles-core', 'roles-subcore'].includes(activeTab) && (
+                <div className="roles-tab">
+                  <div className="dash-card">
+                    <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                      <div className="header-text" style={{ flex: '1 1 auto' }}>
+                        <h3>{activeTab === 'roles-core' ? 'Core Team Governance' : 'Sub-Core Structure'}</h3>
+                        <p className="chart-subtitle" style={{ margin: '4px 0 0 0' }}>Create and manage {activeTab === 'roles-core' ? 'Tier 2 Core members' : 'Tier 3 Sub-core operational roles'}</p>
+                      </div>
+                      <button className="btn-primary" style={{ width: 'auto', alignSelf: 'center', flexShrink: 0 }} onClick={() => { 
+                        setEditingRole({ tierLevel: activeTab === 'roles-core' ? 2 : 3, permissions: { canCreateEvents: false, canSendNotifications: false, canManageMembers: false, canUploadPhotos: false } }); 
+                        setShowRoleModal(true); 
+                      }}>
+                        <PlusCircle size={16} /> {activeTab === 'roles-core' ? 'Add Core Role' : 'Add Sub-core Role'}
+                      </button>
+                    </div>
+                    <div className="table-container" style={{ padding: '1rem' }}>
+                      <table className="data-table">
+                        <thead>
+                          <tr>
+                            <th>Role / Team Name</th>
+                            <th>Tier</th>
+                            <th>Permissions</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {rolesData.filter(r => r.tierLevel === (activeTab === 'roles-core' ? 2 : 3)).length === 0 && (
+                            <tr><td colSpan="4" style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>No {activeTab === 'roles-core' ? 'Core' : 'Sub-core'} roles defined yet.</td></tr>
+                          )}
+                          {rolesData.filter(r => r.tierLevel === (activeTab === 'roles-core' ? 2 : 3)).map(role => (
+                            <tr key={role._id}>
+                              <td><div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: activeTab === 'roles-core' ? '#6366f1' : '#f59e0b' }}></div>
+                                <strong>{role.roleName}</strong>
+                              </div></td>
+                              <td>{role.tierLevel === 2 ? 'Core Team' : 'Sub-Core'}</td>
+                              <td>
+                                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                                  {role.permissions?.canCreateEvents && <span className="cat-badge" style={{ background: '#dcfce7', color: '#16a34a', fontSize: '10px' }}>Events</span>}
+                                  {role.permissions?.canSendNotifications && <span className="cat-badge" style={{ background: '#e0e7ff', color: '#4f46e5', fontSize: '10px' }}>Notifs</span>}
+                                  {role.permissions?.canManageMembers && <span className="cat-badge" style={{ background: '#fef3c7', color: '#d97706', fontSize: '10px' }}>Admin</span>}
+                                  {role.permissions?.canUploadPhotos && <span className="cat-badge" style={{ background: '#fce7f3', color: '#db2777', fontSize: '10px' }}>Gallery</span>}
+                                </div>
+                              </td>
+                              <td>
+                                <button className="btn-icon-sm" onClick={() => { setEditingRole(role); setShowRoleModal(true); }}><Edit3 size={14} /></button>
+                                <button className="btn-icon-sm danger" onClick={async () => {
+                                  if(!window.confirm("Delete this role?")) return;
+                                  try {
+                                    const token = localStorage.getItem("token");
+                                    await axios.delete(`${API}/api/club-leader/roles/${role._id}`, { headers: { Authorization: `Bearer ${token}` } });
+                                    fetchRolesData();
+                                    showToast("Role removed");
+                                  } catch (e) { showToast("Failed to delete", "error"); }
+                                }}><Trash2 size={14} /></button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {activeTab === 'events' && (
                 <div className="events-tab">
-                  <div className="filter-bar">
-                    <div className="search-box">
-                      <Search size={18} />
+                  <div className="filter-bar-premium">
+                    <div className="search-group-modern">
+                      <div className="search-icon-wrapper">
+                        <Search size={18} />
+                      </div>
                       <input
                         type="text"
-                        placeholder="Search events..."
+                        className="search-input-modern"
+                        placeholder="Filter through club events..."
                         value={eventSearch}
                         onChange={(e) => setEventSearch(e.target.value)}
                       />
+                      {eventSearch && <button onClick={() => setEventSearch('')} className="clear-search"><X size={14} /></button>}
                     </div>
-                    <div className="filter-actions">
-                      <button className="btn-secondary"><Filter size={16} /> Filter</button>
-                      {canManageEvents && <button onClick={() => openModal('createEvent')} className="btn-primary">Create Event</button>}
+                    <div className="filter-actions-group">
+                      <div className="filter-chip-select">
+                         <Filter size={14} /> <span>All Categories</span>
+                      </div>
+                      {canManageEvents && (
+                        <button onClick={() => openModal('createEvent')} className="btn-create-modern pulse-on-hover">
+                           <PlusCircle size={18} /> <span>New Event</span>
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -580,68 +753,160 @@ const ClubDashboard = () => {
 
               {activeTab === 'members' && (
                 <div className="members-tab">
-                  <div className="dash-card">
-                    <div className="card-header">
-                      <h3>Club Members</h3>
-                      <div className="header-actions">
+                  {/* Sub-tab switcher */}
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '1.5rem' }}>
+                    <button
+                      onClick={() => setMembersSubTab('applicants')}
+                      className={membersSubTab === 'applicants' ? 'btn-primary' : 'btn-secondary'}
+                      style={{ width: 'auto', borderRadius: '10px' }}
+                    >
+                      Club Applicants
+                    </button>
+                    <button
+                      onClick={() => setMembersSubTab('official')}
+                      className={membersSubTab === 'official' ? 'btn-primary' : 'btn-secondary'}
+                      style={{ width: 'auto', borderRadius: '10px' }}
+                    >
+                      Official Members
+                    </button>
+                  </div>
+
+                  {membersSubTab === 'applicants' && (
+                    <div className="dash-card">
+                      <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                        <div>
+                          <h3>Club Applicants</h3>
+                          <p style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '4px' }}>Students who clicked "Join Club" — assign them to a team to make them official members.</p>
+                        </div>
                         <div className="search-box-small">
                           <Search size={16} />
-                          <input
-                            type="text"
-                            placeholder="Search members..."
-                            value={memberSearch}
-                            onChange={(e) => setMemberSearch(e.target.value)}
-                          />
+                          <input type="text" placeholder="Search..." value={memberSearch} onChange={(e) => setMemberSearch(e.target.value)} />
                         </div>
-                        {canManageMembers && <button className="btn-primary"><UserPlus size={16} /> Invite</button>}
+                      </div>
+                      <div className="table-container">
+                        <table className="data-table">
+                          <thead>
+                            <tr>
+                              <th>Student</th>
+                              <th>Status</th>
+                              <th>Applied</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(members.length > 0 ? members : (club?.members || [])).filter(m => !m.roleId && !m.isLeader).filter(m => {
+                              const name = (m.userId?.fullName || m.user?.fullName || '').toLowerCase();
+                              const email = (m.userId?.email || m.user?.email || '').toLowerCase();
+                              return name.includes(memberSearch.toLowerCase()) || email.includes(memberSearch.toLowerCase());
+                            }).map((m, i) => {
+                              const member = m.userId || m.user;
+                              if (!member) return null;
+                              return (
+                                <tr key={i}>
+                                  <td>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                      <img src={member.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.fullName)}&background=6366f1&color=fff`} alt="Avatar" style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover' }} />
+                                      <div>
+                                        <div style={{ fontWeight: 700, color: '#1e293b' }}>{member.fullName}</div>
+                                        <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{member.email}</div>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td><span className="cat-badge" style={{ background: '#fff7ed', color: '#ea580c', fontSize: '11px' }}>Pending Assignment</span></td>
+                                  <td style={{ color: '#64748b', fontSize: '0.82rem' }}>{m.joinedAt ? new Date(m.joinedAt).toLocaleDateString() : 'N/A'}</td>
+                                  <td>
+                                    <button className="btn-primary" style={{ width: 'auto', fontSize: '0.78rem', padding: '6px 12px' }} onClick={() => { setMemberToEdit({...m, assignedRoleId: ''}); setShowMemberModal(true); }}>
+                                      Assign to Team
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                            {(members.length > 0 ? members : (club?.members || [])).filter(m => !m.roleId && !m.isLeader).length === 0 && (
+                              <tr><td colSpan="4" style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+                                <UserPlus size={32} style={{ opacity: 0.2, marginBottom: '8px' }} />
+                                <p style={{ margin: 0 }}>No pending applicants. Share your club to attract members!</p>
+                              </td></tr>
+                            )}
+                          </tbody>
+                        </table>
                       </div>
                     </div>
-                    <div className="table-container">
-                      <table className="data-table">
-                        <thead>
-                          <tr>
-                            <th>Member</th>
-                            <th>Membership Type</th>
-                            <th>Domain</th>
-                            <th>Joined</th>
-                            {canManageMembers && <th>Actions</th>}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {(members.length > 0 ? members : (club?.members || [])).filter(m => {
-                            const name = (m.userId?.fullName || m.user?.fullName || '').toLowerCase();
-                            const email = (m.userId?.email || m.user?.email || '').toLowerCase();
-                            return name.includes(memberSearch.toLowerCase()) || email.includes(memberSearch.toLowerCase());
-                          }).map((m, i) => {
-                            const member = m.userId || m.user;
-                            if (!member) return null;
-                            return (
-                              <tr key={i}>
-                                <td>
-                                  <div className="user-profile-sm">
-                                    <img src={member.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.fullName)}&background=6366f1&color=fff`} alt="Avatar" />
-                                    <div className="user-info">
-                                      <div className="name">{member.fullName}</div>
-                                      <div className="email">{member.email}</div>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td><span className={`badge-role ${m.membershipType === 'Core Member' ? 'core' : (m.role || 'member')}`}>{m.membershipType || m.role || 'General Member'}</span></td>
-                                <td>{m.domain || 'None'}</td>
-                                <td>{m.joinedAt ? new Date(m.joinedAt).toLocaleDateString() : 'N/A'}</td>
-                                {canManageMembers && (
+                  )}
+
+                  {membersSubTab === 'official' && (
+                    <div className="dash-card">
+                      <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                        <div>
+                          <h3>Official Team Members</h3>
+                          <p style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '4px' }}>Students assigned to a team with specific responsibilities.</p>
+                        </div>
+                        <div className="search-box-small">
+                          <Search size={16} />
+                          <input type="text" placeholder="Search..." value={memberSearch} onChange={(e) => setMemberSearch(e.target.value)} />
+                        </div>
+                      </div>
+                      <div className="table-container">
+                        <table className="data-table">
+                          <thead>
+                            <tr>
+                              <th>Member</th>
+                              <th>Team / Role</th>
+                              <th>Responsibilities</th>
+                              <th>Joined</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(members.length > 0 ? members : (club?.members || [])).filter(m => m.roleId || m.isLeader).filter(m => {
+                              const name = (m.userId?.fullName || m.user?.fullName || '').toLowerCase();
+                              return name.includes(memberSearch.toLowerCase());
+                            }).map((m, i) => {
+                              const member = m.userId || m.user;
+                              if (!member) return null;
+                              return (
+                                <tr key={i}>
                                   <td>
-                                    <button className="btn-icon-sm"><Edit3 size={14} /></button>
-                                    <button className="btn-icon-sm danger"><Trash2 size={14} /></button>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                      <img src={member.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.fullName)}&background=6366f1&color=fff`} alt="Avatar" style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover' }} />
+                                      <div>
+                                        <div style={{ fontWeight: 700 }}>{member.fullName}</div>
+                                        <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{member.email}</div>
+                                      </div>
+                                    </div>
                                   </td>
-                                )}
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
+                                  <td><span className={`badge-role ${m.isLeader ? 'leader' : 'core'}`}>{m.isLeader ? 'Club Leader' : (m.roleId?.roleName || m.membershipType || 'Team Member')}</span></td>
+                                  <td style={{ fontSize: '0.82rem', color: '#64748b', maxWidth: '200px' }}>{m.isLeader ? 'Administrator' : (m.customTitle || '—')}</td>
+                                  <td style={{ fontSize: '0.82rem', color: '#64748b' }}>{m.joinedAt ? new Date(m.joinedAt).toLocaleDateString() : 'N/A'}</td>
+                                  <td style={{ display: 'flex', gap: '6px' }}>
+                                    {!m.isLeader && (
+                                      <>
+                                        <button className="btn-icon-sm" onClick={() => { setMemberToEdit({...m, assignedRoleId: m.roleId?._id || m.roleId || ''}); setShowMemberModal(true); }}><Edit3 size={14} /></button>
+                                        <button className="btn-icon-sm danger" onClick={async () => {
+                                          if(!window.confirm('Remove member from club?')) return;
+                                          try {
+                                            const token = localStorage.getItem('token');
+                                            await axios.delete(`${API}/api/club-leader/members/${m._id}`, { headers: { Authorization: `Bearer ${token}` } });
+                                            fetchClubData(); showToast('Member removed');
+                                          } catch(e) { showToast('Failed','error'); }
+                                        }}><Trash2 size={14} /></button>
+                                      </>
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                            {(members.length > 0 ? members : (club?.members || [])).filter(m => m.roleId || m.isLeader).length === 0 && (
+                              <tr><td colSpan="5" style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+                                <ShieldAlert size={32} style={{ opacity: 0.2, marginBottom: '8px' }} />
+                                <p style={{ margin: 0 }}>No official members yet. Assign applicants to teams first.</p>
+                              </td></tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
 
@@ -838,79 +1103,91 @@ const ClubDashboard = () => {
                 </div>
               )}
 
-              {activeTab === 'tasks' && (
-                <div className="tasks-tab">
-                  <div className="dash-card">
-                    <div className="card-header">
-                      <h3>Task Management</h3>
-                      <button className="btn-primary" onClick={() => openModal('notify')}>Assign New Task</button>
-                    </div>
-                    <div className="task-full-list">
-                      {[
-                        { title: "Review Event Poster", domain: "Media", status: "In Progress", due: "Tomorrow" },
-                        { title: "Email Participants", domain: "Management", status: "Pending", due: "25 Oct" },
-                        { title: "Technical Setup", domain: "Technical", status: "Completed", due: "20 Oct" },
-                      ].map((task, i) => (
-                        <div key={i} className="task-row">
-                          <CheckCircle2 size={20} className={`status-icon ${task.status.toLowerCase()}`} />
-                          <div className="task-info">
-                            <div className="task-title">{task.title}</div>
-                            <div className="task-meta">{task.domain} • Due {task.due}</div>
-                          </div>
-                          <div className={`status-badge ${task.status.toLowerCase().replace(' ', '-')}`}>{task.status}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {activeTab === 'announcements' && (
-                <div className="announcements-tab">
+                <div className="announcements-tab" style={{ maxWidth: '800px', margin: '0 auto' }}>
                   <div className="dash-card">
-                    <div className="card-header">
-                      <h3>Broadcast Center</h3>
-                      <button className="btn-primary" onClick={() => openModal('notify')}>Post New Announcement</button>
+                    <div className="card-header" style={{ padding: '1.5rem', borderBottom: '2px solid #f1f5f9' }}>
+                      <div>
+                        <h3>Broadcast Center</h3>
+                        <p style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '4px' }}>Maintain professional communication with your club members</p>
+                      </div>
+                      {canSendNotifs && (
+                        <button className="btn-primary" onClick={() => openModal('notify')}>Broadcast Update</button>
+                      )}
                     </div>
                     <div className="announcement-list">
                       {announcements.length > 0 ? announcements.map((ann, i) => (
-                        <div key={i} className="announcement-card-full">
-                          <div className="ann-header">
-                            <h4>{ann.title}</h4>
-                            <span className="ann-date">{ann.date}</span>
+                        <div key={i} className="compact-announcement">
+                          <div className="ann-meta">
+                            <div className="ann-sender">
+                              <div className="avatar-chip">Y</div>
+                              <span>Posted by {ann.sender}</span>
+                            </div>
+                            <span className="ann-time">{ann.date}</span>
                           </div>
-                          <p>{ann.text}</p>
-                          <div className="ann-footer">Posted by {ann.sender}</div>
+                          <div className="ann-content">
+                            <h4 style={{ margin: '0 0 8px 0', fontSize: '1rem', color: '#1e293b' }}>{ann.title}</h4>
+                            <p style={{ margin: 0, fontSize: '0.9rem', color: '#444', lineHeight: '1.5' }}>{ann.text}</p>
+                          </div>
                         </div>
                       )) : (
-                        <div className="empty-apps" style={{ padding: '3rem' }}>
-                          <Megaphone size={40} style={{ opacity: 0.3, marginBottom: '1rem' }} />
-                          <p>No recent announcements. Broadcast updates to your members.</p>
+                        <div className="empty-apps" style={{ padding: '4rem 2rem' }}>
+                          <Megaphone size={48} style={{ opacity: 0.15, marginBottom: '1.5rem' }} />
+                          <h4 style={{ color: '#64748b', margin: 0 }}>No Announcements Yet</h4>
+                          <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '8px' }}>Keep your members informed about upcoming activities</p>
                         </div>
                       )}
                     </div>
                   </div>
                 </div>
               )}
-
-              {activeTab === 'settings' && userRole === 'leader' && (
-                <div className="settings-tab">
+              {activeTab === 'gallery' && (
+                <div className="gallery-tab">
                   <div className="dash-card">
-                    <div className="card-header"><h3>Club Settings</h3></div>
-                    <div className="settings-body">
-                      <div className="setting-group">
-                        <label>Club Name</label>
-                        <input type="text" defaultValue={club.name} />
+                    <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                      <div style={{ flex: '1 1 auto' }}>
+                        <h3>Memories & Highlights</h3>
+                        <p className="chart-subtitle" style={{ margin: '4px 0 0 0' }}>Capture your club's journey. Click 'Upload' to share new milestones.</p>
                       </div>
-                      <div className="setting-group">
-                        <label>Club Category</label>
-                        <select defaultValue={club.category}>
-                          <option>Technical</option>
-                          <option>Cultural</option>
-                          <option>Sports</option>
-                        </select>
-                      </div>
-                      <button className="btn-primary">Save Changes</button>
+                      {canUploadPhotos && (
+                        <button className="btn-primary" style={{ width: 'auto', alignSelf: 'center', flexShrink: 0 }} onClick={() => openModal('uploadPhoto')}>
+                          <ImageIcon size={16} /> Add Moments
+                        </button>
+                      )}
+                    </div>
+                    <div className="gallery-flex-container" style={{ padding: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: '1.5rem' }}>
+                      {(club?.gallery || []).length > 0 ? (
+                        club.gallery.slice().reverse().map((photo, i) => (
+                          <div key={i} className="gallery-item-flex" style={{ flex: '1 1 280px', maxWidth: '350px', background: 'white', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9', transition: 'all 0.3s ease' }}>
+                            <div className="photo-wrapper" style={{ height: '180px', width: '100%', position: 'relative' }}>
+                              <img src={photo.url} alt="Gallery" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              <div className="team-category-badge" style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(255,255,255,0.95)', padding: '4px 10px', borderRadius: '8px', fontSize: '10px', fontWeight: 'bold', color: '#6366f1', textTransform: 'uppercase', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                                {photo.category || "General"}
+                              </div>
+                            </div>
+                            <div className="photo-info" style={{ padding: '12px' }}>
+                              <p style={{ margin: 0, fontSize: '0.9rem', color: '#1e293b', fontWeight: '600' }}>{photo.caption || "Club Event Snapshot"}</p>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
+                                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{new Date(photo.uploadedAt).toLocaleDateString()}</span>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                  {canManageMembers && (
+                                    <button className="btn-icon-xs-danger" onClick={() => handleDeletePhoto(photo._id)}>
+                                      <Trash2 size={13} />
+                                    </button>
+                                  )}
+                                  <button className="btn-icon-xs"><PlusCircle size={13} /></button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ padding: '3rem', textAlign: 'center', width: '100%' }}>
+                          <ImageIcon size={48} style={{ opacity: 0.15, marginBottom: '1.25rem', color: '#6366f1' }} />
+                          <h4 style={{ color: '#64748b', margin: 0 }}>No Moments Captured Yet</h4>
+                          <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '8px' }}>Share the first highlights of your club community.</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -929,6 +1206,41 @@ const ClubDashboard = () => {
               <button onClick={() => setShowModal(false)} className="close-btn"><X size={20} /></button>
             </div>
             <div className="modal-body">
+              {modalType === 'uploadPhoto' && (
+                <div className="photo-upload-form">
+                  <div className="upload-preview-area" style={{ height: '200px', background: '#f8fafc', borderRadius: '12px', border: '2px dashed #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', overflow: 'hidden' }}>
+                    {modalData?.image ? <img src={modalData.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <ImageIcon size={30} color="#cbd5e1" />}
+                  </div>
+                  <input type="file" id="gal-up" hidden accept="image/*" onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = () => setModalData(prev => ({...prev, image: reader.result}));
+                      reader.readAsDataURL(file);
+                    }
+                  }} />
+                  <label htmlFor="gal-up" className="btn-secondary-modern" style={{ width: '100%', justifyContent: 'center', cursor: 'pointer', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px', padding: '12px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', fontWeight: '700' }}>
+                    <ImageIcon size={18} /> Select Highlight Image
+                  </label>
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '800', marginBottom: '8px', color: '#e2e8f0' }}>Moment Caption</label>
+                    <input type="text" placeholder="Describe the memory..." style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', background: '#0f172a', color: 'white' }} value={modalData?.caption || ''} onChange={e => setModalData(prev => ({...prev, caption: e.target.value}))} />
+                  </div>
+                  <div className="form-actions">
+                    <button className="btn-secondary" onClick={() => setShowModal(false)}>Discard</button>
+                    <button className="btn-primary" onClick={async () => {
+                       if (!modalData?.image) return showToast('Please select a photo', 'error');
+                       try {
+                         const token = localStorage.getItem('token');
+                         await axios.post(`${API}/api/club-leader/gallery/upload`, modalData, { headers: { Authorization: `Bearer ${token}` } });
+                         showToast('Moment added to gallery!');
+                         setShowModal(false);
+                         fetchClubData();
+                       } catch(e) { showToast('Upload failed', 'error'); }
+                    }}>Publish to Gallery</button>
+                  </div>
+                </div>
+              )}
               {modalType === 'createEvent' && (
                 <div className="redirect-box">
                   <p>Redirecting to Event Studio for full controls.</p>
@@ -953,6 +1265,89 @@ const ClubDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Role Management Dynamic Modal */}
+      {showRoleModal && (
+        <div className="modal-overlay" onClick={() => setShowRoleModal(false)}>
+          <div className="modal-content-premium" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{editingRole?._id ? "Edit Dynamic Structure" : "Generate Custom Role"}</h3>
+              <button onClick={() => setShowRoleModal(false)} className="close-btn"><X size={20} /></button>
+            </div>
+            <form className="modal-body" onSubmit={handleSaveRole}>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold' }}>Team / Role Official Title</label>
+                <input required type="text" placeholder="e.g. Design Sub-Core" value={editingRole?.roleName || ''} onChange={(e) => setEditingRole({...editingRole, roleName: e.target.value})} style={{ width: '100%', padding: '10px', marginTop: '6px', borderRadius: '8px', border: '1px solid #ccc' }} />
+              </div>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold' }}>Hierarchy Tier Level</label>
+                <select value={editingRole?.tierLevel || 3} onChange={(e) => setEditingRole({...editingRole, tierLevel: parseInt(e.target.value)})} style={{ width: '100%', padding: '10px', marginTop: '6px', borderRadius: '8px', border: '1px solid #ccc' }}>
+                  <option value={2}>Tier 2: Core Team</option>
+                  <option value={3}>Tier 3: Sub-Core & Functional Teams</option>
+                </select>
+              </div>
+              <p style={{ fontWeight: 'bold', fontSize: '13px', borderBottom: '1px solid #eee', paddingBottom: '8px', marginBottom: '8px' }}>Assign Operational Permissions:</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input type="checkbox" checked={editingRole?.permissions?.canCreateEvents || false} onChange={e => setEditingRole({...editingRole, permissions: {...editingRole?.permissions, canCreateEvents: e.target.checked}})} /> Can Launch Official Events
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input type="checkbox" checked={editingRole?.permissions?.canSendNotifications || false} onChange={e => setEditingRole({...editingRole, permissions: {...editingRole?.permissions, canSendNotifications: e.target.checked}})} /> Can Push Club Notifications
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input type="checkbox" checked={editingRole?.permissions?.canManageMembers || false} onChange={e => setEditingRole({...editingRole, permissions: {...editingRole?.permissions, canManageMembers: e.target.checked}})} /> Can Promote/Evict Members
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input type="checkbox" checked={editingRole?.permissions?.canUploadPhotos || false} onChange={e => setEditingRole({...editingRole, permissions: {...editingRole?.permissions, canUploadPhotos: e.target.checked}})} /> Can Upload to Gallery
+                </label>
+              </div>
+              <div className="form-actions" style={{ marginTop: '1.5rem' }}>
+                <button type="button" className="btn-secondary" onClick={() => setShowRoleModal(false)}>Discard</button>
+                <button type="submit" className="btn-primary">Provision Role</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Member Promotion Modal */}
+      {showMemberModal && (
+        <div className="modal-overlay" onClick={() => setShowMemberModal(false)}>
+          <div className="modal-content-premium" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Assign to Team</h3>
+              <button onClick={() => setShowMemberModal(false)} className="close-btn"><X size={20} /></button>
+            </div>
+            <form className="modal-body" onSubmit={handlePromoteMember}>
+              <p style={{ marginBottom: '1.25rem', fontSize: '0.875rem' }}>Assigning a student to a team makes them an <strong>Official Club Member</strong> with the role's permissions.</p>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', marginBottom: '6px' }}>Assign to Team</label>
+                <select value={memberToEdit?.assignedRoleId || ''} onChange={(e) => setMemberToEdit({...memberToEdit, assignedRoleId: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '8px' }}>
+                  <option value="">-- No Team (Keep as Applicant) --</option>
+                  {rolesData.map(r => (
+                    <option key={r._id} value={r._id}>{r.roleName} (Tier {r.tierLevel === 2 ? 'Core' : 'Sub-core'})</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', marginBottom: '6px' }}>Responsibilities / Custom Title</label>
+                <input
+                  type="text"
+                  value={memberToEdit?.customTitle || ''}
+                  onChange={(e) => setMemberToEdit({...memberToEdit, customTitle: e.target.value})}
+                  placeholder="e.g. Lead Designer, Social Media Manager"
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px' }}
+                />
+              </div>
+              <div className="form-actions">
+                <button type="button" className="btn-secondary" onClick={() => setShowMemberModal(false)}>Cancel</button>
+                <button type="submit" className="btn-primary">Confirm Assignment</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

@@ -57,4 +57,43 @@ const checkOwnership = (model) => {
     };
 };
 
-module.exports = { authenticate, authorize, checkOwnership };
+// 4. Dynamic Club Operations Authorization Middleware
+const requireClubPermission = (requiredPermission) => async (req, res, next) => {
+    try {
+        const Club = require("../models/Club");
+        const ClubMember = require("../models/ClubMember");
+        
+        // Grab clubId from params or body depending on route structure
+        const clubId = req.params.clubId || req.body.club || req.params.id; 
+        if(!clubId) return res.status(400).json({ error: "Missing Target Club ID" });
+
+        const userId = req.user.userId || req.user.id;
+
+        // 1. Bypass check if pure Admin globally or Creator/Leader specifically
+        if(req.user.globalRole === 'admin') return next();
+        const club = await Club.findById(clubId);
+        if(!club) return res.status(404).json({ error: "Club not found" });
+        if(club.leaderId.equals(userId) || (club.leader && club.leader.equals(userId))) return next();
+
+        // 2. Resolve Dynamic Member Role
+        const member = await ClubMember.findOne({ clubId, userId }).populate('roleId');
+        if(!member || member.status === 'suspended') return res.status(403).json({ error: "Access Denied: Not an active member" });
+
+        // 3. Fallback for general participants (they have no roleId or legacy role logic)
+        if(!member.roleId && member.role !== 'core' && member.isLeader !== true) {
+             return res.status(403).json({ error: "Insufficient Team Access Privileges" });
+        }
+
+        // 4. Actual Boolean Validation from Dynamic Hierarchy
+        if(member.roleId && member.roleId.permissions[requiredPermission] !== true) {
+            return res.status(403).json({ error: "Action strictly restricted by Club Director" });
+        }
+        
+        next();
+    } catch(err) {
+        console.error("Permission check err:", err);
+        res.status(500).json({ error: "Internal Auth Failure" });
+    }
+}
+
+module.exports = { authenticate, authorize, checkOwnership, requireClubPermission };

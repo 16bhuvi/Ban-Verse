@@ -23,6 +23,7 @@ const StudentDashboard = () => {
   const [pastEvents, setPastEvents] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [notifications, setNotifications] = useState([]);
+  const [popupAnnouncement, setPopupAnnouncement] = useState(null);
   const [aiRecommendations, setAiRecommendations] = useState(null);
   const [isRefreshingAI, setIsRefreshingAI] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -61,11 +62,21 @@ const StudentDashboard = () => {
 
         setData(response.data);
 
-        // Fetch Notifications Count
+        // Fetch Notifications Count & Popup
         const notifRes = await axios.get(`${API}/api/notifications`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const validNotifs = (notifRes.data.notifications || []).filter(n => new Date(n.createdAt) >= thirtyDaysAgo);
+
+        setNotifications(validNotifs);
         setUnreadNotifications(notifRes.data.unreadCount);
+
+        const latestUnread = validNotifs.find(n => !n.read && !sessionStorage.getItem(`seen_notif_${n._id}`));
+        if (latestUnread) {
+          setPopupAnnouncement(latestUnread);
+        }
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
         setErrorMessage(`Connection failed: ${error.response?.status || error.message}`);
@@ -165,7 +176,7 @@ const StudentDashboard = () => {
       <>
         <section className="welcome-card">
           <div className="welcome-text">
-            <h1>Welcome back, {user.fullName.split(" ")[0]}! 👋</h1>
+            <h1>Welcome back, {user.fullName?.split(" ")[0] || "Student"}! 👋</h1>
             <p>You have {stats.upcomingEventsCount} upcoming events this week. Keep up the activity!</p>
           </div>
         </section>
@@ -202,17 +213,30 @@ const StudentDashboard = () => {
             </div>
             <div className="event-list">
               {aiRecommendations?.recommended_events?.length > 0 ? (
-                aiRecommendations.recommended_events.map(event => (
+                aiRecommendations.recommended_events.map((event, index) => (
                   <div className="event-item-modern" key={event._id || event.name} onClick={() => { logActivity("click", event._id || event.name, "event"); navigate(`/viewpost/${event._id || event.name}`); }}>
                     <div className="event-info">
-                      <h4>{event.name || event.title} <span className="match-badge">{(event.match_score * 100).toFixed(0)}% Match</span></h4>
-                      <p>
-                        <span onClick={(e) => handleClubClick(e, event.clubName)} style={{ cursor: "pointer", color: "#6366f1", fontWeight: "600" }} className="hover-underline">
-                          {event.clubName || "Personalized Match"}
-                        </span> • {event.category}
-                      </p>
+                       <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                         {index + 1}. {event.name} 
+                         <span className="match-badge">Match Score: {event.priority_score}/10</span>
+                       </h4>
+                       <div className="tag-row" style={{ display: 'flex', gap: '5px', margin: '4px 0' }}>
+                          {(event.tags || []).map(tag => (
+                            <span key={tag} className={`tag-mini tag-${tag.toLowerCase()}`} style={{ 
+                               fontSize: '10px', 
+                               padding: '2px 8px', 
+                               borderRadius: '8px', 
+                               background: tag === 'Trending' ? '#fee2e2' : (tag === 'Explore' ? '#f0f9ff' : '#e0e7ff'),
+                               color: tag === 'Trending' ? '#991b1b' : (tag === 'Explore' ? '#075985' : '#3730a3'),
+                               fontWeight: '600'
+                             }}>{tag}</span>
+                          ))}
+                       </div>
+                       <div className="ai-reasons-block" style={{ fontSize: '11px', color: '#4338ca', whiteSpace: 'pre-line', lineHeight: '1.4', background: 'rgba(99, 102, 241, 0.05)', padding: '8px', borderRadius: '8px', marginTop: '6px' }}>
+                          {event.reason}
+                       </div>
                     </div>
-                    <button className="register-btn" onClick={(e) => { e.stopPropagation(); navigate(`/viewpost/${event._id || event.name}`); }}>Details</button>
+                    <button className="register-btn" style={{ height: 'fit-content', alignSelf: 'center' }} onClick={(e) => { e.stopPropagation(); navigate(`/viewpost/${event._id || event.name}`); }}>Details</button>
                   </div>
                 ))
               ) : (
@@ -259,8 +283,8 @@ const StudentDashboard = () => {
                   <div className="club-item-modern" key={club.name} onClick={() => logActivity("view", club.name, "club")}>
                     <div className="club-logo-modern">{club.name.charAt(0)}</div>
                     <div className="club-info">
-                      <h4>{club.name} <span className="match-badge">{(club.match_score * 100).toFixed(0)}% Match</span></h4>
-                      <p style={{ fontSize: '12px', color: '#6366f1' }}>{club.reason}</p>
+                      <h4>{club.name} <span className="match-badge">Score: {club.priority_score}/10</span></h4>
+                      <p style={{ fontSize: '12px', color: '#6366f1', fontWeight: '500' }}>🎯 {club.reason}</p>
                     </div>
                     <button className="join-btn-small">Join</button>
                   </div>
@@ -381,7 +405,9 @@ const StudentDashboard = () => {
           const res = await axios.get(`${API}/api/events/past`, {
             headers: { Authorization: `Bearer ${token}` }
           });
-          setPastEvents(res.data);
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          setPastEvents(res.data.filter(e => new Date(e.date) >= thirtyDaysAgo));
         } catch (err) {
           console.error("Past events error:", err);
         }
@@ -413,7 +439,12 @@ const StudentDashboard = () => {
                   <div key={event._id} className="past-event-item">
                     <div className={`dot ${event.isRegistered ? 'dot-registered' : 'dot-missed'}`}></div>
                     <div className="past-event-info">
-                      <strong>{event.title}</strong>
+                      <strong>
+                        {event.title}
+                        <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: '500', marginLeft: '8px' }}>
+                          ({new Date(event.date).toLocaleDateString()})
+                        </span>
+                      </strong>
                       <span style={{ color: '#64748b', fontSize: '13px' }}>
                         {event.club?.name || 'Campus Event'} &bull; {event.category}
                       </span>
@@ -627,7 +658,9 @@ const StudentDashboard = () => {
               </div>
               <div className="club-card-content">
                 <h4 className="club-card-name">{club.name}</h4>
-                <span className="club-card-role">{club.category || "General"} Member</span>
+                <div style={{ padding: '4px 10px', background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', border: '1px solid rgba(99, 102, 241, 0.2)', display: 'inline-block', marginBottom: '8px' }}>
+                  {club.memberRole || "Member"}
+                </div>
               </div>
               <div className="club-card-actions-vertical">
                 <button className="btn-flex-secondary" onClick={() => navigate(`/viewclub?id=${club._id}`)}>
@@ -714,16 +747,43 @@ const StudentDashboard = () => {
       const res = await axios.get(`${API}/api/notifications`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setNotifications(res.data.notifications || []);
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const validNotifs = (res.data.notifications || []).filter(n => new Date(n.createdAt) >= thirtyDaysAgo);
+
+      setNotifications(validNotifs);
       setUnreadNotifications(res.data.unreadCount || 0);
+
+      const latestUnread = validNotifs.find(n => !n.read && !sessionStorage.getItem(`seen_notif_${n._id}`));
+      if (latestUnread) {
+        setPopupAnnouncement(latestUnread);
+      }
     } catch (err) {
       console.error("Notifications fetch error:", err);
     }
   };
 
+  const closePopup = () => {
+    if (popupAnnouncement) {
+      sessionStorage.setItem(`seen_notif_${popupAnnouncement._id}`, "true");
+      setPopupAnnouncement(null);
+    }
+  };
+
   useEffect(() => {
     if (activeTab === "notifications") {
-      fetchNotifications();
+      fetchNotifications().then(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+          axios.patch(`${API}/api/notifications/mark-all-read`, {}, {
+            headers: { Authorization: `Bearer ${token}` }
+          }).catch(err => console.error("Failed to mark notifications read", err));
+          
+          setUnreadNotifications(0);
+          setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+        }
+      });
     }
   }, [activeTab]);
 
@@ -785,8 +845,8 @@ const StudentDashboard = () => {
             {unreadNotifications > 0 && <span className="notif-badge">{unreadNotifications}</span>}
           </li>
           <li className={`nav-link ${activeTab === "profile" ? "active" : ""}`} onClick={() => setActiveTab("profile")}><span>👤</span> Profile</li>
-          {JSON.parse(localStorage.getItem("user"))?.isClubLeader && (
-            <li className="nav-link" onClick={() => { localStorage.setItem("role", "club"); navigate("/clubdashboard"); }} style={{ color: '#6366f1', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '12px' }}>
+          {(data?.user?.isClubLeader || data?.user?.membershipType === "Core Member") && (
+            <li className={`nav-link`} onClick={() => { localStorage.setItem("role", "club"); navigate("/clubdashboard"); }} style={{ color: '#6366f1', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '12px' }}>
               <span>👑</span> Club Dashboard
             </li>
           )}
@@ -836,6 +896,28 @@ const StudentDashboard = () => {
 
         {renderContent()}
       </main>
+      
+      {/* Announcement Popup Toast */}
+      {popupAnnouncement && (
+        <div style={{
+          position: 'fixed', bottom: '20px', right: '20px', background: '#3b82f6', color: 'white',
+          padding: '16px 20px', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+          zIndex: 9999, maxWidth: '350px', animation: 'slideUpFade 0.4s ease-out'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <strong style={{ fontSize: '15px' }}>📢 New Announcement</strong>
+            <button onClick={closePopup} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '18px', padding: '0 4px' }}>&times;</button>
+          </div>
+          <p style={{ margin: 0, fontSize: '13.5px', lineHeight: '1.4', opacity: 0.95 }}>{popupAnnouncement.message}</p>
+          <button 
+            onClick={() => { closePopup(); setActiveTab("notifications"); }} 
+            style={{ marginTop: '12px', background: 'white', color: '#3b82f6', border: 'none', padding: '6px 14px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+          >
+            Go to Notifications
+          </button>
+        </div>
+      )}
+
       <ChatBot />
     </div>
   );

@@ -1,205 +1,175 @@
 from bson import ObjectId
 from datetime import datetime, timezone
-from recommendation.content_filter import get_club_content_score, get_event_content_score
+import random
 
 def log_to_file(msg):
     with open("ai_debug_log.txt", "a", encoding="utf-8") as f:
         f.write(msg + "\n")
 
 async def get_hybrid_recommendations(db, studentId):
-    log_to_file(f"\n--- AI RECOMMENDATION REQUEST: {studentId} ---")
+    log_to_file(f"\n--- BANVERSE INTELLIGENT HYBRID ENGINE: {studentId} ---")
     
-    # 1. FETCH COLLECTIONS (Robust Handling)
     collection_names = await db.list_collection_names()
     user_coll = "users" if "users" in collection_names else "Users"
     event_coll = "events" if "events" in collection_names else "Events"
     club_coll = "clubs" if "clubs" in collection_names else "Clubs"
 
-    # Fetch Student
-    student = None
-    try:
-        query_id = ObjectId(studentId) if isinstance(studentId, str) and len(studentId) == 24 else studentId
-        student = await db[user_coll].find_one({"_id": query_id})
-    except:
-        student = await db[user_coll].find_one({"_id": studentId})
-        
-    if not student:
-        log_to_file(f"CRITICAL ERROR: Student {studentId} not found in collection '{user_coll}'")
-        return {"error": "Student not found"}
+    # 1. FETCH BASE DATA
+    student = await db[user_coll].find_one({"_id": ObjectId(studentId) if len(str(studentId)) == 24 else studentId})
+    if not student: return {"error": "Student not found"}
     
-    # 2. COLLECT REAL BEHAVIORAL DATA
-    user_interests = student.get('interests', [])
-    if isinstance(user_interests, str): user_interests = [user_interests]
-    
-    joined_club_ids = student.get('joinedClubs', [])
-    club_keywords = []
-    if joined_club_ids:
-        for cid in joined_club_ids:
-            try:
-                c_id = ObjectId(str(cid)) if len(str(cid)) == 24 else cid
-                club_doc = await db[club_coll].find_one({"_id": c_id})
-                if club_doc:
-                    club_keywords.append(club_doc.get('name', ''))
-                    club_keywords.append(club_doc.get('category', ''))
-            except: pass
+    user_interests = [i.lower() for i in (student.get('interests', []) or [])]
+    joined_club_ids = [str(cid) for cid in (student.get('joinedClubs', []) or [])]
+    reg_event_ids = [str(eid) for eid in (student.get('registeredEvents', []) or [])]
 
-    reg_event_ids = student.get('registeredEvents', [])
-    event_keywords = []
-    if reg_event_ids:
-        for eid in reg_event_ids:
-            try:
-                e_id = ObjectId(str(eid)) if len(str(eid)) == 24 else eid
-                event_doc = await db[event_coll].find_one({"_id": e_id})
-                if event_doc: event_keywords.append(event_doc.get('category', ''))
-            except: pass
-
-    # COMBINE FOR TRUE PERSONALIZATION
-    interests = list(set([str(i).lower().strip() for i in (user_interests + club_keywords + event_keywords) if i]))
-    registered = [str(rid) for rid in (reg_event_ids or [])]
-    
-    # 3. FETCH ONLY UPCOMING EVENTS (today and future) & MATCH
     today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
-    all_events = await db[event_coll].find({"date": {"$gte": today}}).sort("date", 1).to_list(200)
-    log_to_file(f"Analyzing {len(all_events)} upcoming events (from {today.date()}) for user activity matching.")
+    upcoming_events = await db[event_coll].find({"date": {"$gte": today}}).to_list(100)
     
-    # 3. Recommendation Logic
-    recs = []
-    for event in all_events:
+    # Analyze Popularity (Trending)
+    sorted_by_popularity = sorted(upcoming_events, key=lambda x: len(x.get('participants', [])), reverse=True)
+    trending_ids = [str(e['_id']) for e in sorted_by_popularity[:5]]
+
+    scored_events = []
+    
+    for event in upcoming_events:
         eid = str(event['_id'])
-        title = event.get('title', 'Event')
+        if eid in reg_event_ids: continue
+        
+        title = event.get('title', '')
+        cat = event.get('category', '').lower()
+        desc = event.get('description', '').lower()
+        club_id = str(event.get('club', ''))
+        is_sponsored = event.get('isSponsored', False)
+        
+        # Scoring Logic (Internal weights)
+        score = 0.0
+        reasons = []
+        tags = []
 
-        # Skip events the user has already registered for
-        if eid in registered:
-            log_to_file(f"SKIPPING '{title}': User already registered.")
-            continue
+        # Interest match (Highest priority)
+        matched_kws = [k for k in user_interests if (k in title.lower() or k in cat or k in desc)]
+        if matched_kws:
+            score += 5.5
+            reasons.append(f"Direct match for your interest in {matched_kws[0].capitalize()}.")
+        
+        # Behavior match (High priority)
+        if club_id in joined_club_ids:
+            score += 3.0
+            reasons.append("Hosted by a club you've joined.")
+            tags.append("Recommended")
 
-        # Ensure we use lowercase for matching
-        low_interests = [i.lower().strip() for i in interests if i]
-        
-        # 3. RE-BALANCED SCORING (Single Pass Logic)
-        base_score = 0.05 
-        is_relevant = False
-        
-        event_title = event.get('title', '').lower()
-        event_desc = event.get('description', '').lower()
-        event_cat = event.get('category', '').lower()
-        
-        # Robust Club ID Extraction
-        club_id_val = event.get('club')
-        event_club_id_str = str(club_id_val)
-        user_joined_ids = [str(cid) for cid in joined_club_ids]
-        
-        # KEYWORD MATCHING: Search Title, Description, and Category
-        for kw in low_interests:
-            if kw in event_title: 
-                base_score += 0.65 # Title is the strongest signal
-                is_relevant = True
-            if kw in event_cat:
-                base_score += 0.4
-                is_relevant = True
-            if kw in event_desc:
-                base_score += 0.2
-                is_relevant = True
-        
-        # CLUB BEHAVIOR LAYER: Loyalty boost if from their own club
-        if event_club_id_str in user_joined_ids:
-            base_score += 0.35 
-            is_relevant = True
-            log_to_file(f"BEHAVIORAL MATCH: Event '{title}' from joined club.")
+        # Popularity match (Medium priority)
+        if eid in trending_ids:
+            score += 1.5
+            reasons.append("High student engagement—currently trending!")
+            tags.append("Trending")
 
-        # FINAL CALIBRATION
-        if not is_relevant:
-            continue
-            
-        final_score = min(1.0, base_score)
-        log_to_file(f"Event '{title}': Final Match Score {final_score:.2f}")
-            
-        # Get Club Name for Display
-        club_name = "Campus Club"
-        if club_id_val:
-            if isinstance(club_id_val, dict):
-                club_name = club_id_val.get('name', "Campus Club")
-            else:
-                try:
-                    c_id = ObjectId(event_club_id_str) if len(event_club_id_str) == 24 else club_id_val
-                    target_club = await db[club_coll].find_one({"_id": c_id})
-                    if target_club: club_name = target_club.get('name', "Campus Club")
-                except: pass
-            
-        recs.append({
+        # Recency match (Medium priority)
+        days_to_go = (event['date'].replace(tzinfo=timezone.utc) - today).days
+        if days_to_go <= 2:
+            score += 1.0
+            reasons.append("Happening very soon—don't miss out!")
+            tags.append("New")
+
+        # Sponsored boost (Slight increase)
+        if is_sponsored:
+            score += 0.5
+            tags.append("Sponsored")
+
+        # Map to 1-10
+        final_score = min(10.0, round(score, 1))
+        
+        # Category diversity check (Discovery logic)
+        is_discovery = len(matched_kws) == 0 and score > 2.0
+        if is_discovery:
+            tags.append("Explore")
+            reasons.append("Great way to explore outside your usual interests.")
+
+        # FILTERING RULE: Score must be >= 4.0
+        if final_score < 4.0 and not (eid in trending_ids): continue
+
+        scored_events.append({
             "_id": eid,
             "name": title,
-            "match_score": final_score,
+            "score": final_score,
+            "tags": tags[:3] or ["New"],
+            "reasons": reasons[:2] if reasons else ["A fresh activity on Banverse!"],
             "category": event.get('category', 'General'),
-            "clubName": club_name
+            "is_discovery": is_discovery,
+            "is_trending": eid in trending_ids
         })
-        
-    # --- FINAL FALLBACK: If no behavioral matches, show top upcoming events ---
-    if not recs:
-        log_to_file("FALLBACK: No personalized matches. Returning top upcoming events.")
-        top_events = await db[event_coll].find({"date": {"$gte": today}}).sort("date", 1).to_list(10)
-        for event in top_events:
-            recs.append({
-                "_id": str(event['_id']),
-                "name": event.get('title', 'Campus Event'),
-                "match_score": 0.5, # Default match
-                "category": event.get('category', 'General'),
-                "clubName": "Suggested for You"
-            })
+
+    # --- STRATEGIC SELECTION (Exactly 5 Events) ---
+    high_match = [e for e in scored_events if e['score'] >= 7.0 and not e['is_discovery']]
+    trending = [e for e in scored_events if e['is_trending']]
+    discovery = [e for e in scored_events if e['is_discovery']]
+
+    selection = []
+    # 2-3 High Match
+    selection.extend(sorted(high_match, key=lambda x: x['score'], reverse=True)[:3])
+    # 1 Trending (avoiding duplicates)
+    for t in sorted(trending, key=lambda x: x['score'], reverse=True):
+        if not any(s['_id'] == t['_id'] for s in selection):
+            selection.append(t)
+            break
+    # 1 Discovery (avoiding duplicates)
+    for d in sorted(discovery, key=lambda x: x['score'], reverse=True):
+        if not any(s['_id'] == d['_id'] for s in selection):
+            selection.append(d)
+            break
             
-    recs.sort(key=lambda x: x['match_score'], reverse=True)
-    final_recs = recs[:10]
-    
-    # --- PHASE 4: CLUB RECOMMENDATIONS (Precision Align) ---
-    recommended_clubs = []
+    # Final cleanup if selection is short
+    if len(selection) < 5:
+        remaining = [e for e in scored_events if not any(s['_id'] == e['_id'] for s in selection)]
+        selection.extend(sorted(remaining, key=lambda x: x['score'], reverse=True)[:5-len(selection)])
+
+    # Format output for the intelligent response
+    formatted_recs = selection[:5]
+    for r in formatted_recs:
+        r['priority_score'] = r['score'] # Maintain compatibility
+        r['reason'] = f"Reasons:\n- {r['reasons'][0]}" + (f"\n- {r['reasons'][1]}" if len(r['reasons']) > 1 else "")
+
+    # Club Recommendations (High-Impact Filtering)
+    user_dept = str(student.get('department', '') or student.get('domain', '')).lower()
+    club_recs = []
     all_clubs = await db[club_coll].find({"isActive": True}).to_list(100)
     
-    # If no clubs found yet, get any clubs
-    if not all_clubs:
-        all_clubs = await db[club_coll].find().to_list(20)
-
     for club in all_clubs:
-        club_id = str(club['_id'])
-        c_name = club.get('name', '')
+        cid = str(club['_id'])
+        if cid in joined_club_ids: continue
+        
+        c_name = club.get('name', '').lower()
         c_cat = club.get('category', '').lower()
         
-        c_score = 0.05
-        text_blob = f"{c_name} {c_cat}".lower()
-        
-        # Only boost if it matches interests or behavioral history
-        has_match = False
-        for kw in interests:
-            if kw in text_blob: 
-                c_score += 0.4
-                has_match = True
-            
-        if club_id in [str(c) for c in joined_club_ids]:
-            c_score += 0.5 # High match if already a member
-            has_match = True
-            
-        if has_match or not recs: # Fallback: always show some clubs if list is empty
-            recommended_clubs.append({
-                "_id": club_id,
-                "name": c_name,
-                "category": club.get('category', 'General'),
-                "logo": club.get('logo', ''),
-                "match_score": min(0.99, c_score + (0.3 if not has_match else 0))
-            })
-            
-    if not recommended_clubs and all_clubs:
-        for club in all_clubs[:6]:
-             recommended_clubs.append({
-                "_id": str(club['_id']),
-                "name": club.get('name', ''),
-                "category": club.get('category', 'General'),
-                "logo": club.get('logo', ''),
-                "match_score": 0.4
-            })
+        score = 3.5 # Lower fallback to trigger filtering
+        reason = "Expand your horizons with this popular society!"
 
-    recommended_clubs.sort(key=lambda x: x['match_score'], reverse=True)
-    
+        # Domain/Department Match
+        if user_dept and (user_dept in c_cat or user_dept in c_name):
+            score = 9.0
+            reason = f"Highly popular among students in your {user_dept.upper()} domain!"
+        
+        # Interest Match
+        elif any(i in c_cat or i in c_name for i in user_interests):
+            matched = [i for i in user_interests if (i in c_cat or i in c_name)][0]
+            score = 8.5
+            reason = f"Perfectly aligns with your interest in {matched.capitalize()}."
+        
+        # FILTERING RULE: Strictly only show if score > 4.0 (matches domain or interest)
+        if score <= 4.0: continue
+
+        club_recs.append({
+            "_id": cid,
+            "name": club.get('name'),
+            "category": club.get('category', 'General'),
+            "priority_score": score,
+            "reason": reason
+        })
+    club_recs.sort(key=lambda x: x['priority_score'], reverse=True)
+
     return {
-        "recommended_clubs": recommended_clubs[:6],
-        "recommended_domains": interests,
-        "recommended_events": final_recs
+        "recommended_events": formatted_recs,
+        "recommended_clubs": club_recs[:6],
+        "message": "Welcome back! Here's your personalized campus guide for today. 🎓",
+        "recommended_domains": user_interests
     }

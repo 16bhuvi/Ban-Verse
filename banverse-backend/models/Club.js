@@ -16,11 +16,19 @@ const clubSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        settings: {
+            restrictEventCreationToLeader: { type: Boolean, default: false },
+            requireLeaderApprovalForNotifications: { type: Boolean, default: false }
+        },
         vision: {
             type: String,
             default: "",
         },
         logo: {
+            type: String,
+            default: "",
+        },
+        banner: {
             type: String,
             default: "",
         },
@@ -66,6 +74,8 @@ const clubSchema = new mongoose.Schema(
             {
                 url: String,
                 caption: String,
+                uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+                category: String, // Team/Role name
                 uploadedAt: { type: Date, default: Date.now }
             }
         ],

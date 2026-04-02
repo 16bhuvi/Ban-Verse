@@ -99,12 +99,14 @@ router.get(["/dashboard", "/analytics"], adminOnly, async (req, res) => {
     }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// GET /api/admin/users  - Get all users (for dropdown + table)
-// ─────────────────────────────────────────────────────────────────────────────
+// GET /api/admin/users  - Get recent student users
 router.get("/users", adminOnly, async (req, res) => {
     try {
-        const users = await User.find({ globalRole: "student" }).select("-password").sort("-createdAt");
+        const users = await User.find({ globalRole: "student" })
+            .select("-password")
+            .sort("-createdAt")
+            .limit(100)
+            .lean();
         res.json(users);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch users" });
@@ -119,7 +121,9 @@ router.get("/clubs", adminOnly, async (req, res) => {
         const clubs = await Club.find()
             .populate("leaderId", "fullName email profileImage")
             .populate("leader", "fullName email profileImage")
-            .sort("-createdAt");
+            .sort("-createdAt")
+            .limit(50)
+            .lean();
         res.json(clubs);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch clubs" });
@@ -349,7 +353,9 @@ router.get("/events", adminOnly, async (req, res) => {
         const events = await Event.find()
             .populate("club", "name")
             .populate("createdBy", "fullName")
-            .sort("-date");
+            .sort("-date")
+            .limit(50)
+            .lean();
         res.json(events);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch events" });

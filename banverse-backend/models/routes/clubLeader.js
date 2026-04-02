@@ -7,28 +7,56 @@ const Event = require("../Event");
 const ClubMember = require("../ClubMember");
 const ClubApplication = require("../ClubApplication");
 const Notification = require("../Notification");
+const ClubRole = require("../ClubRole");
 const { authenticate, authorize } = require("../../middleware/authMiddleware");
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Middleware: verify user is leader of their club
-// ─────────────────────────────────────────────────────────────────────────────
+// Middleware: verify user is leader or core member of their club
 const verifyLeader = async (req, res, next) => {
     try {
+        // Check for dedicated ClubMember model (supports both leaders and core members)
         const membership = await ClubMember.findOne({
             userId: req.user.userId,
-            isLeader: true
+            clubId: req.params.clubId || req.query.clubId || null // Some routes use it
         });
-        if (!membership) {
+        
+        // If no specific clubId in URL, find the first relevant membership
+        let finalMembership = membership;
+        if (!finalMembership) {
+            finalMembership = await ClubMember.findOne({
+                userId: req.user.userId,
+                $or: [{ isLeader: true }, { membershipType: "Core Member" }, { roleId: { $ne: null } }]
+            }).populate("roleId");
+        } else {
+            await finalMembership.populate("roleId");
+        }
+
+        if (!finalMembership) {
             // Also check legacy field
             const legacyClub = await Club.findOne({ leader: req.user.userId });
             if (legacyClub) {
                 req.clubId = legacyClub._id;
                 req.club = legacyClub;
+                req.userClubPermissions = {
+                    canCreateEvents: true, canEditEvents: true, canSendNotifications: true,
+                    canManageMembers: true, canEditClubProfile: true, canUploadPhotos: true, canViewAnalytics: true
+                };
                 return next();
             }
-            return res.status(403).json({ error: "Access denied. You are not a club leader." });
+            return res.status(403).json({ error: "Access denied. You are not a club leader or core member." });
         }
-        req.clubId = membership.clubId;
+        
+        req.clubId = finalMembership.clubId;
+        
+        // Populate permissions for the route to check
+        req.userClubPermissions = finalMembership.isLeader ? {
+            canCreateEvents: true, canEditEvents: true, canSendNotifications: true,
+            canManageMembers: true, canEditClubProfile: true, canUploadPhotos: true, canViewAnalytics: true
+        } : (finalMembership.roleId?.permissions || {
+            canCreateEvents: false, canEditEvents: false, canSendNotifications: false,
+            canManageMembers: false, canEditClubProfile: false, canUploadPhotos: false, canViewAnalytics: false
+        });
+
         next();
     } catch (error) {
         console.error("Leader verify error:", error);
@@ -42,12 +70,29 @@ const leaderOnly = [authenticate, verifyLeader];
 // HELPER: get the leader's club, querying by both new and legacy field
 // ─────────────────────────────────────────────────────────────────────────────
 const getLeaderClub = async (userId) => {
-    return await Club.findOne({
+    const club = await Club.findOne({
         $or: [
             { leaderId: userId },
             { leader: userId }
         ]
     });
+    
+    if (club) return club;
+    
+    // If not direct leader, check memberships
+    const membership = await ClubMember.findOne({
+        userId,
+        $or: [
+           { membershipType: "Core Member" },
+           { roleId: { $ne: null } }
+        ]
+    });
+    
+    if (membership) {
+        return await Club.findById(membership.clubId);
+    }
+    
+    return null;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -63,8 +108,33 @@ router.get("/my-club", authenticate, async (req, res) => {
         const generalCount = await ClubMember.countDocuments({ clubId: club._id, membershipType: "General Member" });
         const eventCount = await Event.countDocuments({ club: club._id });
 
+        // Calculate the current user's specific permissions in this club context
+        const userMembership = await ClubMember.findOne({ userId: req.user.userId, clubId: club._id })
+            .populate("roleId");
+            
+        const isLeader = userMembership?.isLeader || club.leaderId?.toString() === req.user.userId.toString() || club.leader?.toString() === req.user.userId.toString();
+        
+        const permissions = isLeader ? {
+            canCreateEvents: true,
+            canEditEvents: true,
+            canSendNotifications: true,
+            canManageMembers: true,
+            canEditClubProfile: true,
+            canUploadPhotos: true,
+            canViewAnalytics: true
+        } : (userMembership?.roleId?.permissions || {
+            canCreateEvents: false,
+            canEditEvents: false,
+            canSendNotifications: false,
+            canManageMembers: false,
+            canEditClubProfile: false,
+            canUploadPhotos: false,
+            canViewAnalytics: false
+        });
+
         res.json({
             club,
+            permissions,
             stats: {
                 totalMembers: memberCount,
                 coreMembers: coreCount,
@@ -89,8 +159,10 @@ router.get("/dashboard", authenticate, async (req, res) => {
             return res.json({ club: null });
         }
 
-        // Also populate old-style members for backward compat
+        // Also populate old-style members and leader for backward compat/security
         club = await Club.findById(club._id)
+            .populate("leaderId", "fullName email profileImage")
+            .populate("leader", "fullName email profileImage")
             .populate({ path: "members.user", select: "fullName email createdAt profileImage", strictPopulate: false })
             .lean();
 
@@ -134,6 +206,30 @@ router.get("/dashboard", authenticate, async (req, res) => {
         const engagementScore = Math.min(100, Math.round(
             (totalMembers * 2) + (attendanceRate * 0.5) + (totalEvents * 5)
         ));
+
+        // Permissions logic
+        const userMembership = await ClubMember.findOne({ userId: req.user.userId, clubId })
+            .populate("roleId");
+            
+        const isLeader = userMembership?.isLeader || club.leaderId?._id?.toString() === req.user.userId.toString() || club.leader?._id?.toString() === req.user.userId.toString();
+        
+        const permissions = isLeader ? {
+            canCreateEvents: true, 
+            canEditEvents: true,
+            canSendNotifications: true,
+            canManageMembers: true,
+            canEditClubProfile: true,
+            canUploadPhotos: true,
+            canViewAnalytics: true
+        } : (userMembership?.roleId?.permissions || {
+            canCreateEvents: false,
+            canEditEvents: false,
+            canSendNotifications: false,
+            canManageMembers: false,
+            canEditClubProfile: false,
+            canUploadPhotos: false,
+            canViewAnalytics: false
+        });
 
         // Domain distribution from ClubMembers
         const domainStats = {};
@@ -385,6 +481,65 @@ router.get("/domains/:domainId/members", leaderOnly, async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// ROLE MANAGEMENT (DYNAMIC TEAMS)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// GET /api/club-leader/roles
+router.get("/roles", leaderOnly, async (req, res) => {
+    try {
+        const club = await getLeaderClub(req.user.userId);
+        const roles = await ClubRole.find({ clubId: club._id }).sort('tierLevel');
+        res.json(roles);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch roles" });
+    }
+});
+
+// POST /api/club-leader/roles
+router.post("/roles", leaderOnly, async (req, res) => {
+    try {
+        const club = await getLeaderClub(req.user.userId);
+        const roleData = { ...req.body, clubId: club._id };
+        const newRole = await ClubRole.create(roleData);
+        res.status(201).json(newRole);
+    } catch (error) {
+        if (error.code === 11000) return res.status(400).json({ error: "Role name already exists" });
+        res.status(500).json({ error: "Failed to create role" });
+    }
+});
+
+// PUT /api/club-leader/roles/:roleId
+router.put("/roles/:roleId", leaderOnly, async (req, res) => {
+    try {
+        const club = await getLeaderClub(req.user.userId);
+        const role = await ClubRole.findOneAndUpdate(
+            { _id: req.params.roleId, clubId: club._id },
+            req.body,
+            { new: true }
+        );
+        if (!role) return res.status(404).json({ error: "Role not found" });
+        res.json(role);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to update role" });
+    }
+});
+
+// DELETE /api/club-leader/roles/:roleId
+router.delete("/roles/:roleId", leaderOnly, async (req, res) => {
+    try {
+        const club = await getLeaderClub(req.user.userId);
+        const role = await ClubRole.findOneAndDelete({ _id: req.params.roleId, clubId: club._id });
+        if (!role) return res.status(404).json({ error: "Role not found" });
+
+        // Wipe this role from any assigned members (demote them to general participants)
+        await ClubMember.updateMany({ roleId: role._id }, { $unset: { roleId: 1 } });
+        res.json({ message: "Role deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to delete role" });
+    }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // MEMBER MANAGEMENT
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -401,6 +556,7 @@ router.get("/members", leaderOnly, async (req, res) => {
 
         let members = await ClubMember.find(filter)
             .populate("userId", "fullName email department year profileImage")
+            .populate("roleId")
             .sort("-joinedAt");
 
         if (search) {
@@ -417,10 +573,10 @@ router.get("/members", leaderOnly, async (req, res) => {
     }
 });
 
-// PUT /api/club-leader/members/:memberId/promote - Promote General → Core
+// PUT /api/club-leader/members/:memberId/promote - Assign a Dynamic Role
 router.put("/members/:memberId/promote", leaderOnly, async (req, res) => {
     try {
-        const { membershipType, domain } = req.body;
+        const { roleId, membershipType, domain, customTitle } = req.body;
         const club = await getLeaderClub(req.user.userId);
         if (!club) return res.status(404).json({ error: "Club not found" });
 
@@ -432,14 +588,38 @@ router.put("/members/:memberId/promote", leaderOnly, async (req, res) => {
         if (!member) return res.status(404).json({ error: "Member not found" });
         if (member.isLeader) return res.status(400).json({ error: "Cannot change leader's role" });
 
+        if (roleId !== undefined) member.roleId = roleId || null; // Null drops them from structured team
+        
+        // If a student is being assigned to a specific team or given a custom title,
+        // they should automatically be upgraded to a "Core Member" so they can access the dashboard.
+        if (roleId || customTitle) {
+            member.membershipType = "Core Member";
+            member.role = "core";
+        }
+
+        // Legacy support updates (if explicitly requested)
         if (membershipType) {
             member.membershipType = membershipType;
             member.role = membershipType === "Core Member" ? "core" : "member";
         }
         if (domain) member.domain = domain;
+        if (customTitle !== undefined) member.customTitle = customTitle;
+
         await member.save();
 
-        res.json({ message: "Member updated successfully", member });
+        // Send Notification to user about role change
+        try {
+            const roleObj = roleId ? await ClubRole.findById(roleId) : null;
+            const roleName = customTitle || (roleObj ? roleObj.roleName : (membershipType || "Member"));
+            await Notification.create({
+                userId: member.userId,
+                message: `You've been assigned to the ${roleName} in ${club.name}! Check your Club Dashboard.`
+            });
+        } catch (notifErr) {
+            console.error("Failed to send role update notification:", notifErr);
+        }
+
+        res.json({ message: "Member promoted to role successfully", member });
     } catch (error) {
         res.status(500).json({ error: "Promotion failed" });
     }
@@ -494,15 +674,18 @@ router.get("/events", authenticate, async (req, res) => {
 // POST /api/club-leader/create-event
 router.post("/create-event", leaderOnly, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
-        if (!club) {
-            return res.status(400).json({ error: "Please set up your club profile before creating an event." });
+        if (!req.clubId) {
+            return res.status(400).json({ error: "No club relationship found for this profile." });
+        }
+
+        if (!req.userClubPermissions.canCreateEvents) {
+            return res.status(403).json({ error: "permission-denied: You do not have authority to create events." });
         }
 
         const newEvent = new Event({
             ...req.body,
             creator: req.user.userId,
-            club: club._id
+            club: req.clubId
         });
 
         await newEvent.save();
@@ -516,8 +699,12 @@ router.post("/create-event", leaderOnly, async (req, res) => {
 // PUT /api/club-leader/edit-event/:id
 router.put("/edit-event/:id", leaderOnly, async (req, res) => {
     try {
+        if (!req.userClubPermissions.canEditEvents) {
+            return res.status(403).json({ error: "permission-denied: You do not have authority to edit events." });
+        }
+
         const event = await Event.findOneAndUpdate(
-            { _id: req.params.id, creator: req.user.userId },
+            { _id: req.params.id, club: req.clubId },
             req.body,
             { new: true }
         );
@@ -561,6 +748,10 @@ router.post("/notify", leaderOnly, async (req, res) => {
         const { message, target } = req.body;
         const club = await getLeaderClub(req.user.userId);
 
+        if (!req.userClubPermissions.canSendNotifications) {
+            return res.status(403).json({ error: "permission-denied: Your role does not allow broadcasting announcements." });
+        }
+
         let userIds = [];
         if (target === "members") {
             const members = await ClubMember.find({ clubId: club._id });
@@ -570,9 +761,8 @@ router.post("/notify", leaderOnly, async (req, res) => {
         }
 
         const notifications = userIds.map(uid => ({
-            user: uid,
-            message: `[${club.name}] ${message}`,
-            type: "announcement"
+            userId: uid,
+            message: `[${club.name}] ${message}`
         }));
 
         await Notification.insertMany(notifications);
@@ -585,10 +775,10 @@ router.post("/notify", leaderOnly, async (req, res) => {
 // PUT /api/club-leader/update-profile
 router.put("/update-profile", leaderOnly, async (req, res) => {
     try {
-        const { name, description, vision, category, logo, email, phone, instagram, linkedin } = req.body;
+        const { name, description, vision, category, logo, banner, email, phone, instagram, linkedin } = req.body;
         const club = await Club.findOneAndUpdate(
             { $or: [{ leaderId: req.user.userId }, { leader: req.user.userId }] },
-            { name, description, vision, category, logo, email, phone, instagram, linkedin },
+            { name, description, vision, category, logo, banner, email, phone, instagram, linkedin },
             { new: true, upsert: false }
         );
         if (!club) return res.status(404).json({ error: "Club not found" });
@@ -618,6 +808,62 @@ router.get("/export", leaderOnly, async (req, res) => {
         return res.send(csv);
     } catch (error) {
         res.status(500).json({ error: "Export failed" });
+    }
+});
+
+// POST /api/club-leader/gallery/upload
+router.post("/gallery/upload", leaderOnly, async (req, res) => {
+    try {
+        const { image, caption } = req.body;
+        if (!image) return res.status(400).json({ error: "Image is required" });
+
+        const club = await getLeaderClub(req.user.userId);
+        if (!club) return res.status(404).json({ error: "Club not found" });
+
+        if (!req.userClubPermissions.canUploadPhotos) {
+            return res.status(403).json({ error: "permission-denied: You do not have authority to upload gallery photos." });
+        }
+
+        // Identify the uploader's role/team
+        const membership = await ClubMember.findOne({ userId: req.user.userId, clubId: club._id })
+            .populate("roleId");
+
+        let teamLabel = "Club Member"; 
+        if (membership.isLeader) teamLabel = "Club Leader";
+        else if (membership.roleId) teamLabel = membership.roleId.roleName;
+
+        club.gallery.push({
+            url: image, // Base64 for now as per this app's pattern
+            caption: caption || "",
+            uploadedBy: req.user.userId,
+            category: teamLabel
+        });
+
+        await club.save();
+        res.json({ message: "Photo added to gallery", gallery: club.gallery });
+    } catch (error) {
+        console.error("Gallery upload error:", error);
+        res.status(500).json({ error: "Failed to upload photo" });
+    }
+});
+
+// DELETE /api/club-leader/gallery/photo/:photoId
+router.delete("/gallery/photo/:photoId", leaderOnly, async (req, res) => {
+    try {
+        const { photoId } = req.params;
+        const club = await getLeaderClub(req.user.userId);
+        if (!club) return res.status(404).json({ error: "Club not found" });
+
+        if (!req.userClubPermissions.canUploadPhotos) {
+            return res.status(403).json({ error: "permission-denied: You do not have authority to manage gallery moments." });
+        }
+
+        club.gallery = club.gallery.filter(p => p._id.toString() !== photoId);
+        await club.save();
+        res.json({ message: "Photo removed from gallery", gallery: club.gallery });
+    } catch (error) {
+        console.error("Gallery delete error:", error);
+        res.status(500).json({ error: "Failed to delete photo" });
     }
 });
 

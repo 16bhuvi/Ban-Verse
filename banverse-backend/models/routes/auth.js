@@ -140,6 +140,46 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// 1.5 Resend OTP
+router.post("/resend-otp", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email is required." });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found." });
+    if (user.isVerified) return res.status(400).json({ error: "Account already verified." });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
+
+    user.otp = otp;
+    user.otpExpiry = otpExpiry;
+    await user.save();
+
+    // Send OTP Email
+    await transporter.sendMail({
+      from: `"Ban-verse" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your New OTP for Ban-verse",
+      html: `
+        <div style="font-family: sans-serif; padding: 20px; color: #333;">
+          <h2 style="color: #6366f1;">New Verification Code</h2>
+          <p>Your new OTP for account verification is:</p>
+          <h1 style="color: #6366f1; letter-spacing: 5px; background: #f3f4f6; padding: 10px; display: inline-block;">${otp}</h1>
+          <p>This code will expire in 5 minutes.</p>
+        </div>
+      `,
+    });
+
+    console.log(`📧 New OTP sent to ${email}: ${otp}`);
+    res.status(200).json({ message: "A new OTP has been sent to your email." });
+  } catch (error) {
+    console.error("Resend OTP error:", error);
+    res.status(500).json({ error: "Failed to resend OTP." });
+  }
+});
+
 // 2. Verify OTP
 router.post("/verify-otp", async (req, res) => {
   try {

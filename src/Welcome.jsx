@@ -44,7 +44,7 @@ const Counter = ({ endValue, suffix = "" }) => {
 const Welcome = () => {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
-  const [stats, setStats] = useState({ students: 5000, eventsMonthly: 10, departments: 15 });
+  const [stats, setStats] = useState({ students: 5000, eventsMonthly: 10, activeClubs: 15 });
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -55,7 +55,7 @@ const Welcome = () => {
           setStats({
             students: data.students ?? 0,
             eventsMonthly: data.eventsMonthly ?? 0,
-            departments: data.departments ?? 0
+            activeClubs: data.activeClubs ?? 0
           });
         }
       } catch (error) {
@@ -160,8 +160,8 @@ const Welcome = () => {
             <p>Events Monthly</p>
           </div>
           <div className="stat-item">
-            <Counter endValue={stats.departments} suffix="+" />
-            <p>Departments</p>
+            <Counter endValue={stats.activeClubs} suffix="+" />
+            <p>Active Clubs</p>
           </div>
         </div>
       </section>

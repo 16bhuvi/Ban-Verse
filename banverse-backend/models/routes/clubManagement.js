@@ -21,7 +21,8 @@ router.get("/:clubId/my-role", authenticate, async (req, res) => {
             return res.json({ role: "guest" });
         }
 
-        res.json({ role: membership.role, domain: membership.domain });
+        const role = membership.membershipType === "Core Member" ? "core" : membership.role;
+        res.json({ role, domain: membership.domain });
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch role" });
     }

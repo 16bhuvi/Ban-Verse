@@ -50,13 +50,36 @@ const VerifyOtp = () => {
     }
   };
 
+  const handleResend = async () => {
+    setError('');
+    const resendEmail = localStorage.getItem("verifyEmail") || email;
+    if (!resendEmail) return setError("User email not found. Please register again.");
+
+    try {
+      const response = await fetch("http://localhost:5001/api/auth/resend-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: resendEmail })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("A new 6-digit code has been sent to your email!");
+      } else {
+        setError(data.error || "Resend failed.");
+      }
+    } catch (err) {
+      setError("Network error. Could not resend code.");
+    }
+  };
+
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
         <img src={logo} alt="Logo" className="auth-logo" />
         <h2>Verify Account</h2>
         <p className="subtitle">We've sent a 6-digit OTP to <b>{email}</b></p>
-
+ 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="input-group">
             <input
@@ -71,16 +94,16 @@ const VerifyOtp = () => {
             />
             <label style={{ left: '50%', transform: 'translateX(-50%)' }}>6-Digit Code</label>
           </div>
-
+ 
           {error && <p className="error-msg" style={{ textAlign: 'center' }}>{error}</p>}
-
+ 
           <button className="auth-btn" type="submit" disabled={loading}>
             {loading ? "Verifying..." : "Confirm & Activate"}
           </button>
         </form>
-
+ 
         <div className="auth-footer">
-          Didn't receive the code? <span style={{ color: '#6366f1', cursor: 'pointer', fontWeight: '700' }}>Resend</span>
+          Didn't receive the code? <span onClick={handleResend} style={{ color: '#6366f1', cursor: 'pointer', fontWeight: '700' }}>Resend</span>
         </div>
       </div>
     </div>

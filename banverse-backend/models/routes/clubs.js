@@ -152,18 +152,41 @@ router.post("/join/:clubId", authenticate, async (req, res) => {
             return res.status(404).json({ error: "Club not found" });
         }
 
+        // Check if the joining user is the leader
+        const isLeader = club.leaderId?.toString() === userId.toString() || 
+                        club.leader?.toString() === userId.toString();
+
         // Update User and add 10 points
         await User.findByIdAndUpdate(userId, {
             $addToSet: { joinedClubs: clubId },
             $inc: { points: 10 }
         });
 
-        // Update Club legacy members
+        // Ensure ClubMember document exists
+        let membership = await ClubMember.findOne({ userId, clubId });
+        if (!membership) {
+            membership = await ClubMember.create({
+                userId,
+                clubId,
+                membershipType: isLeader ? "Core Member" : "General Member",
+                isLeader: isLeader,
+                role: isLeader ? "leader" : "member",
+                joinedAt: new Date()
+            });
+        } else if (isLeader && !membership.isLeader) {
+            // Already a member? Update to leader status if they finally joined properly
+            membership.isLeader = true;
+            membership.membershipType = "Core Member";
+            membership.role = "leader";
+            await membership.save();
+        }
+
+        // Update Club legacy members array for backward compatibility
         await Club.findByIdAndUpdate(clubId, {
             $addToSet: {
                 members: {
                     user: userId,
-                    role: "member",
+                    role: isLeader ? "leader" : "member",
                     domain: "General",
                     joinedAt: new Date()
                 }

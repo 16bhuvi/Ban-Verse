@@ -31,6 +31,14 @@ const clubMemberSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         },
+        roleId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "ClubRole"
+        },
+        customTitle: {
+            type: String,
+            default: ""
+        },
         joinedAt: {
             type: Date,
             default: Date.now

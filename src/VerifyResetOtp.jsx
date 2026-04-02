@@ -29,6 +29,7 @@ const VerifyResetOtp = () => {
       if (res.ok) {
         alert("✅ OTP verified");
         localStorage.setItem("otpVerified", "true");
+        localStorage.setItem("resetOtp", otp);
         navigate("/ResetPassword");
       } else {
         alert(data.error || "Invalid OTP");

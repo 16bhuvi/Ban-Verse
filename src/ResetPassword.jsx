@@ -49,6 +49,7 @@ const ResetPassword = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: localStorage.getItem("resetEmail"),
+          otp: localStorage.getItem("resetOtp"),
           newPassword: form.password
         }),
       });
@@ -58,6 +59,7 @@ const ResetPassword = () => {
       if (res.ok) {
         localStorage.removeItem("resetEmail");
         localStorage.removeItem("otpVerified");
+        localStorage.removeItem("resetOtp");
         navigate("/login");
       } else {
         setError(data.error || "Failed to reset password.");

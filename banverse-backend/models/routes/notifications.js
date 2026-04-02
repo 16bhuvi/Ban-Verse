@@ -22,6 +22,19 @@ router.get("/", authenticate, async (req, res) => {
     }
 });
 
+// PATCH /api/notifications/mark-all-read
+router.patch("/mark-all-read", authenticate, async (req, res) => {
+    try {
+        await Notification.updateMany(
+            { userId: req.user.userId, read: false },
+            { $set: { read: true } }
+        );
+        res.json({ message: "All notifications marked as read" });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to mark all as read" });
+    }
+});
+
 // PATCH /api/notifications/:id/read
 router.patch("/:id/read", authenticate, async (req, res) => {
     try {
