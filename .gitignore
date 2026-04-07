@@ -21,3 +21,35 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+*.log
+debug.log*
+npm-debug.log*
+
+# Environment files
+.env
+.env.*
+
+# Node modules (already present but safe)
+node_modules/
+
+# Build folders
+dist/
+build/
+
+# OS files
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Temporary files
+temp/
+*.tmp
