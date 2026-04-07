@@ -755,7 +755,7 @@ router.delete("/delete-event/:id", leaderOnly, async (req, res) => {
         res.json({ message: "Event deleted successfully" });
     } catch (error) {
         console.error("Delete Event Error:", error);
-        res.status(500).json({ error: "Deletion failed" });
+        res.status(500).json({ error: "Deletion failed", details: error.message });
     }
 });
 

@@ -297,7 +297,7 @@ const ClubDashboard = () => {
       showToast('Event deleted successfully');
       fetchClubData();
     } catch (err) {
-      showToast('Deletion failed', 'error');
+      showToast(err.response?.data?.details || err.response?.data?.error || 'Deletion failed', 'error');
     }
   };
 
