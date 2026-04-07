@@ -1,3 +1,5 @@
-flask
-transformers
+fastapi
+uvicorn
+motor
+python-dotenv
 pymongo

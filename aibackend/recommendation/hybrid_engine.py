@@ -146,6 +146,7 @@ async def get_hybrid_recommendations(db, studentId):
     formatted_recs = selection[:5]
     for r in formatted_recs:
         r['priority_score'] = r['score']
+        r['match_score'] = r['score']  # Fixed: Match script expects this
         r['reason'] = f"Reasons:\n- {r['reasons'][0]}" + (
             f"\n- {r['reasons'][1]}" if len(r['reasons']) > 1 else ""
         )

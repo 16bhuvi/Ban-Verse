@@ -2,7 +2,7 @@ import asyncio
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
-MONGO_URI = "mongodb+srv://banverseUser:Base206%4028@banversecluster.yph1gnu.mongodb.net/?appName=BanverseCluster"
+MONGO_URI = "mongodb+srv://banverseUser:Banverse26%4002@banversecluster.yph1gnu.mongodb.net/?appName=BanverseCluster"
 
 async def test():
     print("Connecting...")

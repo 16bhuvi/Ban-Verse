@@ -14,7 +14,7 @@ load_dotenv()
 app = FastAPI(title="Banverse AI Engine")
 
 # MongoDB Configuration - must match Node.js/Mongoose default ("test" when no DB in URI)
-MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://banverseUser:Base206%4028@banversecluster.yph1gnu.mongodb.net/?appName=BanverseCluster")
+MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://banverseUser:Banverse26%4002@banversecluster.yph1gnu.mongodb.net/?appName=BanverseCluster")
 DB_NAME = os.getenv("DB_NAME", "test")  # Mongoose uses "test" by default when no DB in URI
 
 client = AsyncIOMotorClient(MONGO_URI)

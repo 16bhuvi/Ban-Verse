@@ -3,7 +3,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from recommendation.hybrid_engine import get_hybrid_recommendations
 import os
 
-MONGO_URI = "mongodb+srv://banverseUser:Base206%4028@banversecluster.yph1gnu.mongodb.net/?appName=BanverseCluster"
+MONGO_URI = "mongodb+srv://banverseUser:Banverse26%4002@banversecluster.yph1gnu.mongodb.net/?appName=BanverseCluster"
 STUDENT_ID = "69a508e2a65131d65a8082f7"
 
 async def test():
