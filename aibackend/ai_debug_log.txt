@@ -3283,3 +3283,5 @@ Upcoming events (naive UTC compare): 1
 Scored events: 1
 Active clubs: 2
 Returning 1 events, 1 clubs
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active

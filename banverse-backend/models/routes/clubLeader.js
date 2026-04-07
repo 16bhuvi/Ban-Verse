@@ -739,9 +739,22 @@ router.put("/edit-event/:id", leaderOnly, async (req, res) => {
 // DELETE /api/club-leader/delete-event/:id
 router.delete("/delete-event/:id", leaderOnly, async (req, res) => {
     try {
-        await Event.findOneAndDelete({ _id: req.params.id, creator: req.user.userId });
+        if (!req.userClubPermissions.canEditEvents) {
+            return res.status(403).json({ error: "permission-denied: You do not have authority to delete events." });
+        }
+
+        const deletedEvent = await Event.findOneAndDelete({ 
+            _id: req.params.id, 
+            club: req.clubId 
+        });
+
+        if (!deletedEvent) {
+            return res.status(404).json({ error: "Event not found or doesn't belong to your club." });
+        }
+
         res.json({ message: "Event deleted successfully" });
     } catch (error) {
+        console.error("Delete Event Error:", error);
         res.status(500).json({ error: "Deletion failed" });
     }
 });
