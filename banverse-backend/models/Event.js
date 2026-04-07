@@ -40,7 +40,19 @@ const eventSchema = new mongoose.Schema({
   isPast: {
     type: Boolean,
     default: false
+  },
+  results: {
+    published: { type: Boolean, default: false },
+    winners: [
+      {
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        position: { type: String }, // "1st", "2nd", "3rd", etc.
+        certificateUrl: { type: String } // Base64 or Cloudinary URL for the unique certificate
+      }
+    ]
   }
 }, { timestamps: true, strictPopulate: false });
+
+eventSchema.index({ club: 1, date: -1 });
 
 module.exports = mongoose.models.Event || mongoose.model("Event", eventSchema);

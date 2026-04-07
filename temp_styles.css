@@ -1,0 +1,77 @@
+
+/* Premium Badges & Directory Enhancements */
+.badge-premium {
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: inline-flex !important;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.badge-student { 
+  background: rgba(148, 163, 184, 0.1) !important; 
+  color: #cbd5e1 !important; 
+  border: 1px solid rgba(148, 163, 184, 0.3) !important; 
+}
+
+.badge-admin { 
+  background: rgba(239, 68, 68, 0.1) !important; 
+  color: #f87171 !important; 
+  border: 1px solid rgba(239, 68, 68, 0.3) !important; 
+}
+
+.badge-leader-gold { 
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05)) !important; 
+  color: #fbbf24 !important; 
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+
+.role-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  align-items: flex-start !important;
+}
+
+.promote-btn-fancy {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  padding: 0.65rem 1.25rem !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4) !important;
+  width: fit-content !important;
+  white-space: nowrap !important;
+}
+
+.promote-btn-fancy:hover {
+  transform: translateY(-2.5px) scale(1.03) !important;
+  box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.6) !important;
+  background: linear-gradient(135deg, #4f46e5, #4338ca) !important;
+}
+
+.status-label-active {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: #10b981 !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  padding: 0.5rem 1rem !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  border-radius: 10px !important;
+  width: fit-content !important;
+}

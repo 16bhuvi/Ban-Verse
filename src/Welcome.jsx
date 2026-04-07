@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
 import logo from "./banasthali-logo.jpg";
 import "./Welcome.css";
+import config from "./config";
 
 const Counter = ({ endValue, suffix = "" }) => {
   const [count, setCount] = useState(0);
@@ -49,7 +50,7 @@ const Welcome = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch("http://localhost:5001/api/dashboard/public-stats");
+        const response = await fetch(`${config.API_BASE_URL}/api/dashboard/public-stats`);
         if (response.ok) {
           const data = await response.json();
           setStats({
@@ -110,10 +111,10 @@ const Welcome = () => {
             Ban-verse
           </div>
           <div className="lp-nav-links">
-            <ScrollLink to="hero" smooth={true} duration={500}>Home</ScrollLink>
-            <ScrollLink to="problem" smooth={true} duration={500}>Problem</ScrollLink>
-            <ScrollLink to="solution" smooth={true} duration={500}>Solution</ScrollLink>
-            <ScrollLink to="steps" smooth={true} duration={500}>Steps</ScrollLink>
+            <ScrollLink to="hero" smooth={true} duration={500}>Discover</ScrollLink>
+            <ScrollLink to="problem" smooth={true} duration={500}>Challenges</ScrollLink>
+            <ScrollLink to="solution" smooth={true} duration={500}>Features</ScrollLink>
+            <ScrollLink to="steps" smooth={true} duration={500}>Journey</ScrollLink>
           </div>
           <div className="lp-nav-btns">
             <button className="lp-btn-login" onClick={() => navigate("/login")}>Login</button>
@@ -169,7 +170,7 @@ const Welcome = () => {
       {/* Problem Section */}
       <section id="problem" className="lp-section problem">
         <div className="lp-section-header reveal reveal-left">
-          <h2>The Problem</h2>
+          <h2>The Challenge</h2>
           <p>
             Campus information is scattered. Students miss opportunities while
             club administrators struggle to reach their audience effectively.
@@ -203,7 +204,7 @@ const Welcome = () => {
       {/* Solution Section */}
       <section id="solution" className="lp-section solution">
         <div className="lp-section-header reveal reveal-left">
-          <h2>The Ban-verse Solution</h2>
+          <h2>Our Features</h2>
           <p>
             A unified, intelligent, and visually structured campus ecosystem
             that empowers both students and administrators.
@@ -237,7 +238,7 @@ const Welcome = () => {
       {/* How It Works Section */}
       <section id="steps" className="lp-section how-it-works">
         <div className="lp-section-header reveal reveal-up">
-          <h2>How It Works</h2>
+          <h2>Your Journey</h2>
           <p>
             Get started with Ban-verse in four simple steps and transform your
             campus experience.
@@ -340,10 +341,10 @@ const Welcome = () => {
             <div className="footer-links">
               <h4>Platform</h4>
               <ul>
-                <li><ScrollLink to="hero" smooth={true} duration={500}>Home</ScrollLink></li>
-                <li><ScrollLink to="problem" smooth={true} duration={500}>The Problem</ScrollLink></li>
-                <li><ScrollLink to="solution" smooth={true} duration={500}>Our Solution</ScrollLink></li>
-                <li><ScrollLink to="steps" smooth={true} duration={500}>How It Works</ScrollLink></li>
+                <li><ScrollLink to="hero" smooth={true} duration={500}>Discover</ScrollLink></li>
+                <li><ScrollLink to="problem" smooth={true} duration={500}>The Challenge</ScrollLink></li>
+                <li><ScrollLink to="solution" smooth={true} duration={500}>Our Features</ScrollLink></li>
+                <li><ScrollLink to="steps" smooth={true} duration={500}>Your Journey</ScrollLink></li>
               </ul>
             </div>
             <div className="footer-links">

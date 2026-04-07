@@ -37,9 +37,7 @@ router.get("/advanced", authenticate, async (req, res) => {
         }
 
         const events = await Event.find(query)
-            .populate("participants", "fullName")
-            .populate("attendedParticipants", "fullName")
-            .populate("club", "name category")
+            .populate("club", "_id name category")
             .lean();
 
         if (events.length === 0) {

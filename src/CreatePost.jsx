@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "./createPost.css";
 import { ArrowLeft, AlertCircle, Calendar, Clock, MapPin, Award, PlusCircle, Link as LinkIcon, Phone } from "lucide-react";
+import config from "./config";
+
+const API = config.API_BASE_URL;
 
 export default function CreatePost() {
   const navigate = useNavigate();
@@ -42,12 +45,12 @@ export default function CreatePost() {
     try {
       const token = localStorage.getItem("token");
       if (editEvent) {
-        await axios.put(`http://localhost:5001/api/club-leader/edit-event/${editEvent._id}`,
+        await axios.put(`${API}/api/club-leader/edit-event/${editEvent._id}`,
           { ...form, poster },
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
-        await axios.post("http://localhost:5001/api/club-leader/create-event",
+        await axios.post(`${API}/api/club-leader/create-event`,
           { ...form, poster },
           { headers: { Authorization: `Bearer ${token}` } }
         );

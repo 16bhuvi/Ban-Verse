@@ -5,6 +5,8 @@ import logo from './banasthali-logo.jpg';
 import eyeIcon from './images/eye.png';
 import hiddenIcon from './images/hidden.png';
 
+import config from "./config";
+
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -53,7 +55,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5001/api/auth/login", {
+      const response = await fetch(`${config.API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)

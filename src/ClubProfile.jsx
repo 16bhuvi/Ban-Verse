@@ -7,6 +7,8 @@ import {
 import "./ClubDashboard.css";
 import "./ClubProfile.css";
 
+import config from "./config";
+
 const ClubProfile = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -37,7 +39,7 @@ const ClubProfile = () => {
           return navigate("/home");
         }
 
-        const res = await axios.get("http://localhost:5001/api/club-leader/dashboard", {
+        const res = await axios.get(`${config.API_BASE_URL}/api/club-leader/dashboard`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -91,7 +93,7 @@ const ClubProfile = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      await axios.put("http://localhost:5001/api/club-leader/update-profile", form, {
+      await axios.put(`${config.API_BASE_URL}/api/club-leader/update-profile`, form, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert("Profile updated successfully!");

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import './Auth.css';
 import logo from './banasthali-logo.jpg';
 
+import config from "./config";
+
 const VerifyOtp = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState('');
@@ -17,7 +19,7 @@ const VerifyOtp = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5001/api/auth/verify-otp", {
+      const response = await fetch(`${config.API_BASE_URL}/api/auth/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp })
@@ -56,7 +58,7 @@ const VerifyOtp = () => {
     if (!resendEmail) return setError("User email not found. Please register again.");
 
     try {
-      const response = await fetch("http://localhost:5001/api/auth/resend-otp", {
+      const response = await fetch(`${config.API_BASE_URL}/api/auth/resend-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: resendEmail })

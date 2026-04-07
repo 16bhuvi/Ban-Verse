@@ -1,171 +1,190 @@
 from bson import ObjectId
 from datetime import datetime, timezone
-import random
 
 def log_to_file(msg):
     with open("ai_debug_log.txt", "a", encoding="utf-8") as f:
         f.write(msg + "\n")
 
 async def get_hybrid_recommendations(db, studentId):
-    log_to_file(f"\n--- BANVERSE INTELLIGENT HYBRID ENGINE: {studentId} ---")
-    
+    log_to_file(f"\n--- BANVERSE HYBRID ENGINE: {studentId} ---")
+
     collection_names = await db.list_collection_names()
     user_coll = "users" if "users" in collection_names else "Users"
     event_coll = "events" if "events" in collection_names else "Events"
     club_coll = "clubs" if "clubs" in collection_names else "Clubs"
+    log_to_file(f"Collections found: {collection_names}")
 
-    # 1. FETCH BASE DATA
-    student = await db[user_coll].find_one({"_id": ObjectId(studentId) if len(str(studentId)) == 24 else studentId})
-    if not student: return {"error": "Student not found"}
-    
+    # 1. FETCH STUDENT
+    try:
+        oid = ObjectId(studentId) if len(str(studentId)) == 24 else studentId
+        student = await db[user_coll].find_one({"_id": oid})
+    except Exception as e:
+        log_to_file(f"ObjectId error: {e}")
+        student = await db[user_coll].find_one({"_id": studentId})
+
+    if not student:
+        log_to_file("Student not found")
+        return {"error": "Student not found"}
+
     user_interests = [i.lower() for i in (student.get('interests', []) or [])]
     joined_club_ids = [str(cid) for cid in (student.get('joinedClubs', []) or [])]
     reg_event_ids = [str(eid) for eid in (student.get('registeredEvents', []) or [])]
+    log_to_file(f"Student: {student.get('fullName')}, interests: {user_interests}")
 
-    today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
-    upcoming_events = await db[event_coll].find({"date": {"$gte": today}}).to_list(100)
-    
-    # Analyze Popularity (Trending)
-    sorted_by_popularity = sorted(upcoming_events, key=lambda x: len(x.get('participants', [])), reverse=True)
-    trending_ids = [str(e['_id']) for e in sorted_by_popularity[:5]]
+    # CRITICAL FIX: MongoDB stores dates as NAIVE UTC datetimes.
+    # Using timezone-aware datetime caused $gte comparison to silently fail → 0 events returned.
+    # Must use datetime.utcnow() (naive) for MongoDB date comparisons.
+    today_naive = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+
+    upcoming_events = await db[event_coll].find({"date": {"$gte": today_naive}}).to_list(100)
+    log_to_file(f"Upcoming events (naive UTC compare): {len(upcoming_events)}")
+
+    # Fallback: if no upcoming events, show most recent events anyway
+    if not upcoming_events:
+        upcoming_events = await db[event_coll].find({}).sort("date", -1).limit(20).to_list(20)
+        log_to_file(f"Fallback recent events: {len(upcoming_events)}")
+
+    # Popularity ranking
+    sorted_by_pop = sorted(upcoming_events, key=lambda x: len(x.get('participants', [])), reverse=True)
+    trending_ids = {str(e['_id']) for e in sorted_by_pop[:5]}
 
     scored_events = []
-    
+
     for event in upcoming_events:
         eid = str(event['_id'])
-        if eid in reg_event_ids: continue
-        
-        title = event.get('title', '')
-        cat = event.get('category', '').lower()
-        desc = event.get('description', '').lower()
+        if eid in reg_event_ids:
+            continue
+
+        title = (event.get('title', '') or '').lower()
+        cat = (event.get('category', '') or '').lower()
+        desc = (event.get('description', '') or '').lower()
         club_id = str(event.get('club', ''))
-        is_sponsored = event.get('isSponsored', False)
-        
-        # Scoring Logic (Internal weights)
-        score = 0.0
+
+        score = 1.0  # Base score — every event gets a chance
         reasons = []
         tags = []
 
-        # Interest match (Highest priority)
-        matched_kws = [k for k in user_interests if (k in title.lower() or k in cat or k in desc)]
+        # Interest match
+        matched_kws = [k for k in user_interests if k in title or k in cat or k in desc]
         if matched_kws:
             score += 5.5
             reasons.append(f"Direct match for your interest in {matched_kws[0].capitalize()}.")
-        
-        # Behavior match (High priority)
+
+        # Club behavior
         if club_id in joined_club_ids:
             score += 3.0
             reasons.append("Hosted by a club you've joined.")
             tags.append("Recommended")
 
-        # Popularity match (Medium priority)
+        # Trending
         if eid in trending_ids:
             score += 1.5
             reasons.append("High student engagement—currently trending!")
             tags.append("Trending")
 
-        # Recency match (Medium priority)
-        days_to_go = (event['date'].replace(tzinfo=timezone.utc) - today).days
-        if days_to_go <= 2:
-            score += 1.0
-            reasons.append("Happening very soon—don't miss out!")
-            tags.append("New")
+        # Recency (handle both naive and timezone-aware dates from DB)
+        event_date = event.get('date')
+        if event_date:
+            try:
+                if hasattr(event_date, 'tzinfo') and event_date.tzinfo is not None:
+                    event_date = event_date.replace(tzinfo=None)
+                days_to_go = (event_date - today_naive).days
+                if 0 <= days_to_go <= 3:
+                    score += 1.0
+                    reasons.append("Happening very soon—don't miss out!")
+                    tags.append("New")
+            except Exception:
+                pass
 
-        # Sponsored boost (Slight increase)
-        if is_sponsored:
+        if event.get('isSponsored'):
             score += 0.5
             tags.append("Sponsored")
 
-        # Map to 1-10
         final_score = min(10.0, round(score, 1))
-        
-        # Category diversity check (Discovery logic)
-        is_discovery = len(matched_kws) == 0 and score > 2.0
+        is_discovery = len(matched_kws) == 0 and club_id not in joined_club_ids
+
         if is_discovery:
             tags.append("Explore")
-            reasons.append("Great way to explore outside your usual interests.")
-
-        # FILTERING RULE: Score must be >= 4.0
-        if final_score < 4.0 and not (eid in trending_ids): continue
+            if not reasons:
+                reasons.append("Great way to explore outside your usual interests.")
 
         scored_events.append({
             "_id": eid,
-            "name": title,
+            "name": event.get('title', 'Unnamed Event'),
             "score": final_score,
-            "tags": tags[:3] or ["New"],
+            "tags": (tags[:3] or ["New"]),
             "reasons": reasons[:2] if reasons else ["A fresh activity on Banverse!"],
             "category": event.get('category', 'General'),
             "is_discovery": is_discovery,
             "is_trending": eid in trending_ids
         })
 
-    # --- STRATEGIC SELECTION (Exactly 5 Events) ---
-    high_match = [e for e in scored_events if e['score'] >= 7.0 and not e['is_discovery']]
-    trending = [e for e in scored_events if e['is_trending']]
-    discovery = [e for e in scored_events if e['is_discovery']]
+    log_to_file(f"Scored events: {len(scored_events)}")
+
+    # Strategic selection (up to 5 events)
+    high_match = [e for e in scored_events if e['score'] >= 5.0 and not e['is_discovery']]
+    trending_list = [e for e in scored_events if e['is_trending']]
+    discovery_list = [e for e in scored_events if e['is_discovery']]
 
     selection = []
-    # 2-3 High Match
     selection.extend(sorted(high_match, key=lambda x: x['score'], reverse=True)[:3])
-    # 1 Trending (avoiding duplicates)
-    for t in sorted(trending, key=lambda x: x['score'], reverse=True):
+
+    for t in sorted(trending_list, key=lambda x: x['score'], reverse=True):
         if not any(s['_id'] == t['_id'] for s in selection):
             selection.append(t)
             break
-    # 1 Discovery (avoiding duplicates)
-    for d in sorted(discovery, key=lambda x: x['score'], reverse=True):
+
+    for d in sorted(discovery_list, key=lambda x: x['score'], reverse=True):
         if not any(s['_id'] == d['_id'] for s in selection):
             selection.append(d)
             break
-            
-    # Final cleanup if selection is short
+
     if len(selection) < 5:
         remaining = [e for e in scored_events if not any(s['_id'] == e['_id'] for s in selection)]
-        selection.extend(sorted(remaining, key=lambda x: x['score'], reverse=True)[:5-len(selection)])
+        selection.extend(sorted(remaining, key=lambda x: x['score'], reverse=True)[:5 - len(selection)])
 
-    # Format output for the intelligent response
     formatted_recs = selection[:5]
     for r in formatted_recs:
-        r['priority_score'] = r['score'] # Maintain compatibility
-        r['reason'] = f"Reasons:\n- {r['reasons'][0]}" + (f"\n- {r['reasons'][1]}" if len(r['reasons']) > 1 else "")
+        r['priority_score'] = r['score']
+        r['reason'] = f"Reasons:\n- {r['reasons'][0]}" + (
+            f"\n- {r['reasons'][1]}" if len(r['reasons']) > 1 else ""
+        )
 
-    # Club Recommendations (High-Impact Filtering)
-    user_dept = str(student.get('department', '') or student.get('domain', '')).lower()
-    club_recs = []
+    # Club Recommendations
+    user_dept = (student.get('department', '') or student.get('domain', '') or '').lower()
     all_clubs = await db[club_coll].find({"isActive": True}).to_list(100)
-    
+    log_to_file(f"Active clubs: {len(all_clubs)}")
+
+    club_recs = []
     for club in all_clubs:
         cid = str(club['_id'])
-        if cid in joined_club_ids: continue
-        
-        c_name = club.get('name', '').lower()
-        c_cat = club.get('category', '').lower()
-        
-        score = 3.5 # Lower fallback to trigger filtering
+        if cid in joined_club_ids:
+            continue
+
+        c_name = (club.get('name', '') or '').lower()
+        c_cat = (club.get('category', '') or '').lower()
+
+        score = 3.5
         reason = "Expand your horizons with this popular society!"
 
-        # Domain/Department Match
         if user_dept and (user_dept in c_cat or user_dept in c_name):
             score = 9.0
             reason = f"Highly popular among students in your {user_dept.upper()} domain!"
-        
-        # Interest Match
         elif any(i in c_cat or i in c_name for i in user_interests):
-            matched = [i for i in user_interests if (i in c_cat or i in c_name)][0]
+            matched = next(i for i in user_interests if i in c_cat or i in c_name)
             score = 8.5
             reason = f"Perfectly aligns with your interest in {matched.capitalize()}."
-        
-        # FILTERING RULE: Strictly only show if score > 4.0 (matches domain or interest)
-        if score <= 4.0: continue
 
         club_recs.append({
             "_id": cid,
-            "name": club.get('name'),
+            "name": club.get('name', 'Unknown Club'),
             "category": club.get('category', 'General'),
             "priority_score": score,
             "reason": reason
         })
+
     club_recs.sort(key=lambda x: x['priority_score'], reverse=True)
+    log_to_file(f"Returning {len(formatted_recs)} events, {len(club_recs[:6])} clubs")
 
     return {
         "recommended_events": formatted_recs,

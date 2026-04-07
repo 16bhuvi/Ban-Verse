@@ -4,6 +4,8 @@ import './Auth.css';
 import logo from './banasthali-logo.jpg';
 import eyeIcon from './images/eye.png';
 import hiddenIcon from './images/hidden.png';
+import config from "./config";
+
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -18,6 +20,8 @@ const Signup = () => {
   });
 
   const [error, setError] = useState('');
+  // eslint-disable-next-line no-unused-vars
+  const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [emailWarning, setEmailWarning] = useState('');
@@ -26,19 +30,41 @@ const Signup = () => {
   const branches = ["CSE", "IT", "ECE", "Electrical", "Biotechnology", "Mechanical", "HR", "Marketing", "Finance"];
   const years = ["1st", "2nd", "3rd", "4th", "5th"];
 
+  const validateField = (name, value) => {
+    let err = "";
+    if (name === "fullName") {
+      if (!value.trim()) err = "Full Name is required";
+      else if (value.trim().length < 3) err = "Name must be at least 3 characters";
+      else if (!/^[a-zA-Z\s]+$/.test(value)) err = "Only letters and spaces allowed";
+    } else if (name === "email") {
+      if (!value) err = "Email is required";
+      else if (!value.toLowerCase().endsWith("@banasthali.in")) err = "Use @banasthali.in email";
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) err = "Invalid email format";
+    } else if (name === "password") {
+      if (!value) err = "Password is required";
+      else if (value.length < 8) err = "Minimum 8 characters required";
+      else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/.test(value)) err = "Include uppercase, lowercase and number";
+    } else if (name === "confirmPassword") {
+      if (value !== formData.password) err = "Passwords do not match";
+    } else if (["course", "branch", "year"].includes(name)) {
+      if (!value) err = "Selection required";
+    }
+    return err;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setFormData({ ...formData, [name]: value });
+    
+    // Clear field-specific error
+    setFieldErrors(prev => ({ ...prev, [name]: "" }));
     setError('');
 
-    // Email domain warning
     if (name === "email") {
       if (value.includes("@")) {
         const domain = value.split("@")[1];
-
-        if (!"banasthali.in".startsWith(domain)) {
-          setEmailWarning("Invalid domain. Only @banasthali.in is allowed.");
+        if (!"banasthali.in".startsWith(domain) && domain !== "") {
+          setEmailWarning("Only @banasthali.in allowed");
         } else {
           setEmailWarning("");
         }
@@ -51,30 +77,25 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
+    // Validate all fields
+    const newErrors = {};
+    Object.keys(formData).forEach(key => {
+      const err = validateField(key, formData[key]);
+      if (err) newErrors[key] = err;
+    });
 
-    if (!formData.email.toLowerCase().endsWith("@banasthali.in")) {
-      setError("Only Banasthali Vidyapith official emails are allowed.");
-      return;
-    }
-
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters.");
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
+    if (Object.keys(newErrors).length > 0) {
+      setFieldErrors(newErrors);
+      setError("Please fix the errors above.");
       return;
     }
 
     setLoading(true);
-
     try {
-      const response = await fetch("http://localhost:5001/api/auth/register", {
+      const response = await fetch(`${config.API_BASE_URL}/api/auth/register`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fullName: formData.fullName,
           email: formData.email,
@@ -86,14 +107,12 @@ const Signup = () => {
       });
 
       const data = await response.json();
-
       if (response.ok) {
         localStorage.setItem("verifyEmail", formData.email);
         navigate("/VerifyOtp");
       } else {
         setError(data.error || "Registration failed.");
       }
-
     } catch (err) {
       setError("Server connection failed.");
     } finally {
@@ -114,7 +133,7 @@ const Signup = () => {
         <form className="auth-form" onSubmit={handleSubmit}>
 
           {/* Full Name */}
-          <div className="input-group">
+          <div className={`input-group ${fieldErrors.fullName ? 'has-error' : ''}`}>
             <input
               type="text"
               name="fullName"
@@ -124,10 +143,11 @@ const Signup = () => {
               required
             />
             <label>Full Name</label>
+            {fieldErrors.fullName && <p className="field-error-msg">{fieldErrors.fullName}</p>}
           </div>
 
           {/* Email */}
-          <div className="input-group">
+          <div className={`input-group ${fieldErrors.email ? 'has-error' : ''}`}>
             <input
               type="email"
               name="email"
@@ -137,14 +157,17 @@ const Signup = () => {
               required
             />
             <label>University Email (@banasthali.in)</label>
+            {fieldErrors.email ? (
+              <p className="field-error-msg">{fieldErrors.email}</p>
+            ) : emailWarning ? (
+              <p className="error-msg">{emailWarning}</p>
+            ) : null}
           </div>
-
-          {emailWarning && <p className="error-msg">{emailWarning}</p>}
 
           {/* Course + Branch */}
           <div className="form-row">
 
-            <div className="input-group">
+            <div className={`input-group ${fieldErrors.course ? 'has-error' : ''}`}>
               <select
                 name="course"
                 value={formData.course}
@@ -164,9 +187,10 @@ const Signup = () => {
               }>
                 Course
               </label>
+              {fieldErrors.course && <p className="field-error-msg">{fieldErrors.course}</p>}
             </div>
 
-            <div className="input-group">
+            <div className={`input-group ${fieldErrors.branch ? 'has-error' : ''}`}>
               <select
                 name="branch"
                 value={formData.branch}
@@ -186,12 +210,13 @@ const Signup = () => {
               }>
                 Branch
               </label>
+              {fieldErrors.branch && <p className="field-error-msg">{fieldErrors.branch}</p>}
             </div>
 
           </div>
 
           {/* Year */}
-          <div className="input-group">
+          <div className={`input-group ${fieldErrors.year ? 'has-error' : ''}`}>
             <select
               name="year"
               value={formData.year}
@@ -211,10 +236,11 @@ const Signup = () => {
             }>
               Current Year
             </label>
+            {fieldErrors.year && <p className="field-error-msg">{fieldErrors.year}</p>}
           </div>
 
           {/* Password */}
-          <div className="input-group">
+          <div className={`input-group ${fieldErrors.password ? 'has-error' : ''}`}>
             <input
               type={showPassword ? "text" : "password"}
               name="password"
@@ -232,10 +258,11 @@ const Signup = () => {
               onClick={() => setShowPassword(!showPassword)}
               style={{ cursor: "pointer", width: "20px", height: "20px" }}
             />
+            {fieldErrors.password && <p className="field-error-msg">{fieldErrors.password}</p>}
           </div>
 
           {/* Confirm Password */}
-          <div className="input-group">
+          <div className={`input-group ${fieldErrors.confirmPassword ? 'has-error' : ''}`}>
             <input
               type={showPassword ? "text" : "password"}
               name="confirmPassword"
@@ -245,9 +272,17 @@ const Signup = () => {
               required
             />
             <label>Confirm Password</label>
+            <img
+              src={showPassword ? hiddenIcon : eyeIcon}
+              alt={showPassword ? "Hide password" : "Show password"}
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{ cursor: "pointer", width: "20px", height: "20px" }}
+            />
+            {fieldErrors.confirmPassword && <p className="field-error-msg">{fieldErrors.confirmPassword}</p>}
           </div>
 
-          {error && <p className="error-msg">{error}</p>}
+          {error && !Object.keys(fieldErrors).length && <p className="error-msg text-center">{error}</p>}
 
           <button
             className="auth-btn"

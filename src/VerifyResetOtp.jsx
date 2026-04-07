@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
 
+import config from "./config";
+
 const VerifyResetOtp = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
@@ -13,7 +15,7 @@ const VerifyResetOtp = () => {
 
     try {
       const res = await fetch(
-        "http://localhost:5001/api/auth/verify-reset-otp",
+        `${config.API_BASE_URL}/api/auth/verify-reset-otp`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

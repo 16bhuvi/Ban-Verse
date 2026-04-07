@@ -51,10 +51,12 @@ const verifyLeader = async (req, res, next) => {
         // Populate permissions for the route to check
         req.userClubPermissions = finalMembership.isLeader ? {
             canCreateEvents: true, canEditEvents: true, canSendNotifications: true,
-            canManageMembers: true, canEditClubProfile: true, canUploadPhotos: true, canViewAnalytics: true
+            canManageMembers: true, canEditClubProfile: true, canUploadPhotos: true, 
+            canViewAnalytics: true, canManageResults: true
         } : (finalMembership.roleId?.permissions || {
             canCreateEvents: false, canEditEvents: false, canSendNotifications: false,
-            canManageMembers: false, canEditClubProfile: false, canUploadPhotos: false, canViewAnalytics: false
+            canManageMembers: false, canEditClubProfile: false, canUploadPhotos: false, 
+            canViewAnalytics: false, canManageResults: false
         });
 
         next();
@@ -69,7 +71,17 @@ const leaderOnly = [authenticate, verifyLeader];
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPER: get the leader's club, querying by both new and legacy field
 // ─────────────────────────────────────────────────────────────────────────────
-const getLeaderClub = async (userId) => {
+const getLeaderClub = async (userId, requestedClubId = null) => {
+    if (requestedClubId) {
+        const club = await Club.findById(requestedClubId);
+        if (club && (club.leaderId?.toString() === userId.toString() || club.leader?.toString() === userId.toString())) {
+            return club;
+        }
+        const membership = await ClubMember.findOne({ userId, clubId: requestedClubId });
+        if (membership) return await Club.findById(requestedClubId);
+        return null; // Return null if not a member of the requested club
+    }
+
     const club = await Club.findOne({
         $or: [
             { leaderId: userId },
@@ -100,7 +112,7 @@ const getLeaderClub = async (userId) => {
 // ─────────────────────────────────────────────────────────────────────────────
 router.get("/my-club", authenticate, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId);
         if (!club) return res.json({ club: null });
 
         const memberCount = await ClubMember.countDocuments({ clubId: club._id });
@@ -153,49 +165,61 @@ router.get("/my-club", authenticate, async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 router.get("/dashboard", authenticate, async (req, res) => {
     try {
-        let club = await getLeaderClub(req.user.userId);
+        let club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId);
 
         if (!club) {
             return res.json({ club: null });
         }
 
-        // Also populate old-style members and leader for backward compat/security
+        // Populate leader for backward compat/security but drop huge user lists
         club = await Club.findById(club._id)
             .populate("leaderId", "fullName email profileImage")
             .populate("leader", "fullName email profileImage")
-            .populate({ path: "members.user", select: "fullName email createdAt profileImage", strictPopulate: false })
+            .select("-members")
             .lean();
 
         const clubId = club._id;
 
         // New-style ClubMembers
         const allMembers = await ClubMember.find({ clubId })
-            .populate("userId", "fullName email department year profileImage")
+            .select("membershipType isLeader customTitle domain roleId")
+            .populate("roleId", "roleName permissions")
             .lean();
 
         const totalMembers = allMembers.length;
         const coreMembers = allMembers.filter(m => m.membershipType === "Core Member").length;
         const generalMembers = allMembers.filter(m => m.membershipType === "General Member").length;
 
-        const events = await Event.find({ club: clubId })
-            .populate({ path: "participants", select: "fullName email", strictPopulate: false })
-            .populate({ path: "attendedParticipants", select: "fullName email", strictPopulate: false })
+        // We no longer send full members and full events arrays in the dashboard overview
+        // to save memory and improve speed. The specific tabs fetch them separately.
+        
+        // Count registrations and attendance without loading all participant details
+        // Fast query across ALL events to build analytical charts (No giant base64 payloads)
+        const allEventsForStats = await Event.find({ club: clubId })
+            .select('title date participants attendedParticipants')
             .lean();
-
-        const totalEvents = events.length;
+            
+        // Detailed query for the UI, limited to most recent entries
+        const detailedEvents = await Event.find({ club: clubId })
+            .sort({ date: -1 })
+            .limit(50)
+            .populate("participants", "fullName email")
+            .lean();
+        
+        const totalEvents = allEventsForStats.length;
         let totalRegistrations = 0;
         let totalAttendance = 0;
         const participationData = [];
 
-        events.forEach(e => {
-            const participants = e.participants || [];
-            const attended = e.attendedParticipants || [];
-            totalRegistrations += participants.length;
-            totalAttendance += attended.length;
+        allEventsForStats.forEach(e => {
+            const participantsCount = e.participants?.length || 0;
+            const attendedCount = e.attendedParticipants?.length || 0;
+            totalRegistrations += participantsCount;
+            totalAttendance += attendedCount;
             participationData.push({
-                name: (e.title || "Event").substring(0, 10),
-                registered: participants.length,
-                attended: attended.length
+                name: (e.title || "Event").length > 20 ? (e.title || "Event").substring(0, 20) + "..." : (e.title || "Event"),
+                registered: participantsCount,
+                attended: attendedCount
             });
         });
 
@@ -207,7 +231,7 @@ router.get("/dashboard", authenticate, async (req, res) => {
             (totalMembers * 2) + (attendanceRate * 0.5) + (totalEvents * 5)
         ));
 
-        // Permissions logic
+        // ... existing permissions logic ...
         const userMembership = await ClubMember.findOne({ userId: req.user.userId, clubId })
             .populate("roleId");
             
@@ -231,27 +255,24 @@ router.get("/dashboard", authenticate, async (req, res) => {
             canViewAnalytics: false
         });
 
-        // Domain distribution from ClubMembers
+        // Domain distribution
         const domainStats = {};
         allMembers.forEach(m => {
-            const d = m.domain || "None";
+            const d = m.roleId?.roleName || m.customTitle || (m.domain && m.domain !== "None" ? m.domain : "General");
             domainStats[d] = (domainStats[d] || 0) + 1;
         });
 
         const categoryBreakdown = Object.entries(domainStats).map(([name, value]) => ({ name, value }));
 
         const memberGrowth = [
-            { month: "Sep", count: Math.max(0, totalMembers - 15) },
-            { month: "Oct", count: Math.max(0, totalMembers - 12) },
-            { month: "Nov", count: Math.max(0, totalMembers - 8) },
-            { month: "Dec", count: Math.max(0, totalMembers - 5) },
-            { month: "Jan", count: Math.max(0, totalMembers - 2) },
-            { month: "Feb", count: totalMembers }
+            { month: "Jan", count: Math.max(0, Math.floor(totalMembers * 0.2)) },
+            { month: "Feb", count: Math.max(1, Math.floor(totalMembers * 0.6)) },
+            { month: "Mar", count: Math.max(1, Math.floor(totalMembers * 0.9)) },
+            { month: "Apr", count: totalMembers }
         ];
 
         res.json({
             club,
-            members: allMembers,
             stats: {
                 totalMembers,
                 coreMembers,
@@ -270,7 +291,8 @@ router.get("/dashboard", authenticate, async (req, res) => {
                     { name: "Absent", value: Math.max(0, totalRegistrations - totalAttendance) }
                 ]
             },
-            events
+            permissions,
+            events: detailedEvents
         });
     } catch (error) {
         console.error("Dashboard Error:", error);
@@ -285,7 +307,7 @@ router.get("/dashboard", authenticate, async (req, res) => {
 // GET /api/club-leader/applications  - Get all applications for leader's club
 router.get("/applications", leaderOnly, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         if (!club) return res.status(404).json({ error: "Club not found" });
 
         const applications = await ClubApplication.find({ clubId: club._id })
@@ -310,7 +332,7 @@ router.put("/applications/:appId/approve", leaderOnly, async (req, res) => {
         if (!app) return res.status(404).json({ error: "Application not found" });
         if (app.status !== "pending") return res.status(400).json({ error: "Application already processed" });
 
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         if (!club || club._id.toString() !== app.clubId.toString()) {
             return res.status(403).json({ error: "Not authorized for this club" });
         }
@@ -367,7 +389,7 @@ router.put("/applications/:appId/reject", leaderOnly, async (req, res) => {
         if (!app) return res.status(404).json({ error: "Application not found" });
         if (app.status !== "pending") return res.status(400).json({ error: "Application already processed" });
 
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         if (!club || club._id.toString() !== app.clubId.toString()) {
             return res.status(403).json({ error: "Not authorized for this club" });
         }
@@ -395,7 +417,7 @@ router.put("/applications/:appId/reject", leaderOnly, async (req, res) => {
 // GET /api/club-leader/domains - Get all domains for the club
 router.get("/domains", leaderOnly, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         if (!club) return res.status(404).json({ error: "Club not found" });
         res.json(club.domains || []);
     } catch (error) {
@@ -409,7 +431,7 @@ router.post("/domains", leaderOnly, async (req, res) => {
         const { name, description } = req.body;
         if (!name) return res.status(400).json({ error: "Domain name is required" });
 
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         if (!club) return res.status(404).json({ error: "Club not found" });
 
         // Check for duplicate
@@ -429,7 +451,7 @@ router.post("/domains", leaderOnly, async (req, res) => {
 router.put("/domains/:domainId", leaderOnly, async (req, res) => {
     try {
         const { name, description } = req.body;
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         if (!club) return res.status(404).json({ error: "Club not found" });
 
         const domain = club.domains.id(req.params.domainId);
@@ -448,7 +470,7 @@ router.put("/domains/:domainId", leaderOnly, async (req, res) => {
 // DELETE /api/club-leader/domains/:domainId - Delete a domain
 router.delete("/domains/:domainId", leaderOnly, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         if (!club) return res.status(404).json({ error: "Club not found" });
 
         club.domains = club.domains.filter(d => d._id.toString() !== req.params.domainId);
@@ -463,7 +485,7 @@ router.delete("/domains/:domainId", leaderOnly, async (req, res) => {
 // GET /api/club-leader/domains/:domainId/members - Members in a specific domain
 router.get("/domains/:domainId/members", leaderOnly, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         if (!club) return res.status(404).json({ error: "Club not found" });
 
         const domain = club.domains.id(req.params.domainId);
@@ -487,7 +509,7 @@ router.get("/domains/:domainId/members", leaderOnly, async (req, res) => {
 // GET /api/club-leader/roles
 router.get("/roles", leaderOnly, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         const roles = await ClubRole.find({ clubId: club._id }).sort('tierLevel');
         res.json(roles);
     } catch (error) {
@@ -498,7 +520,7 @@ router.get("/roles", leaderOnly, async (req, res) => {
 // POST /api/club-leader/roles
 router.post("/roles", leaderOnly, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         const roleData = { ...req.body, clubId: club._id };
         const newRole = await ClubRole.create(roleData);
         res.status(201).json(newRole);
@@ -511,7 +533,7 @@ router.post("/roles", leaderOnly, async (req, res) => {
 // PUT /api/club-leader/roles/:roleId
 router.put("/roles/:roleId", leaderOnly, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         const role = await ClubRole.findOneAndUpdate(
             { _id: req.params.roleId, clubId: club._id },
             req.body,
@@ -527,7 +549,7 @@ router.put("/roles/:roleId", leaderOnly, async (req, res) => {
 // DELETE /api/club-leader/roles/:roleId
 router.delete("/roles/:roleId", leaderOnly, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         const role = await ClubRole.findOneAndDelete({ _id: req.params.roleId, clubId: club._id });
         if (!role) return res.status(404).json({ error: "Role not found" });
 
@@ -546,7 +568,7 @@ router.delete("/roles/:roleId", leaderOnly, async (req, res) => {
 // GET /api/club-leader/members - Get all club members
 router.get("/members", leaderOnly, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         if (!club) return res.status(404).json({ error: "Club not found" });
 
         const { membershipType, domain, search } = req.query;
@@ -555,7 +577,7 @@ router.get("/members", leaderOnly, async (req, res) => {
         if (domain) filter.domain = domain;
 
         let members = await ClubMember.find(filter)
-            .populate("userId", "fullName email department year profileImage")
+            .populate("userId", "fullName email department year") // Exclude heavy profileImage from list
             .populate("roleId")
             .sort("-joinedAt");
 
@@ -577,7 +599,7 @@ router.get("/members", leaderOnly, async (req, res) => {
 router.put("/members/:memberId/promote", leaderOnly, async (req, res) => {
     try {
         const { roleId, membershipType, domain, customTitle } = req.body;
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         if (!club) return res.status(404).json({ error: "Club not found" });
 
         const member = await ClubMember.findOne({
@@ -628,7 +650,7 @@ router.put("/members/:memberId/promote", leaderOnly, async (req, res) => {
 // DELETE /api/club-leader/members/:memberId - Remove a member
 router.delete("/members/:memberId", leaderOnly, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         if (!club) return res.status(404).json({ error: "Club not found" });
 
         const member = await ClubMember.findOne({
@@ -658,7 +680,7 @@ router.delete("/members/:memberId", leaderOnly, async (req, res) => {
 // GET /api/club-leader/events - Get all events for leader's club
 router.get("/events", authenticate, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         if (!club) return res.json([]);
 
         const events = await Event.find({ club: club._id })
@@ -746,16 +768,18 @@ router.post("/mark-attendance/:eventId", leaderOnly, async (req, res) => {
 router.post("/notify", leaderOnly, async (req, res) => {
     try {
         const { message, target } = req.body;
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
 
         if (!req.userClubPermissions.canSendNotifications) {
             return res.status(403).json({ error: "permission-denied: Your role does not allow broadcasting announcements." });
         }
 
         let userIds = [];
-        if (target === "members") {
-            const members = await ClubMember.find({ clubId: club._id });
-            userIds = members.map(m => m.userId);
+        if (target === "members" || target === "all") {
+            // Broadcast to absolutely every student on the platform as requested
+            const User = require("../User");
+            const allUsers = await User.find({ globalRole: 'student' }).select('_id');
+            userIds = allUsers.map(u => u._id);
         } else if (Array.isArray(target)) {
             userIds = target;
         }
@@ -792,7 +816,7 @@ router.put("/update-profile", leaderOnly, async (req, res) => {
 // GET /api/club-leader/export
 router.get("/export", leaderOnly, async (req, res) => {
     try {
-        const club = await getLeaderClub(req.user.userId);
+        const club = await getLeaderClub(req.user.userId, req.query.clubId || req.clubId || req.body.clubId);
         const members = await ClubMember.find({ clubId: club._id })
             .populate("userId", "fullName email department year");
 
@@ -864,6 +888,41 @@ router.delete("/gallery/photo/:photoId", leaderOnly, async (req, res) => {
     } catch (error) {
         console.error("Gallery delete error:", error);
         res.status(500).json({ error: "Failed to delete photo" });
+    }
+});
+
+// POST /api/club-leader/events/:eventId/results
+router.post("/events/:eventId/results", leaderOnly, async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const { winners } = req.body; // Expected format: [{ userId, position }]
+
+        if (!req.userClubPermissions.canManageResults) {
+            return res.status(403).json({ error: "Access denied. You do not have permission to manage results." });
+        }
+
+        const event = await Event.findById(eventId);
+        if (!event) return res.status(404).json({ error: "Event not found" });
+
+        // Simple validation: make sure positional winners exist
+        if (!winners || !Array.isArray(winners)) {
+            return res.status(400).json({ error: "Winners list is required." });
+        }
+
+        event.results = {
+            published: true,
+            winners: winners.map(w => ({
+                userId: w.userId,
+                position: w.position,
+                certificateUrl: w.certificateUrl || null // CRITICAL: Save the uploaded certificate!
+            }))
+        };
+
+        await event.save();
+        res.json({ message: "Results published successfully", results: event.results });
+    } catch (error) {
+        console.error("Results publish error:", error);
+        res.status(500).json({ error: "Failed to publish results" });
     }
 });
 

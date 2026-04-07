@@ -34,7 +34,7 @@ const clubSchema = new mongoose.Schema(
         },
         category: {
             type: String,
-            enum: ["Technical", "Cultural", "Workshop", "Hackathon", "Seminar", "Sports", "Entrepreneurship"],
+            enum: ["Technical", "Cultural", "Workshop", "Hackathon", "Seminar", "Sports", "Entrepreneurship", "Event", "Welfare", "Academic", "Marketing"],
             default: "Technical"
         },
         leaderId: {

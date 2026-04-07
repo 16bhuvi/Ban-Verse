@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Bot, Send, X, MessageSquare } from 'lucide-react';
 import './ChatBot.css';
 
+import config from "./config";
+
 const ChatBot = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
@@ -31,7 +33,7 @@ const ChatBot = () => {
         setIsTyping(true);
     
         try {
-            const res = await fetch("http://localhost:8000/chat", {
+            const res = await fetch(`${config.AI_BASE_URL}/chat`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ user_input: inputValue })

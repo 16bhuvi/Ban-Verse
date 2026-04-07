@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./StudentDashboard.css";
 import logo from "./banasthali-logo.jpg";
 import ChatBot from "./ChatBot";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Trophy, Medal, Award, Info, Image as ImageIcon, Download, Trash2 } from "lucide-react";
+import Certificate from "./components/Certificate";
 
-const API = "http://localhost:5001";
-const AI_API = "http://localhost:8000";
+import config from "./config";
+
+const API = config.API_BASE_URL;
+const AI_API = config.AI_BASE_URL;
 const CATEGORIES = ["Technical", "Cultural", "Workshop", "Hackathon", "Seminar", "Sports", "Entrepreneurship"];
 
 const StudentDashboard = () => {
@@ -36,6 +39,14 @@ const StudentDashboard = () => {
     profileImage: ""
   });
 
+  const [studentResults, setStudentResults] = useState([]);
+  const [showCert, setShowCert] = useState(false);
+  const [certData, setCertData] = useState(null);
+  const [resultsLoading, setResultsLoading] = useState(false);
+  const [moments, setMoments] = useState([]);
+  const [momentsLoading, setMomentsLoading] = useState(false);
+  const [certLoading, setCertLoading] = useState(false);
+
   const handleFileChange = (e, field) => {
     const file = e.target.files[0];
     if (file) {
@@ -47,6 +58,14 @@ const StudentDashboard = () => {
     }
   };
 
+  const handleAuthError = useCallback((err) => {
+    console.error("Auth Error:", err);
+    if (err.response?.status === 403 || err.response?.status === 401) {
+      localStorage.clear();
+      navigate("/login");
+    }
+  }, [navigate]);
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -56,71 +75,168 @@ const StudentDashboard = () => {
           return;
         }
 
-        const response = await axios.get(`${API}/api/dashboard`, {
-          headers: { Authorization: `Bearer ${token}` },
+        // Fetch dashboard data — set loading to false as soon as it arrives
+        axios.get(`${API}/api/dashboard`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).then(res => {
+          setData(res.data);
+          setLoading(false); // Clear loading immediately when data is ready
+        }).catch(err => {
+          handleAuthError(err);
+          setErrorMessage("Failed to load dashboard data.");
+          setLoading(false);
         });
 
-        setData(response.data);
+        // Safety net: forcibly clear loading after 6s even if fetch is still pending
+        const safetyTimer = setTimeout(() => setLoading(false), 6000);
 
-        // Fetch Notifications Count & Popup
-        const notifRes = await axios.get(`${API}/api/notifications`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        const validNotifs = (notifRes.data.notifications || []).filter(n => new Date(n.createdAt) >= thirtyDaysAgo);
+        // Fetch Notifications in background (non-blocking)
+        axios.get(`${API}/api/notifications`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).then(notifRes => {
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          const validNotifs = (notifRes.data.notifications || []).filter(n => new Date(n.createdAt) >= thirtyDaysAgo);
+          setNotifications(validNotifs);
+          setUnreadNotifications(notifRes.data.unreadCount);
+          const latestUnread = validNotifs.find(n => !n.read && !sessionStorage.getItem(`seen_notif_${n._id}`));
+          if (latestUnread) setPopupAnnouncement(latestUnread);
+        }).catch(err => console.error("Notification fetch failed:", err));
 
-        setNotifications(validNotifs);
-        setUnreadNotifications(notifRes.data.unreadCount);
+        return () => clearTimeout(safetyTimer);
 
-        const latestUnread = validNotifs.find(n => !n.read && !sessionStorage.getItem(`seen_notif_${n._id}`));
-        if (latestUnread) {
-          setPopupAnnouncement(latestUnread);
-        }
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-        setErrorMessage(`Connection failed: ${error.response?.status || error.message}`);
-        if (error.response?.status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          localStorage.removeItem("role");
-          navigate("/login");
-        }
-      } finally {
+        handleAuthError(error);
+        setErrorMessage("Connection failed");
         setLoading(false);
       }
     };
-
     fetchDashboardData();
-  }, [navigate]);
+  }, [navigate, handleAuthError]);
+
+  const fetchResults = useCallback(async () => {
+    setResultsLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API}/api/dashboard/student-results`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setStudentResults(res.data);
+    } catch (err) {
+      handleAuthError(err);
+    } finally {
+      setResultsLoading(false);
+    }
+  }, [handleAuthError]);
+
+  const fetchMoments = useCallback(async () => {
+    setMomentsLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API}/api/dashboard/moments`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setMoments(res.data);
+    } catch (err) {
+      handleAuthError(err);
+    } finally {
+      setMomentsLoading(false);
+    }
+  }, [handleAuthError]);
+
+  useEffect(() => {
+    if (activeTab === "results" && studentResults.length === 0) {
+      fetchResults();
+    }
+  }, [activeTab, studentResults.length, fetchResults]);
+
+  useEffect(() => {
+    if (activeTab === "moments") {
+      fetchMoments();
+    }
+  }, [activeTab, fetchMoments]);
+
+  const handlePreviewCertificate = async (eventId) => {
+    if (!eventId) {
+      alert("Invalid Event reference.");
+      return;
+    }
+    setCertLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API}/api/dashboard/certificate/${eventId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // If a custom certificate was uploaded by the club leader, download it instead
+      if (res.data.manualUrl) {
+         const link = document.createElement('a');
+         link.href = res.data.manualUrl;
+         const fileName = `Certificate_${res.data.eventName}_${res.data.userName.replace(/\s+/g, '_')}`;
+         link.setAttribute('download', fileName);
+         document.body.appendChild(link);
+         link.click();
+         document.body.removeChild(link);
+         return;
+      }
+
+      // If it's a winner but no manual certificate is found, don't show the old digital one
+      if (res.data.type === "Winner") {
+         alert("Your official custom certificate has been published by the club. If the download didn't start, please try re-publishing from the Club Dashboard to ensure the file is properly anchored.");
+         return;
+      }
+
+      // Participation certificates (Non-winners) still show the general preview modal for now,
+      // or we can hide them too if requested. 
+      setCertData(res.data);
+      setShowCert(true);
+    } catch (err) {
+      handleAuthError(err);
+      alert(err.response?.data?.error || "Certificate calculation failed. Ensure the event has concluded.");
+    } finally {
+      setCertLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchAIRecommendations = async () => {
       const studentId = data?.user?._id || data?.user?.id;
-      if (studentId) {
-        try {
-          const res = await axios.get(`${AI_API}/recommendations/${studentId}`);
-          setAiRecommendations(res.data);
-        } catch (err) {
+      if (!studentId) return;
+      try {
+        // 8-second timeout: if AI server is slow/down, don't block the dashboard
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const res = await axios.get(`${AI_API}/recommendations/${studentId}`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        setAiRecommendations(res.data);
+      } catch (err) {
+        if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') {
           console.error("AI Recommendations error:", err);
         }
+        // Silently fail — AI is non-critical, dashboard should still work
       }
     };
-    fetchAIRecommendations();
-  }, [data]);
+    if (data?.user?._id) fetchAIRecommendations();
+  }, [data?.user?._id, data?.user?.id]);
 
   const handleRefreshAI = async () => {
     const studentId = data?.user?._id || data?.user?.id;
-    if (studentId) {
-      setIsRefreshingAI(true);
-      try {
-        const res = await axios.get(`${AI_API}/recommendations/${studentId}`);
-        setAiRecommendations(res.data);
-      } catch (err) {
-        console.error("AI Recommendations refresh error:", err);
-      } finally {
-        setTimeout(() => setIsRefreshingAI(false), 1000);
-      }
+    if (!studentId) return;
+    setIsRefreshingAI(true);
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      const res = await axios.get(`${AI_API}/recommendations/${studentId}`, {
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      setAiRecommendations(res.data);
+    } catch (err) {
+      console.error("AI Recommendations refresh error:", err);
+    } finally {
+      setTimeout(() => setIsRefreshingAI(false), 500);
     }
   };
 
@@ -177,7 +293,7 @@ const StudentDashboard = () => {
         <section className="welcome-card">
           <div className="welcome-text">
             <h1>Welcome back, {user.fullName?.split(" ")[0] || "Student"}! 👋</h1>
-            <p>You have {stats.upcomingEventsCount} upcoming events this week. Keep up the activity!</p>
+            <p>You have registered for {stats.registeredEventsCount} upcoming event(s). Keep up the activity!</p>
           </div>
         </section>
 
@@ -190,7 +306,7 @@ const StudentDashboard = () => {
           <div className="stat-card">
             <div className="stat-icon" style={{ background: "#ecfdf5" }}>📅</div>
             <div className="stat-value">{stats.upcomingEventsCount}</div>
-            <div className="stat-label">Upcoming Events</div>
+            <div className="stat-label">Available Campus Events</div>
           </div>
           <div className="stat-card">
             <div className="stat-icon" style={{ background: "#fff7ed" }}>⭐</div>
@@ -331,15 +447,28 @@ const StudentDashboard = () => {
       </div>
     );
 
-    switch (activeTab) {
-      case "dashboard": return renderDashboard();
-      case "clubs": return renderClubs();
-      case "events": return renderEvents();
-      case "past-events": return renderPastEvents();
-      case "explore": return renderExplore();
-      case "notifications": return renderNotifications();
-      case "profile": return renderProfile();
-      default: return renderDashboard();
+    try {
+      switch (activeTab) {
+        case "dashboard": return renderDashboard();
+        case "clubs": return renderClubs();
+        case "events": return renderEvents();
+        case "past-events": return renderPastEvents();
+        case "explore": return renderExplore();
+        case "notifications": return renderNotifications();
+        case "results": return renderResults();
+        case "moments": return renderMoments();
+        case "profile": return renderProfile();
+        default: return renderDashboard();
+      }
+    } catch (err) {
+      console.error("Tab Render Error:", err);
+      return (
+        <div style={{ padding: '40px', textAlign: 'center', background: 'white', borderRadius: '16px' }}>
+          <h3>❌ Component Error</h3>
+          <p>We encountered a problem rendering this section.</p>
+          <button onClick={() => setActiveTab('dashboard')} className="btn-primary">Back to Dashboard</button>
+        </div>
+      );
     }
   };
 
@@ -406,7 +535,7 @@ const StudentDashboard = () => {
             headers: { Authorization: `Bearer ${token}` }
           });
           const thirtyDaysAgo = new Date();
-          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 365); // Support trailing 12 months
           setPastEvents(res.data.filter(e => new Date(e.date) >= thirtyDaysAgo));
         } catch (err) {
           console.error("Past events error:", err);
@@ -415,65 +544,6 @@ const StudentDashboard = () => {
       fetchPastEvents();
     }
   }, [activeTab]);
-
-  const renderPastEvents = () => {
-    // Group by Month
-    const grouped = pastEvents.reduce((acc, event) => {
-      const date = new Date(event.date);
-      const key = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(event);
-      return acc;
-    }, {});
-
-    return (
-      <div className="section-card">
-        <h2 className="section-title">Past Events History</h2>
-        <p className="subtitle">All campus events — see which ones you attended.</p>
-        <div className="history-timeline">
-          {Object.keys(grouped).length > 0 ? Object.entries(grouped).map(([month, events]) => (
-            <div key={month} className="month-group">
-              <h3 className="month-label">📅 {month}</h3>
-              <div className="month-events">
-                {events.map(event => (
-                  <div key={event._id} className="past-event-item">
-                    <div className={`dot ${event.isRegistered ? 'dot-registered' : 'dot-missed'}`}></div>
-                    <div className="past-event-info">
-                      <strong>
-                        {event.title}
-                        <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: '500', marginLeft: '8px' }}>
-                          ({new Date(event.date).toLocaleDateString()})
-                        </span>
-                      </strong>
-                      <span style={{ color: '#64748b', fontSize: '13px' }}>
-                        {event.club?.name || 'Campus Event'} &bull; {event.category}
-                      </span>
-                    </div>
-                    <span
-                      className="past-event-badge"
-                      style={{
-                        marginLeft: 'auto',
-                        padding: '4px 12px',
-                        borderRadius: '20px',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        whiteSpace: 'nowrap',
-                        background: event.isRegistered ? '#dcfce7' : '#f1f5f9',
-                        color: event.isRegistered ? '#16a34a' : '#94a3b8',
-                        border: event.isRegistered ? '1px solid #86efac' : '1px solid #e2e8f0'
-                      }}
-                    >
-                      {event.isRegistered ? '✅ Registered' : '○ Not Registered'}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )) : <p className="empty-state">No past events found yet.</p>}
-        </div>
-      </div>
-    );
-  };
 
   const renderProfile = () => {
     const { user } = data;
@@ -787,6 +857,205 @@ const StudentDashboard = () => {
     }
   }, [activeTab]);
 
+  const renderResults = () => {
+    return (
+      <div className="achievements-section">
+         {showCert && <Certificate data={certData} onClose={() => setShowCert(false)} />}
+         
+         <div className="welcome-card" style={{ marginBottom: '20px' }}>
+            <div className="welcome-text">
+              <h1>My Achievement Portfolio 🏆</h1>
+              <p>View your contest ranks, participation logs, and download verified certificates.</p>
+            </div>
+         </div>
+
+         <div className="achievement-grid">
+            {resultsLoading ? (
+              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1/-1' }}><RefreshCw className="spin" /> Loading your achievements...</div>
+            ) : studentResults.length === 0 ? (
+              <div className="empty-state" style={{ gridColumn: '1/-1' }}>
+                <Medal size={60} style={{ opacity: 0.2, marginBottom: '20px' }} />
+                <p style={{ color: '#64748b', fontSize: '1.2rem', fontStyle: 'normal' }}>No achievements recorded yet. Participate in campus events to earn badges!</p>
+              </div>
+            ) : (
+              studentResults.map((res) => (
+                <div className="achievement-card" key={res.id} style={{ background: 'white', borderRadius: '16px', padding: '24px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', minHeight: '220px' }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#6366f1', textTransform: 'uppercase' }}>{res.club?.name}</span>
+                      {res.isWinner ? <Trophy size={20} color="#f59e0b" fill="#f59e0b" /> : <Award size={20} color="#94a3b8" />}
+                   </div>
+                   <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: '12px 0 6px', color: '#1e293b' }}>{res.title}</h3>
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                      <span style={{ fontSize: '11px', background: res.isWinner ? '#fef3c7' : '#f1f5f9', color: res.isWinner ? '#92400e' : '#475569', padding: '4px 10px', borderRadius: '20px', fontWeight: 700 }}>
+                        {res.isWinner ? `🏆 ${res.position} Place` : '🎓 Participant'}
+                      </span>
+                      {!res.published && res.isPast && <span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: '500' }}>• Reviewing results...</span>}
+                      {!res.isPast && <span style={{ fontSize: '11px', color: '#6366f1', fontWeight: '500' }}>• Event Ongoing</span>}
+                   </div>
+
+                   <div className="card-actions" style={{ marginTop: 'auto', display: 'flex', gap: '10px' }}>
+                      <button 
+                        className="btn-primary" 
+                        style={{ 
+                           flex: 1, padding: '10px', fontSize: '0.85rem', borderRadius: '8px', border: 'none', cursor: 'pointer', 
+                           background: (res.published) ? '#6366f1' : '#cbd5e1', color: 'white', fontWeight: '600' 
+                        }} 
+                        onClick={() => res.published ? handlePreviewCertificate(res.id) : alert("Results are still being finalized. The certificate will appear once they are officially published by the club.")}
+                        disabled={certLoading}
+                      >
+                        {certLoading ? <RefreshCw size={14} className="spin" style={{marginRight: '6px'}} /> : <Award size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} />}
+                        {res.published ? 'Certificate' : 'Locked'}
+                      </button>
+                      <button 
+                        className="btn-secondary" 
+                        style={{ padding: '10px', display: 'flex', alignItems: 'center', borderRadius: '8px', background: '#f8fafc', border: '1px solid #e2e8f0', cursor: 'pointer' }} 
+                        onClick={() => navigate(`/viewpost/${res.id}`)}
+                        title="View Event Details"
+                      >
+                        <Info size={16} color="#64748b" />
+                      </button>
+                   </div>
+                </div>
+              ))
+            )}
+         </div>
+      </div>
+    );
+  };
+
+  const deleteNotification = async (notifId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API}/api/notifications/${notifId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNotifications(prev => prev.filter(n => n._id !== notifId));
+    } catch (err) {
+      console.error("Failed to delete notification", err);
+    }
+  };
+
+  const handleDownloadMoment = (url, caption) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Moment_${caption || 'Banverse'}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const renderPastEvents = () => {
+    // Current date - 1 year
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    const filtered = pastEvents; // Use the state hook we populated
+
+    const grouped = filtered.reduce((acc, event) => {
+      const date = new Date(event.date);
+      const key = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(event);
+      return acc;
+    }, {});
+
+    return (
+      <div className="section-card">
+        <h2 className="section-title">Past Events History (Last 1 Year)</h2>
+        <p className="subtitle">Only showing events from the previous 12 months for better performance.</p>
+        <div className="history-timeline">
+          {Object.keys(grouped).length > 0 ? Object.entries(grouped).map(([month, events]) => (
+            <div key={month} className="month-group">
+              <h3 className="month-label">📅 {month}</h3>
+              <div className="month-events">
+                {events.map(event => (
+                  <div key={event._id} className="past-event-item">
+                    <div className={`dot ${event.isRegistered ? 'dot-registered' : 'dot-missed'}`}></div>
+                    <div className="past-event-info">
+                      <strong>
+                        {event.title}
+                        <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: '500', marginLeft: '8px' }}>
+                          ({new Date(event.date).toLocaleDateString()})
+                        </span>
+                      </strong>
+                      <span style={{ color: '#64748b', fontSize: '13px' }}>
+                        {event.club?.name || 'Campus Event'} &bull; {event.category}
+                      </span>
+                    </div>
+                    <span
+                      className="past-event-badge"
+                      style={{
+                        marginLeft: 'auto',
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        whiteSpace: 'nowrap',
+                        background: event.isRegistered ? '#dcfce7' : '#f1f5f9',
+                        color: event.isRegistered ? '#16a34a' : '#94a3b8',
+                        border: event.isRegistered ? '1px solid #86efac' : '1px solid #e2e8f0'
+                      }}
+                    >
+                      {event.isRegistered ? '✅ Registered' : '○ Not Registered'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )) : <p className="empty-state">No past events found in the last 1 year.</p>}
+        </div>
+      </div>
+    );
+  };
+
+  const renderMoments = () => {
+    if (momentsLoading) return <div className="centered"><RefreshCw className="spin" /> Loading memories...</div>;
+
+    return (
+      <div className="section-card moments-container">
+        <div className="moments-header" style={{ marginBottom: '2rem' }}>
+          <h2 className="section-title">Club Moments ✨</h2>
+          <p className="section-subtitle">Visual highlights and updates from the clubs you&apos;ve joined.</p>
+        </div>
+
+        {moments.length === 0 ? (
+          <div className="empty-moments" style={{ textAlign: 'center', padding: '3rem', opacity: 0.6 }}>
+             <ImageIcon size={60} style={{ marginBottom: '1rem' }} />
+             <p>No formal moments have been shared by your joined clubs yet.</p>
+          </div>
+        ) : (
+          <div className="moments-masonry" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+            {moments.map((moment, idx) => (
+              <div key={idx} className="moment-card-pro" style={{ background: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', border: '1px solid #eee' }}>
+                <div style={{ position: 'relative' }}>
+                  <img src={moment.url} alt={moment.caption} style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
+                  <div className="moment-club-tag" style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(255,255,255,0.9)', padding: '4px 10px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600 }}>
+                    <img src={moment.clubLogo} alt="" style={{ width: '16px', height: '16px', borderRadius: '50%' }} />
+                    {moment.clubName}
+                  </div>
+                  <button 
+                    onClick={() => handleDownloadMoment(moment.url, moment.caption)}
+                    style={{ position: 'absolute', bottom: '12px', right: '12px', background: '#6366f1', color: 'white', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}
+                    title="Download Image"
+                  >
+                    <Download size={16} />
+                  </button>
+                </div>
+                <div className="moment-info" style={{ padding: '1rem' }}>
+                  <p className="moment-caption" style={{ fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.5rem' }}>{moment.caption}</p>
+                  <div className="moment-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: '#94a3b8' }}>
+                    <span className="moment-date">{new Date(moment.uploadedAt).toLocaleDateString()}</span>
+                    <span className="moment-cat" style={{ background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px' }}>{moment.category}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const renderNotifications = () => {
     return (
       <div className="section-card">
@@ -799,11 +1068,21 @@ const StudentDashboard = () => {
                 background: n.read ? '#f8fafc' : '#f0f4ff',
                 borderRadius: '16px',
                 borderLeft: n.read ? 'none' : '4px solid #4f46e5',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.02)'
+                boxShadow: '0 2px 10px rgba(0,0,0,0.02)',
+                position: 'relative'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <strong>{n.type === 'announcement' ? '📢 Announcement' : '🔔 Notification'}</strong>
-                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>{new Date(n.createdAt).toLocaleString()}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '11px', color: '#94a3b8' }}>{new Date(n.createdAt).toLocaleString()}</span>
+                    <button 
+                      onClick={() => deleteNotification(n._id)}
+                      style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center' }}
+                      title="Delete Notification"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
                 <p style={{ margin: '8px 0 0 0', color: '#475569', fontSize: '14px', lineHeight: '1.5' }}>{n.message}</p>
               </div>
@@ -811,7 +1090,7 @@ const StudentDashboard = () => {
           ) : (
             <div className="empty-state" style={{ textAlign: 'center', padding: '3rem' }}>
               <div style={{ fontSize: '40px', marginBottom: '10px' }}>🧘</div>
-              <p>All caught up! No unread notifications.</p>
+              <p>All caught up! No notifications yet.</p>
             </div>
           )}
         </div>
@@ -839,6 +1118,8 @@ const StudentDashboard = () => {
           <li className={`nav-link ${activeTab === "clubs" ? "active" : ""}`} onClick={() => setActiveTab("clubs")}><span>🛡️</span> My Clubs</li>
           <li className={`nav-link ${activeTab === "events" ? "active" : ""}`} onClick={() => setActiveTab("events")}><span>📅</span> Events</li>
           <li className={`nav-link ${activeTab === "past-events" ? "active" : ""}`} onClick={() => setActiveTab("past-events")}><span>🗂️</span> Past Events</li>
+          <li className={`nav-link ${activeTab === "results" ? "active" : ""}`} onClick={() => setActiveTab("results")}><span>🏆</span> My Achievements</li>
+          <li className={`nav-link ${activeTab === "moments" ? "active" : ""}`} onClick={() => setActiveTab("moments")}><span>✨</span> Club Moments</li>
           <li className={`nav-link ${activeTab === "explore" ? "active" : ""}`} onClick={() => setActiveTab("explore")}><span>🔍</span> Explore Clubs</li>
           <li className={`nav-link ${activeTab === "notifications" ? "active" : ""}`} onClick={() => setActiveTab("notifications")}>
             <span>🔔</span> Notifications
@@ -894,7 +1175,15 @@ const StudentDashboard = () => {
           )}
         </header>
 
-        {renderContent()}
+        {loading ? (
+           <div className="tab-loading-state" style={{ padding: '6rem 2rem', textAlign: 'center' }}>
+              <div className="custom-spinner" style={{ margin: '0 auto', width: '40px', height: '40px', border: '3px solid #6366f1', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+              <p style={{ marginTop: '1.25rem', color: '#64748b', fontWeight: 500 }}>Fetching your Banverse updates...</p>
+              <style>{`
+                @keyframes spin { to { transform: rotate(360deg); } }
+              `}</style>
+           </div>
+        ) : renderContent()}
       </main>
       
       {/* Announcement Popup Toast */}

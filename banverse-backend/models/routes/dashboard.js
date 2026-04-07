@@ -32,10 +32,29 @@ router.get("/public-stats", async (req, res) => {
 router.get("/", authenticate, async (req, res) => {
     console.log("📥 Dashboard request received for user:", req.user.userId);
     try {
-        const user = await User.findById(req.user.userId)
-            .populate({ path: "joinedClubs", strictPopulate: false })
-            .populate({ path: "registeredEvents", strictPopulate: false })
-            .lean();
+        // PARALLELIZE: Fetch User, Upcoming Events, and all active clubs concurrently
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const [user, upcomingEvents, allClubs] = await Promise.all([
+          User.findById(req.user.userId)
+            .select("fullName email department year bio interests profileImage globalRole points joinedClubs registeredEvents") // Omit resume from dashboard list
+            .populate({ path: "joinedClubs", select: "name logo description category", strictPopulate: false, options: { limit: 10 } })
+            .populate({ path: "registeredEvents", select: "title date club location", strictPopulate: false, options: { limit: 6 } })
+            .lean(),
+          
+          Event.find({ date: { $gte: today } })
+            .select("-participants -attendedParticipants")
+            .populate("club", "name")
+            .sort({ date: 1 })
+            .limit(6)
+            .lean(),
+
+          Club.find({ isActive: true })
+            .select('name logo description category')
+            .limit(12) // Slightly more for better discovery
+            .lean()
+        ]);
 
         if (!user) {
             console.log("❌ User not found in DB");
@@ -43,41 +62,27 @@ router.get("/", authenticate, async (req, res) => {
         }
 
         console.log("👤 User found:", user.fullName);
-
-        // Get upcoming events (from beginning of today)
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const upcomingEvents = await Event.find({
-            date: { $gte: today }
-        })
-            .populate("club", "name logo")
-            .sort({ date: 1 })
-            .lean();
-
         console.log("🗓️ Upcoming events found:", upcomingEvents.length);
 
-        // Get all clubs for exploration
-        const allClubs = await Club.find({ isActive: true }).lean();
-
-        // Unified Membership & Authorization Lookup for the student's main club access
-        const membership = await ClubMember.findOne({
+        // Unified Membership & Authorization Lookup
+        const [membership, userMemberships] = await Promise.all([
+          ClubMember.findOne({
             userId: req.user.userId,
             $or: [
                 { isLeader: true }, 
                 { membershipType: "Core Member" },
                 { roleId: { $ne: null } }
             ]
-        }).populate("roleId").lean();
+          }).populate("roleId").lean(),
+
+          ClubMember.find({ userId: user._id })
+            .populate("roleId")
+            .lean()
+        ]);
 
         const isClubLeader = !!membership;
         let membershipType = membership?.membershipType || "General Member";
         let clubId = membership?.clubId || null;
-
-        // OPTIMIZATION: Prefetch ALL of the user's club memberships to avoid N+1 queries in the enrichment loop
-        const userMemberships = await ClubMember.find({ userId: user._id })
-            .populate("roleId")
-            .lean();
         
         // Create a fast lookup map: clubId string -> membership object
         const membershipsMap = new Map();
@@ -157,12 +162,113 @@ router.get("/", authenticate, async (req, res) => {
     }
 });
 
-// Added to support ViewClub.jsx clustering
+// GET /api/dashboard/results
+router.get("/student-results", authenticate, async (req, res) => {
+    try {
+        // Find events where the student is either listed as a generic participant or attended participant
+        const events = await Event.find({ 
+            $or: [
+                { participants: req.user.userId },
+                { attendedParticipants: req.user.userId }
+            ] 
+        }).populate("club", "name").lean();
+        
+        const results = events.map(event => {
+            const isWinner = event.results?.winners?.find(w => w.userId.toString() === req.user.userId.toString());
+            return {
+                id: event._id,
+                title: event.title,
+                club: event.club,
+                date: event.date,
+                published: event.results?.published || false,
+                isWinner: !!isWinner,
+                position: isWinner ? isWinner.position : null,
+                isPast: event.isPast || new Date(event.date) < new Date(),
+                // If the user attended, they get a participation cert or winner cert. 
+                // If they registered but didn't attend, it depends on policy, but usually participation requires attendance.
+                attended: (event.attendedParticipants || []).some(p => p.toString() === req.user.userId.toString())
+            };
+        });
+        
+        res.json(results);
+    } catch (error) {
+        console.error("Student results error:", error);
+        res.status(500).json({ error: "Failed to fetch student results" });
+    }
+});
+
+// GET /api/dashboard/certificate/:eventId
+router.get("/certificate/:eventId", authenticate, async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const user = await User.findById(req.user.userId);
+        const event = await Event.findById(eventId).populate("club", "name logo");
+
+        if (!event) return res.status(404).json({ error: "Event not found" });
+
+        const hasAttended = (event.attendedParticipants || []).some(p => p.toString() === req.user.userId.toString());
+        const hasParticipated = (event.participants || []).some(p => p.toString() === req.user.userId.toString());
+
+        if (!hasAttended && !hasParticipated) {
+            return res.status(403).json({ error: "Certificate not available. You did not participate in this event." });
+        }
+
+        const isWinner = event.results?.winners?.find(w => w.userId.toString() === req.user.userId.toString());
+        const manualUrl = isWinner?.certificateUrl || null;
+
+        res.json({
+            userName: user.fullName,
+            eventName: event.title,
+            clubName: event.club?.name || "Banverse Club",
+            clubLogo: event.club?.logo || null,
+            date: event.date,
+            type: isWinner ? "Winner" : "Participation",
+            position: isWinner ? isWinner.position : null,
+            manualUrl: manualUrl // To be handled by StudentDashboard
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch certificate metadata" });
+    }
+});
+
+// GET /api/dashboard/moments
+router.get("/moments", authenticate, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId).select('joinedClubs');
+        const clubs = await Club.find({ _id: { $in: user.joinedClubs } }).select('name logo gallery');
+        
+        let allMoments = [];
+        clubs.forEach(club => {
+            // Optimization: Only show last 12 gallery items to keep payload manageable
+            (club.gallery || []).slice(-12).forEach(item => {
+                allMoments.push({
+                    clubId: club._id,
+                    clubName: club.name,
+                    clubLogo: club.logo,
+                    ...item.toObject()
+                });
+            });
+        });
+        
+        // Sort by upload date descending
+        allMoments.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+        
+        res.json(allMoments);
+    } catch (error) {
+        console.error("Moments error:", error);
+        res.status(500).json({ error: "Failed to fetch moments" });
+    }
+});
+
+// GET /api/dashboard/events/club/:clubId - Retrieve specific club events
 router.get("/events/club/:clubId", authenticate, async (req, res) => {
     try {
-        const events = await Event.find({ club: req.params.clubId }).sort({ date: 1 });
+        const events = await Event.find({ club: req.params.clubId })
+            .select("title date description category location poster")
+            .sort({ date: -1 });
         res.json(events);
     } catch (error) {
+        console.error("Club events error:", error);
         res.status(500).json({ error: "Failed to fetch club events" });
     }
 });

@@ -22,7 +22,8 @@ const clubRoleSchema = new mongoose.Schema({
     canManageMembers: { type: Boolean, default: false },
     canEditClubProfile: { type: Boolean, default: false },
     canUploadPhotos: { type: Boolean, default: false },
-    canViewAnalytics: { type: Boolean, default: false }
+    canViewAnalytics: { type: Boolean, default: false },
+    canManageResults: { type: Boolean, default: false }
   }
 }, { timestamps: true });
 

@@ -5,6 +5,9 @@ import "./viewPost.css";
 import logo from "./banasthali-logo.jpg";
 import { ArrowLeft, Calendar, Clock, MapPin, CheckCircle } from "lucide-react";
 
+import config from "./config";
+const API = config.API_BASE_URL;
+
 export default function ViewPost() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -21,7 +24,7 @@ export default function ViewPost() {
         const user = JSON.parse(localStorage.getItem("user"));
 
         if (id) {
-          const res = await axios.get(`http://localhost:5001/api/events/${id}`, {
+          const res = await axios.get(`${API}/api/events/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setPost(res.data);
@@ -53,7 +56,7 @@ export default function ViewPost() {
     setRegistering(true);
     try {
       const token = localStorage.getItem("token");
-      await axios.post(`http://localhost:5001/api/events/register/${post._id}`, {}, {
+      await axios.post(`${API}/api/events/register/${post._id}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setIsRegistered(true);

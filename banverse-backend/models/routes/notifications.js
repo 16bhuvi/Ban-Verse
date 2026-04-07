@@ -48,4 +48,14 @@ router.patch("/:id/read", authenticate, async (req, res) => {
     }
 });
 
+// DELETE /api/notifications/:id
+router.delete("/:id", authenticate, async (req, res) => {
+    try {
+        await Notification.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+        res.json({ message: "Notification deleted" });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to delete notification" });
+    }
+});
+
 module.exports = router;

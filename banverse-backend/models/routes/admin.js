@@ -15,69 +15,44 @@ const adminOnly = [authenticate, authorize("admin")];
 // ─────────────────────────────────────────────────────────────────────────────
 router.get(["/dashboard", "/analytics"], adminOnly, async (req, res) => {
     try {
-        const totalStudents = await User.countDocuments({ globalRole: "student" });
-        const totalClubs = await Club.countDocuments({ isActive: true });
-        const totalEvents = await Event.countDocuments();
-        const totalMembers = await ClubMember.countDocuments();
-
-        // Monthly student registrations (last 6 months)
+        // PARALLELIZE: Run all counts and aggregations concurrently
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-        const userGrowth = await User.aggregate([
+        const [
+          totalStudents,
+          totalClubs,
+          totalEvents,
+          totalMembers,
+          userGrowth,
+          eventsPerClub,
+          memberDistribution,
+          eventsByCategory
+        ] = await Promise.all([
+          User.countDocuments({ globalRole: "student" }),
+          Club.countDocuments({ isActive: true }),
+          Event.countDocuments(),
+          ClubMember.countDocuments(),
+          User.aggregate([
             { $match: { globalRole: "student", createdAt: { $gte: sixMonthsAgo } } },
-            {
-                $group: {
-                    _id: { $month: "$createdAt" },
-                    count: { $sum: 1 }
-                }
-            },
+            { $group: { _id: { $month: "$createdAt" }, count: { $sum: 1 } } },
             { $sort: { "_id": 1 } }
-        ]);
-
-        // Events per club (Bar Chart)
-        const eventsPerClub = await Event.aggregate([
+          ]),
+          Event.aggregate([
             { $group: { _id: "$club", count: { $sum: 1 } } },
-            {
-                $lookup: {
-                    from: "clubs",
-                    localField: "_id",
-                    foreignField: "_id",
-                    as: "clubInfo"
-                }
-            },
+            { $lookup: { from: "clubs", localField: "_id", foreignField: "_id", as: "clubInfo" } },
             { $unwind: { path: "$clubInfo", preserveNullAndEmptyArrays: true } },
-            {
-                $project: {
-                    name: { $ifNull: ["$clubInfo.name", "Unknown"] },
-                    count: 1
-                }
-            }
-        ]);
-
-        // Member distribution per club (Pie Chart)
-        const memberDistribution = await ClubMember.aggregate([
+            { $project: { name: { $ifNull: ["$clubInfo.name", "Unknown"] }, count: 1 } }
+          ]),
+          ClubMember.aggregate([
             { $group: { _id: "$clubId", count: { $sum: 1 } } },
-            {
-                $lookup: {
-                    from: "clubs",
-                    localField: "_id",
-                    foreignField: "_id",
-                    as: "clubInfo"
-                }
-            },
+            { $lookup: { from: "clubs", localField: "_id", foreignField: "_id", as: "clubInfo" } },
             { $unwind: { path: "$clubInfo", preserveNullAndEmptyArrays: true } },
-            {
-                $project: {
-                    name: { $ifNull: ["$clubInfo.name", "Unknown"] },
-                    value: "$count"
-                }
-            }
-        ]);
-
-        // Events by category (backward compat)
-        const eventsByCategory = await Event.aggregate([
+            { $project: { name: { $ifNull: ["$clubInfo.name", "Unknown"] }, value: "$count" } }
+          ]),
+          Event.aggregate([
             { $group: { _id: "$category", count: { $sum: 1 } } }
+          ])
         ]);
 
         res.json({
@@ -103,7 +78,7 @@ router.get(["/dashboard", "/analytics"], adminOnly, async (req, res) => {
 router.get("/users", adminOnly, async (req, res) => {
     try {
         const users = await User.find({ globalRole: "student" })
-            .select("-password")
+            .select("fullName email department year joinedClubs createdAt globalRole points isClubLeader profileImage") // Essential fields for Admin UI
             .sort("-createdAt")
             .limit(100)
             .lean();
@@ -119,8 +94,8 @@ router.get("/users", adminOnly, async (req, res) => {
 router.get("/clubs", adminOnly, async (req, res) => {
     try {
         const clubs = await Club.find()
-            .populate("leaderId", "fullName email profileImage")
-            .populate("leader", "fullName email profileImage")
+            .select("name category description logo isActive createdAt")
+            .populate("leaderId", "fullName email")
             .sort("-createdAt")
             .limit(50)
             .lean();
@@ -247,6 +222,48 @@ router.put("/clubs/:id/activate", adminOnly, async (req, res) => {
         res.json({ message: "Club activated", club });
     } catch (error) {
         res.status(500).json({ error: "Failed to activate club" });
+    }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DELETE /api/admin/clubs/:id  - Permanently delete a club
+// ─────────────────────────────────────────────────────────────────────────────
+router.delete("/clubs/:id", adminOnly, async (req, res) => {
+    try {
+        const clubId = req.params.id;
+        const club = await Club.findById(clubId);
+        if (!club) return res.status(404).json({ error: "Club not found" });
+
+        const leaderId = club.leaderId || club.leader;
+
+        // PARALLELIZE: Wipe all traces of the club
+        await Promise.all([
+          Club.findByIdAndDelete(clubId),
+          ClubMember.deleteMany({ clubId }),
+          require("../ClubApplication").deleteMany({ clubId }),
+          Event.deleteMany({ club: clubId }),
+          // Remove from all users' joinedClubs arrays
+          User.updateMany(
+            { joinedClubs: clubId },
+            { $pull: { joinedClubs: clubId } }
+          )
+        ]);
+
+        // Check if the leader should still have isClubLeader flag
+        // If they lead no other clubs, remove it.
+        if (leaderId) {
+            const otherClubsCount = await Club.countDocuments({ 
+                $or: [{ leaderId: leaderId }, { leader: leaderId }] 
+            });
+            if (otherClubsCount === 0) {
+                await User.findByIdAndUpdate(leaderId, { isClubLeader: false });
+            }
+        }
+
+        res.json({ message: "Club and all its data permanently deleted" });
+    } catch (error) {
+        console.error("Delete club error:", error);
+        res.status(500).json({ error: "Failed to delete club" });
     }
 });
 

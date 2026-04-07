@@ -3,18 +3,112 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import logo from "./banasthali-logo.jpg";
 import {
-  Users, Calendar, UserPlus, TrendingUp, LogOut, LayoutDashboard,
+  Users, Calendar, LogOut, LayoutDashboard,
   PlusCircle, Building2, X, CheckCircle2, XCircle,
   Shield, Layers, Eye, EyeOff, Search, RefreshCw,
-  Zap, Clock, ShieldAlert, ArrowUpRight
+  Zap, ShieldCheck, Trash2
 } from "lucide-react";
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell, Legend
 } from "recharts";
 import "./admin.css";
+import config from "./config";
 
-const API = "http://localhost:5001";
+// eslint-disable-next-line no-unused-vars
+const UserDirectoryStyles = () => (
+  <style>{`
+    .role-stack {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 6px !important;
+      align-items: flex-start !important;
+    }
+    .badge-premium {
+      padding: 0.35rem 0.75rem !important;
+      border-radius: 8px !important;
+      font-size: 0.68rem !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.06em !important;
+      text-transform: uppercase !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+    }
+    .badge-student { 
+      background: rgba(99, 102, 241, 0.1) !important; 
+      color: #818cf8 !important; 
+      border: 1px solid rgba(99, 102, 241, 0.3) !important; 
+    }
+    .badge-admin { 
+      background: rgba(239, 68, 68, 0.1) !important; 
+      color: #f87171 !important; 
+      border: 1px solid rgba(239, 68, 68, 0.3) !important; 
+    }
+    .badge-leader-gold { 
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05)) !important; 
+      color: #fbbf24 !important; 
+      border: 1px solid rgba(245, 158, 11, 0.4) !important;
+    }
+    .promote-btn-fancy {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 10px !important;
+      background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+      color: white !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-radius: 12px !important;
+      padding: 0.65rem 1.25rem !important;
+      font-size: 0.85rem !important;
+      font-weight: 700 !important;
+      cursor: pointer !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4) !important;
+      width: fit-content !important;
+      white-space: nowrap !important;
+    }
+    .promote-btn-fancy:hover {
+      transform: translateY(-2.5px) scale(1.03) !important;
+      box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.6) !important;
+    }
+    .status-label-active {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      color: #10b981 !important;
+      font-size: 0.8rem !important;
+      font-weight: 700 !important;
+      padding: 0.5rem 1rem !important;
+      background: rgba(16, 185, 129, 0.1) !important;
+      border: 1px solid rgba(16, 185, 129, 0.2) !important;
+      border-radius: 10px !important;
+    }
+    .btn-delete-fancy {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+      color: white !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-radius: 10px !important;
+      padding: 0.5rem 12px !important;
+      font-size: 0.8rem !important;
+      font-weight: 700 !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+    }
+    .btn-delete-fancy:hover {
+      transform: translateY(-1px) !important;
+      box-shadow: 0 6px 15px rgba(239, 68, 68, 0.4) !important;
+      filter: brightness(1.1) !important;
+    }
+  `}</style>
+);
+
+const API = config.API_BASE_URL;
 const COLORS = ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
 
 // ─── Toast Component ───────────────────────────────────────────────────────────
@@ -36,27 +130,13 @@ const ClubFormModal = ({ students, onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const addDomain = () => {
-    setForm(f => ({ ...f, domains: [...f.domains, { name: "", description: "" }] }));
-  };
-
-  const removeDomain = (i) => {
-    setForm(f => ({ ...f, domains: f.domains.filter((_, idx) => idx !== i) }));
-  };
-
-  const updateDomain = (i, field, value) => {
-    const d = [...form.domains];
-    d[i][field] = value;
-    setForm(f => ({ ...f, domains: d }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     if (!form.name || !form.description || !form.leaderId) {
       setError("Club name, description, and leader are required."); return;
     }
-    const validDomains = form.domains.filter(d => d.name.trim());
+    const validDomains = (form.domains || []).filter(d => d.name && d.name.trim());
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
@@ -81,12 +161,11 @@ const ClubFormModal = ({ students, onClose, onSuccess }) => {
           <button onClick={onClose} className="close-btn"><X size={20} /></button>
         </div>
         <div className="modal-body" style={{ padding: "1.5rem" }}>
+          {error && <div className="form-error" style={{ color: "#ef4444", background: "rgba(239, 68, 68, 0.1)", padding: "10px", borderRadius: "10px", border: "1px solid rgba(239, 68, 68, 0.2)", marginBottom: "1.5rem", fontSize: "0.85rem", fontWeight: "600" }}>{error}</div>}
           <div className="admin-notice">
             <Shield size={16} />
-            <span>Clubs are created offline after meeting with the student. This form finalizes the process.</span>
+            <span>Clubs are created offline after meeting with the student. This form finalizes their digital presence.</span>
           </div>
-
-          {error && <div className="form-error"><XCircle size={16} /> {error}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="form-grid-2">
@@ -98,58 +177,40 @@ const ClubFormModal = ({ students, onClose, onSuccess }) => {
               <div className="form-group">
                 <label>Category</label>
                 <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
-                  {["Technical", "Cultural", "Workshop", "Hackathon", "Seminar", "Sports", "Entrepreneurship"].map(c => (
-                    <option key={c}>{c}</option>
+                  {["Technical", "Cultural", "Workshop", "Hackathon", "Seminar", "Sports", "Entrepreneurship", "Event", "Welfare", "Academic", "Marketing"].map(c => (
+                    <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
               </div>
             </div>
 
             <div className="form-group">
-              <label>Description *</label>
-              <textarea placeholder="What does this club do?" rows={3}
-                value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} required />
-            </div>
-
-            <div className="form-group">
-              <label>Vision</label>
+              <label>Vision & Mission</label>
               <textarea placeholder="Long-term vision and goals of the club..." rows={2}
                 value={form.vision} onChange={e => setForm(f => ({ ...f, vision: e.target.value }))} />
             </div>
 
             <div className="form-group">
-              <label>Assign Club Leader *</label>
+              <label>Description *</label>
+              <textarea placeholder="What does this club do?" rows={4} 
+                value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} required />
+            </div>
+
+            <div className="form-group" style={{ marginTop: "1rem" }}>
+              <label>Assign Founding Club Leader *</label>
               <select value={form.leaderId} onChange={e => setForm(f => ({ ...f, leaderId: e.target.value }))} required>
-                <option value="">-- Select a student --</option>
+                <option value="">-- Select a primary student leader --</option>
                 {students.map(s => (
                   <option key={s._id} value={s._id}>{s.fullName} ({s.email})</option>
                 ))}
               </select>
             </div>
 
-            <div className="form-group">
-              <label>Domains <span style={{ color: "#64748b", fontSize: "0.8rem" }}>(dynamic - add/remove)</span></label>
-              {form.domains.map((d, i) => (
-                <div key={i} className="domain-input-row">
-                  <input type="text" placeholder="Domain name (e.g., Technical)"
-                    value={d.name} onChange={e => updateDomain(i, "name", e.target.value)} />
-                  <input type="text" placeholder="Description (optional)"
-                    value={d.description} onChange={e => updateDomain(i, "description", e.target.value)} />
-                  {form.domains.length > 1 && (
-                    <button type="button" onClick={() => removeDomain(i)} className="remove-domain-btn"><X size={16} /></button>
-                  )}
-                </div>
-              ))}
-              <button type="button" onClick={addDomain} className="add-domain-btn">
-                <PlusCircle size={16} /> Add Domain
-              </button>
-            </div>
-
             <div className="modal-footer-actions">
               <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
               <button type="submit" className="btn-primary" disabled={loading}>
-                {loading ? <RefreshCw size={16} className="spin" /> : <Building2 size={16} />}
-                {loading ? "Creating..." : "Create Club"}
+                {loading ? <RefreshCw size={16} className="spin" /> : <ShieldCheck size={16} />}
+                {loading ? "Registering..." : "Launch Club"}
               </button>
             </div>
           </form>
@@ -233,7 +294,6 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [clubs, setClubs] = useState([]);
   const [events, setEvents] = useState([]);
-  const [advancedStats, setAdvancedStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [showClubModal, setShowClubModal] = useState(false);
@@ -249,39 +309,33 @@ const AdminDashboard = () => {
     setTimeout(() => setToast(null), 4000);
   };
 
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  // eslint-disable-next-line no-unused-vars
+  const isSuperAdmin = currentUser.email === "anshumanshashtri26@banasthali.in";
+
   const fetchData = useCallback(async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const headers = { Authorization: `Bearer ${token}` };
+    const token = localStorage.getItem("token");
+    if (!token) { navigate("/login"); return; }
 
-      const [statsRes, usersRes, clubsRes, eventsRes] = await Promise.all([
-        axios.get(`${API}/api/admin/analytics`, { headers }),
-        axios.get(`${API}/api/admin/users`, { headers }),
-        axios.get(`${API}/api/admin/clubs`, { headers }),
-        axios.get(`${API}/api/admin/events`, { headers })
-      ]);
-
-      setData(statsRes.data);
-      setUsers(usersRes.data);
-      setClubs(clubsRes.data);
-      setEvents(eventsRes.data);
-
-      // Fetch advanced stats independently so it doesn't block the UI
-      try {
-        const advRes = await axios.get(`${API}/api/analytics/advanced`, { headers });
-        setAdvancedStats(advRes.data);
-      } catch (advErr) {
-        console.warn("Advanced stats fetch failed:", advErr);
-      }
-
-    } catch (error) {
-      console.error("Admin fetch error:", error);
-      if (error.response?.status === 403 || error.response?.status === 401) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        localStorage.removeItem("role");
+    const headers = { Authorization: `Bearer ${token}` };
+    const handleAuthError = (err) => {
+      console.error("Admin Auth Error:", err);
+      if (err.response?.status === 403 || err.response?.status === 401) {
+        localStorage.clear();
         navigate("/login");
       }
+    };
+
+    try {
+      // Execute in parallel for better performance
+      await Promise.all([
+        axios.get(`${API}/api/admin/analytics`, { headers }).then(res => setData(res.data)).catch(handleAuthError),
+        axios.get(`${API}/api/admin/users`, { headers }).then(res => setUsers(res.data)).catch(handleAuthError),
+        axios.get(`${API}/api/admin/clubs`, { headers }).then(res => setClubs(res.data)).catch(handleAuthError),
+        axios.get(`${API}/api/admin/events`, { headers }).then(res => setEvents(res.data)).catch(handleAuthError)
+      ]);
+    } catch (error) {
+      console.error("Critical fetch error:", error);
     } finally {
       setLoading(false);
     }
@@ -303,6 +357,22 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteClub = async (clubId) => {
+    if (!window.confirm("CRITICAL ACTION: This will permanently delete the club, all its events, member records and applications. THIS CANNOT BE UNDONE. Proceed?")) return;
+    
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API}/api/admin/clubs/${clubId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      showToast("Club and all associated data deleted.");
+      fetchData();
+    } catch (error) {
+      showToast("Failed to delete club.", "error");
+    }
+  };
+
+  /* 
   const handlePromote = async (userId) => {
     try {
       const token = localStorage.getItem("token");
@@ -315,6 +385,7 @@ const AdminDashboard = () => {
       showToast("Promotion failed.", "error");
     }
   };
+  */
 
   const handleClubEventsClick = (clubName) => {
     if (clubName && clubName !== "Unknown Club") {
@@ -366,17 +437,28 @@ const AdminDashboard = () => {
     c.name?.toLowerCase().includes(clubSearch.toLowerCase())
   );
 
-  const filteredEvents = events.filter(e =>
-    e.title?.toLowerCase().includes(eventSearch.toLowerCase()) ||
-    e.club?.name?.toLowerCase().includes(eventSearch.toLowerCase())
-  );
+  const filteredEvents = events
+    .filter(e => {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0); // Start of today
+      const eventDate = new Date(e.date);
+      const isUpcoming = eventDate >= now;
+      
+      const searchTerm = eventSearch.toLowerCase();
+      const dateString = eventDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).toLowerCase();
+      const searchMatch = e.title?.toLowerCase().includes(searchTerm) ||
+                         e.club?.name?.toLowerCase().includes(searchTerm) ||
+                         dateString.includes(searchTerm);
+      
+      return isUpcoming && searchMatch;
+    })
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
 
   const sidebarLinks = [
     { id: "overview", label: "Dashboard Overview", icon: LayoutDashboard },
     { id: "clubs", label: "Club Management", icon: Building2 },
     { id: "users", label: "User Directory", icon: Users },
     { id: "events", label: "Events Control", icon: Calendar },
-    { id: "insights", label: "Advanced Insights", icon: TrendingUp },
   ];
 
   const renderOverview = () => (
@@ -387,7 +469,7 @@ const AdminDashboard = () => {
           { label: "Total Students", value: data?.stats?.totalStudents || 0, icon: Users, color: "rgba(99,102,241,0.15)", iconColor: "#6366f1" },
           { label: "Active Clubs", value: data?.stats?.totalClubs || 0, icon: Building2, color: "rgba(16,185,129,0.15)", iconColor: "#10b981" },
           { label: "Total Events", value: data?.stats?.totalEvents || 0, icon: Calendar, color: "rgba(245,158,11,0.15)", iconColor: "#f59e0b" },
-          { label: "Club Members", value: data?.stats?.totalMembers || 0, icon: TrendingUp, color: "rgba(139,92,246,0.15)", iconColor: "#8b5cf6" },
+          { label: "Club Members", value: data?.stats?.totalMembers || 0, icon: Zap, color: "rgba(139,92,246,0.15)", iconColor: "#8b5cf6" },
         ].map((stat, i) => (
           <div key={i} className="stat-card">
             <div className="stat-icon-wrapper" style={{ backgroundColor: stat.color }}>
@@ -472,106 +554,7 @@ const AdminDashboard = () => {
     </div>
   );
 
-  const renderInsights = () => (
-    <div className="dashboard-content">
-      <div className="insights-header-card">
-        <div className="insight-title-group">
-          <TrendingUp size={24} className="text-indigo" />
-          <h2>Predictive Analytics & Event Insights</h2>
-        </div>
-        <p>Data-driven recommendations to optimize campus engagement and event success.</p>
-      </div>
 
-      <div className="insights-grid">
-        <div className="insight-card-premium">
-          <div className="insight-card-header">
-            <CheckCircle2 size={20} className="text-green" />
-            <h3>Best Performing Events</h3>
-          </div>
-          <div className="insight-list">
-            {(advancedStats?.bestEvents || []).map((event, i) => (
-              <div key={i} className="insight-item">
-                <div className="item-main">
-                  <span className="item-title">{event.title}</span>
-                  <span className="item-meta">{event.clubName} • {event.category}</span>
-                </div>
-                <div className="item-stats">
-                  <div className="mini-stat">
-                    <Users size={12} /> {event.registrations} Reg.
-                  </div>
-                  <div className="mini-stat">
-                    <TrendingUp size={12} /> {event.attendanceRate.toFixed(0)}% Turnout
-                  </div>
-                </div>
-                <div className="item-reason">
-                  <Zap size={12} /> {event.reason}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="insight-card-premium">
-          <div className="insight-card-header">
-            <Clock size={20} className="text-orange" />
-            <h3>Optimal Scheduling</h3>
-          </div>
-          <div className="best-time-display">
-            <div className="time-value">{advancedStats?.bestTime || "Friday Evenings"}</div>
-            <p className="time-desc">Historical data suggests this window yields higher engagement than average.</p>
-          </div>
-          <div className="recommendation-box">
-            <Shield size={16} />
-            <p>Recommendation: Schedule flagship technical workshops during this period to maximize student turnout.</p>
-          </div>
-        </div>
-
-        <div className="insight-card-premium" style={{ gridColumn: "1 / -1" }}>
-          <div className="insight-card-header">
-            <ShieldAlert size={20} className="text-red" />
-            <h3>Low-Performing Areas & Suggestions</h3>
-          </div>
-          <div className="low-perf-grid">
-            {(advancedStats?.lowPerforming || []).map((area, i) => (
-              <div key={i} className="low-perf-item">
-                <div className="low-perf-main">
-                  <span className="area-name">{area.name} Events</span>
-                  <div className="area-stats">
-                    <span>Avg. Reg: {Math.round(area.avgReg)}</span>
-                    <span>Avg. Turnout: {Math.round(area.avgAttRate)}%</span>
-                  </div>
-                </div>
-                <div className="suggestion-badge">
-                   {area.suggestion}
-                </div>
-              </div>
-            ))}
-            {(!advancedStats?.lowPerforming || advancedStats.lowPerforming.length === 0) && (
-              <div className="empty-insights" style={{ textAlign: "center", padding: "1rem", gridColumn: "1/-1" }}>
-                <CheckCircle2 size={32} className="text-green" style={{ marginBottom: "0.5rem" }} />
-                <p>All categories are performing above average!</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="insight-card-premium actionable-card" style={{ gridColumn: "1 / -1" }}>
-          <div className="insight-card-header">
-            <Zap size={20} className="text-purple" />
-            <h3>Actionable Recommendations</h3>
-          </div>
-          <div className="recommendation-list-premium">
-            {(advancedStats?.recommendations || []).map((rec, i) => (
-              <div key={i} className="rec-item">
-                <ArrowUpRight size={18} />
-                <span>{rec}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   const renderClubs = () => (
     <div className="data-table-container">
@@ -639,8 +622,17 @@ const AdminDashboard = () => {
               <button
                 className={club.isActive ? "btn-danger-sm" : "btn-success-sm"}
                 onClick={() => handleDeactivateClub(club._id, club.isActive)}
+                style={{ borderRadius: "10px", padding: "0.6rem 16px", minWidth: "120px", justifyContent: "center" }}
               >
                 {club.isActive ? (<><EyeOff size={14} /> Deactivate</>) : (<><Eye size={14} /> Activate</>)}
+              </button>
+              <button
+                className="btn-delete-fancy"
+                onClick={() => handleDeleteClub(club._id)}
+                title="Permanently Delete Club"
+                style={{ minWidth: "100px" }}
+              >
+                <Trash2 size={14} /> Delete
               </button>
             </div>
           </div>
@@ -667,9 +659,11 @@ const AdminDashboard = () => {
             <input type="text" placeholder="Search users..." value={userSearch}
               onChange={e => setUserSearch(e.target.value)} />
           </div>
-          <button onClick={() => setShowAdminModal(true)} className="btn-primary" style={{ background: "#ef4444", borderColor: "#ef4444", whiteSpace: "nowrap" }}>
-            <Shield size={16} /> Add Admin
-          </button>
+          {isSuperAdmin && (
+            <button onClick={() => setShowAdminModal(true)} className="btn-primary" style={{ background: "#ef4444", borderColor: "#ef4444", whiteSpace: "nowrap" }}>
+              <Shield size={16} /> Add Admin
+            </button>
+          )}
           <button onClick={handleExport} className="btn-secondary" style={{ whiteSpace: "nowrap" }}>Export CSV</button>
         </div>
       </div>
@@ -681,7 +675,6 @@ const AdminDashboard = () => {
               <th>Department</th>
               <th>Role</th>
               <th>Points</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -697,19 +690,31 @@ const AdminDashboard = () => {
                     </div>
                   </div>
                 </td>
-                <td style={{ color: "#94a3b8", fontSize: "0.85rem" }}>{user.department || "—"}</td>
+                <td style={{ color: "#94a3b8", fontSize: "0.85rem" }}>{user.department || "General"}</td>
                 <td>
-                  <span className={`badge badge-${user.globalRole}`}>{user.globalRole}</span>
-                  {user.isClubLeader && <span className="badge badge-leader" style={{ marginLeft: "4px" }}>Leader</span>}
+                  <div className="role-stack">
+                    <span className={`badge-premium badge-${user.globalRole || 'student'}`}>
+                      {user.globalRole || 'STUDENT'}
+                    </span>
+                    {user.isClubLeader && (
+                      <span className="badge-premium badge-leader-gold">
+                        <Zap size={10} style={{ marginRight: '4px' }} />CLUB LEADER
+                      </span>
+                    )}
+                    {/* Render functional roles from joined clubs */}
+                    {user.email === "btbti23099_anisha@banasthali.in" && (
+                      <span className="badge-premium" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#818cf8', fontSize: '0.6rem', marginTop: '4px' }}>
+                        Build CV • Design & Experience Team
+                      </span>
+                    )}
+                    {(user.joinedClubs || []).length > 0 && user.email !== "btbti23099_anisha@banasthali.in" && (
+                      <span className="badge-premium" style={{ background: 'rgba(255, 255, 255, 0.05)', color: '#94a3b8', fontSize: '0.6rem', marginTop: '4px' }}>
+                        Part of {(user.joinedClubs || []).length} Clubs
+                      </span>
+                    )}
+                  </div>
                 </td>
-                <td style={{ fontWeight: "700", color: "#f8fafc" }}>{user.points || 0} pts</td>
-                <td>
-                  {user.globalRole === "student" && !user.isClubLeader && (
-                    <button onClick={() => handlePromote(user._id)} className="action-btn">
-                      <UserPlus size={14} /> Promote
-                    </button>
-                  )}
-                </td>
+                <td style={{ fontWeight: "700", color: "#f8fafc" }}>{user.points || 0} <span style={{ fontSize: '0.7rem', color: '#64748b' }}>PTS</span></td>
               </tr>
             ))}
           </tbody>
@@ -718,14 +723,10 @@ const AdminDashboard = () => {
     </div>
   );
 
-  if (loading) return (
-    <div className="centered-state">
-      <div className="spinner"></div>
-    </div>
-  );
-
   return (
     <div className="admin-container">
+      {/* Dynamic Styles */}
+      <UserDirectoryStyles />
       {/* Toast */}
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
@@ -764,11 +765,12 @@ const AdminDashboard = () => {
             <h1>
               {activeTab === "overview" ? "Dashboard Overview" :
                 activeTab === "clubs" ? "Club Management" :
-                activeTab === "users" ? "User Directory" :
-                activeTab === "events" ? "Events Control" :
-                "Advanced Insights"}
+                  activeTab === "users" ? "User Directory" :
+                    activeTab === "events" ? "Events Control" :
+                      "Dashboard"
+              }
             </h1>
-            <p>{activeTab === "insights" ? "Analytical breakdown of platform performance." : "Welcome back, Platform Administrator."}</p>
+            <p>{activeTab === "overview" ? "Welcome back, Platform Administrator." : `Managing all ${activeTab} on the platform.`}</p>
           </div>
           <div className="header-actions">
             {activeTab === "clubs" && (
@@ -779,98 +781,120 @@ const AdminDashboard = () => {
           </div>
         </header>
 
-        {activeTab === "overview" && renderOverview()}
-        {activeTab === "clubs" && renderClubs()}
-        {activeTab === "users" && renderUsers()}
-        {activeTab === "insights" && renderInsights()}
-        {activeTab === "events" && (
-          <div className="data-table-container">
-            <div className="table-header">
-              <div>
-                <h2>{eventSearch ? `Clustered: ${eventSearch} Events` : "Global Event Control"}</h2>
-                <p style={{ color: "#94a3b8", fontSize: "0.85rem", marginTop: "4px" }}>
-                  {eventSearch ? `Showing all events belonging to the "${eventSearch}" cluster.` : "Monitor and moderate all campus events created by Club Leaders."}
-                </p>
-              </div>
-              <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                {eventSearch && (
-                  <button 
-                    onClick={() => setEventSearch("")} 
-                    className="btn-secondary-sm"
-                    style={{ background: "rgba(255,255,255,0.05)", padding: "8px 12px", borderRadius: "8px" }}
-                  >
-                    <RefreshCw size={14} style={{ marginRight: '6px' }} /> Show All
-                  </button>
-                )}
-                <div className="admin-search-box">
-                  <Search size={16} />
-                  <input type="text" placeholder="Search events or clubs..." value={eventSearch}
-                    onChange={e => setEventSearch(e.target.value)} />
-                </div>
-              </div>
-            </div>
-            <div className="table-wrapper" style={{ overflowX: "auto" }}>
-              <table className="responsive-table">
-                <thead>
-                  <tr>
-                    <th>Event Info</th>
-                    <th>Club</th>
-                    <th>Date</th>
-                    <th>Created By</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredEvents.map(event => (
-                    <tr key={event._id}>
-                      <td>
-                        <div className="user-cell" style={{ maxWidth: "250px" }}>
-                          {event.image ? (
-                            <img src={event.image} className="user-avatar" alt="" style={{ borderRadius: '8px', objectFit: 'cover' }} />
-                          ) : (
-                            <div style={{ width: 40, height: 40, borderRadius: 8, background: 'rgba(99, 102, 241, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 15, flexShrink: 0 }}>
-                              <Calendar size={20} color="#6366f1" />
-                            </div>
-                          )}
-                          <div style={{ overflow: "hidden" }}>
-                            <span className="user-name" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "block" }}>{event.title}</span>
-                            <span className="user-email" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "block" }}>{event.category || "General"}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td style={{ fontWeight: "600" }}>
-                        <span 
-                          onClick={() => handleClubEventsClick(event.club?.name)}
-                          style={{ cursor: "pointer", color: "#6366f1" }} className="hover-underline"
-                        >
-                          {event.club?.name || "Unknown Club"}
-                        </span>
-                      </td>
-                      <td style={{ color: "#94a3b8", fontSize: "0.85rem" }}>
-                        {new Date(event.date).toLocaleDateString()} at {event.time || "TBD"}
-                      </td>
-                      <td style={{ color: "#94a3b8", fontSize: "0.85rem" }}>{event.createdBy?.fullName || "Leader"}</td>
-                      <td>
-                        <button onClick={() => handleDeleteEvent(event._id)} className="action-btn" style={{ color: "#ef4444", borderColor: "rgba(239, 68, 68, 0.2)" }}>
-                          <XCircle size={14} /> Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {filteredEvents.length === 0 && (
-                    <tr>
-                      <td colSpan="5" style={{ textAlign: "center", padding: "4rem", color: "#64748b" }}>
-                        <Calendar size={48} style={{ opacity: 0.2, marginBottom: "1rem", display: "inline-block" }} />
-                        <h3 style={{ color: "#94a3b8" }}>No Events Found</h3>
-                        <p style={{ fontSize: "0.9rem" }}>Clubs haven't posted any events matching your search.</p>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+        {loading ? (
+          <div className="centered-state" style={{ padding: "4rem" }}>
+            <div className="spinner"></div>
+            <p style={{ marginTop: "1rem", color: "#64748b" }}>Loading Dashboard Data...</p>
           </div>
-        )}
+        ) : (() => {
+          try {
+            return (
+              <>
+                {activeTab === "overview" && renderOverview()}
+                {activeTab === "clubs" && renderClubs()}
+                {activeTab === "users" && renderUsers()}
+                {activeTab === "events" && (
+                  <div className="data-table-container">
+                    <div className="table-header">
+                      <div>
+                        <h2>{eventSearch ? `Clustered: ${eventSearch} Events` : "Global Event Control"}</h2>
+                        <p style={{ color: "#94a3b8", fontSize: "0.85rem", marginTop: "4px" }}>
+                          {eventSearch ? `Showing all events belonging to the "${eventSearch}" cluster.` : "Monitor and moderate all campus events created by Club Leaders."}
+                        </p>
+                      </div>
+                      <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                        {eventSearch && (
+                          <button
+                            onClick={() => setEventSearch("")}
+                            className="btn-secondary-sm"
+                            style={{ background: "rgba(255,255,255,0.05)", padding: "8px 12px", borderRadius: "8px" }}
+                          >
+                            <RefreshCw size={14} style={{ marginRight: '6px' }} /> Show All
+                          </button>
+                        )}
+                        <div className="admin-search-box">
+                          <Search size={16} />
+                          <input type="text" placeholder="Search events or clubs..." value={eventSearch}
+                            onChange={e => setEventSearch(e.target.value)} />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="table-wrapper" style={{ overflowX: "auto" }}>
+                      <table className="responsive-table">
+                        <thead>
+                          <tr>
+                            <th>Event Info</th>
+                            <th>Club</th>
+                            <th>Date</th>
+                            <th>Created By</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredEvents.map(event => (
+                            <tr key={event._id}>
+                              <td>
+                                <div className="user-cell" style={{ maxWidth: "250px" }}>
+                                  {event.image ? (
+                                    <img src={event.image} className="user-avatar" alt="" style={{ borderRadius: '8px', objectFit: 'cover' }} />
+                                  ) : (
+                                    <div style={{ width: 40, height: 40, borderRadius: 8, background: 'rgba(99, 102, 241, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 15, flexShrink: 0 }}>
+                                      <Calendar size={20} color="#6366f1" />
+                                    </div>
+                                  )}
+                                  <div style={{ overflow: "hidden" }}>
+                                    <span className="user-name" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "block" }}>{event.title}</span>
+                                    <span className="user-email" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "block" }}>{event.category || "General"}</span>
+                                  </div>
+                                </div>
+                              </td>
+                              <td style={{ fontWeight: "600" }}>
+                                <span
+                                  onClick={() => handleClubEventsClick(event.club?.name)}
+                                  style={{ cursor: "pointer", color: "#6366f1" }} className="hover-underline"
+                                >
+                                  {event.club?.name || "Unknown Club"}
+                                </span>
+                              </td>
+                              <td style={{ color: "#94a3b8", fontSize: "0.85rem" }}>
+                                {new Date(event.date).toLocaleDateString()} at {event.time || "TBD"}
+                              </td>
+                              <td style={{ color: "#94a3b8", fontSize: "0.85rem" }}>{event.createdBy?.fullName || "Leader"}</td>
+                              <td>
+                                <button onClick={() => handleDeleteEvent(event._id)} className="action-btn" style={{ color: "#ef4444", borderColor: "rgba(239, 68, 68, 0.2)" }}>
+                                  <XCircle size={14} /> Delete
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                          {filteredEvents.length === 0 && (
+                            <tr>
+                              <td colSpan="5" style={{ textAlign: "center", padding: "4rem", color: "#64748b" }}>
+                                <Calendar size={48} style={{ opacity: 0.2, marginBottom: "1rem", display: "inline-block" }} />
+                                <h3 style={{ color: "#94a3b8" }}>No Events Found</h3>
+                                <p style={{ fontSize: "0.9rem" }}>Clubs haven't posted any events matching your search.</p>
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </>
+            );
+          } catch (err) {
+            console.error("Admin Render Error:", err);
+            return (
+              <div style={{ padding: '3rem', textAlign: 'center', background: 'white', borderRadius: '12px', margin: '2rem' }}>
+                <Shield size={48} style={{ color: '#ef4444', marginBottom: '1rem' }} />
+                <h3>Component Rendering Problem</h3>
+                <p>There was an issue displaying this data cluster. Try refreshing.</p>
+                <button onClick={() => window.location.reload()} className="btn-primary">Reload Dashboard</button>
+              </div>
+            );
+          }
+        })()}
       </main>
 
       {/* Club Creation Modal */}

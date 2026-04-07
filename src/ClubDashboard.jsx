@@ -3,10 +3,10 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import logo from "./banasthali-logo.jpg";
 import {
-  Users, Calendar, PlusCircle, BarChart3,
+  Users, Calendar, PlusCircle, BarChart3, Trophy,
   LogOut, ShieldAlert, TrendingUp, ClipboardList,
-  Mail, Settings,
-  Trash2, Edit3, X, RefreshCw,
+  Settings,
+  Trash2, Edit3, X, RefreshCw, Award, ShieldCheck,
   LayoutDashboard, Layers, Megaphone,
   UserPlus, ChevronRight, Search, Filter, ArrowUpRight,
   Clock, CheckCircle2, Zap, XCircle, Image as ImageIcon
@@ -17,7 +17,8 @@ import {
 } from 'recharts';
 import "./ClubDashboard.css";
 
-const API = "http://localhost:5001";
+import config from "./config";
+const API = config.API_BASE_URL;
 
 const ClubDashboard = () => {
   const { clubId } = useParams();
@@ -29,6 +30,7 @@ const ClubDashboard = () => {
   const [modalType, setModalType] = useState(null);
   const [memberSearch, setMemberSearch] = useState("");
   const [eventSearch, setEventSearch] = useState("");
+  const [eventCategory, setEventCategory] = useState("All Categories");
   const [applications, setApplications] = useState([]);
   const [appLoading, setAppLoading] = useState(false);
   const [members, setMembers] = useState([]);
@@ -38,9 +40,14 @@ const ClubDashboard = () => {
   const [modalData, setModalData] = useState(null); // Used for dynamic modal forms
   const [editingRole, setEditingRole] = useState(null);
   const [advancedStats, setAdvancedStats] = useState(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const [memberToEdit, setMemberToEdit] = useState(null);
   const [showMemberModal, setShowMemberModal] = useState(false);
+  
+  const [resultEvent, setResultEvent] = useState(null);
+  const [winners, setWinners] = useState([{ userId: "", position: "1st", certificateFile: null }]);
+  const [certMode] = useState('manual');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -63,42 +70,34 @@ const ClubDashboard = () => {
     setModalData(null); // Reset data when opening new modal
   };
 
-  const fetchClubData = useCallback(async () => {
+  const fetchClubData = useCallback(async (showLoader = false) => {
     try {
+      // Only show full-page loader if explicitly asked or we have absolutely no data yet
+      if (showLoader) {
+        setLoading(true);
+      }
+      
       const token = localStorage.getItem("token");
       const user = JSON.parse(localStorage.getItem("user"));
 
-      if (clubId) {
-        const roleRes = await axios.get(`${API}/api/club/${clubId}/my-role`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setUserRole(roleRes.data.role);
-      } else if (user?.isClubLeader) {
-        setUserRole("leader");
-      } else if (user?.membershipType === 'Core Member') {
-        setUserRole("core");
-      }
+      // Fetch role and dashboard data in parallel to save time
+      const rolePromise = clubId 
+        ? axios.get(`${API}/api/club/${clubId}/my-role`, { headers: { Authorization: `Bearer ${token}` } })
+        : Promise.resolve({ data: { role: user?.isClubLeader ? "leader" : (user?.membershipType === 'Core Member' ? "core" : "member") } });
 
-      const res = await axios.get(`${API}/api/club-leader/dashboard`, {
+      const dashboardPromise = axios.get(`${API}/api/club-leader/dashboard${clubId ? `?clubId=${clubId}` : ''}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setData(res.data);
 
-      const memberRes = await axios.get(`${API}/api/club-leader/members`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).catch(() => ({ data: [] }));
-      setMembers(memberRes.data);
+      const [roleRes, dashRes] = await Promise.all([rolePromise, dashboardPromise]);
+      
+      setUserRole(roleRes.data.role);
+      setData(dashRes.data);
 
-      const advRes = await axios.get(`${API}/api/analytics/advanced`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).catch(() => ({ data: null }));
-      setAdvancedStats(advRes.data);
     } catch (error) {
       console.error("Club fetch error:", error);
       if (error.response?.status === 403 || error.response?.status === 401) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        localStorage.removeItem("role");
+        localStorage.clear();
         navigate("/login");
       }
     } finally {
@@ -106,26 +105,114 @@ const ClubDashboard = () => {
     }
   }, [clubId, navigate]);
 
+  const handleAuthError = useCallback((err) => {
+    console.error("Auth Error:", err);
+    if (err.response?.status === 403 || err.response?.status === 401) {
+      localStorage.clear();
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  const fetchMembers = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API}/api/club-leader/members${clubId ? `?clubId=${clubId}` : ''}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setMembers(res.data);
+    } catch (err) { handleAuthError(err); }
+  }, [clubId, handleAuthError]);
+
+  const fetchAdvancedStats = useCallback(async () => {
+    setAnalyticsLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API}/api/analytics/advanced`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setAdvancedStats(res.data);
+    } catch (err) { 
+      handleAuthError(err); 
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }, [handleAuthError]);
+
+
   const fetchApplications = useCallback(async () => {
     setAppLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${API}/api/club-leader/applications`, {
+      const res = await axios.get(`${API}/api/club-leader/applications${clubId ? `?clubId=${clubId}` : ''}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setApplications(res.data);
     } catch (err) {
-      console.error('Applications fetch error:', err);
+      handleAuthError(err);
     } finally {
       setAppLoading(false);
     }
-  }, []);
+  }, [clubId, handleAuthError]);
+
+  const handlePublishResults = async () => {
+    if (!resultEvent || winners.some(w => !w.userId)) {
+      showToast("Please select an event and all winners", "error");
+      return;
+    }
+    
+    // Check if certificates are uploaded for winners since we are in Manual Mode
+    if (winners.some(w => !w.certificateFile)) {
+      showToast("Please upload the custom certificates for all winners first.", "error");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      // Map winners and include the certificate data for storage
+      const finalWinners = winners.map(w => ({
+         userId: w.userId,
+         position: w.position,
+         certificateUrl: w.certificateFile
+      }));
+
+      await axios.post(`${API}/api/club-leader/events/${resultEvent._id}/results`, 
+        { winners: finalWinners }, 
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      showToast("Results and certificates published successfully!");
+      setActiveTab("overview");
+      setResultEvent(null);
+      setWinners([{ userId: "", position: "1st", certificateFile: null }]);
+      fetchClubData();
+    } catch (err) {
+      showToast(err.response?.data?.error || "Failed to publish results", "error");
+    }
+  };
+
+  const addWinnerField = () => setWinners([...winners, { userId: "", position: "", certificateFile: null }]);
+  const removeWinnerField = (index) => setWinners(winners.filter((_, i) => i !== index));
+  const updateWinner = (index, field, value) => {
+    const newWinners = [...winners];
+    newWinners[index][field] = value;
+    setWinners(newWinners);
+  };
+  
+  const handleWinnerFileChange = (index, file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const newWinners = [...winners];
+      newWinners[index].certificateFile = reader.result;
+      setWinners(newWinners);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleApprove = async (appId, membershipType, domain) => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(`${API}/api/club-leader/applications/${appId}/approve`,
-        { membershipType, domain },
+        { membershipType, domain, clubId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       showToast('Application approved!');
@@ -139,7 +226,7 @@ const ClubDashboard = () => {
   const handleReject = async (appId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`${API}/api/club-leader/applications/${appId}/reject`, {},
+      await axios.put(`${API}/api/club-leader/applications/${appId}/reject`, { clubId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       showToast('Application rejected.');
@@ -155,26 +242,46 @@ const ClubDashboard = () => {
       navigate("/admindashboard");
       return;
     }
-    fetchClubData();
+    fetchClubData(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clubId]);
+  }, [clubId, fetchClubData]);
+
+  const stats = data?.stats || {};
+  const charts = data?.charts || {};
+  const events = data?.events || [];
+  const club = data?.club;
+  const permissions = data?.permissions || {}; // From our new backend logic
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const isDirectLeader = userRole === 'leader' || club?.leaderId?.email === user?.email || club?.leader?.email === user?.email || club?.email === user?.email;
+
+  const canManageMembers = isDirectLeader || permissions.canManageMembers;
+  const canManageEvents = isDirectLeader || permissions.canCreateEvents;
+  const canViewAnalytics = isDirectLeader || permissions.canViewAnalytics;
+  const canSendNotifs = isDirectLeader || permissions.canSendNotifications;
+  const canUploadPhotos = isDirectLeader || permissions.canUploadPhotos;
+  const canManageResults = isDirectLeader || permissions.canManageResults;
 
   const fetchRolesData = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${API}/api/club-leader/roles`, {
+      const res = await axios.get(`${API}/api/club-leader/roles${clubId ? `?clubId=${clubId}` : ''}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRolesData(res.data);
     } catch (err) {
-      console.error("Roles fetch error:", err);
+      handleAuthError(err);
     }
-  }, []);
+  }, [clubId, handleAuthError]);
 
   useEffect(() => {
-    if (activeTab === 'applications') fetchApplications();
-    if (['roles', 'roles-core', 'roles-subcore', 'members'].includes(activeTab)) fetchRolesData();
-  }, [activeTab, fetchApplications, fetchRolesData]);
+    if (activeTab === 'applications' && applications.length === 0) fetchApplications();
+    if (activeTab === 'analytics' && !advancedStats) fetchAdvancedStats();
+    if (['roles', 'roles-core', 'roles-subcore', 'members'].includes(activeTab) && (members.length === 0 || !members)) {
+       fetchRolesData();
+       fetchMembers();
+    }
+  }, [activeTab, fetchApplications, fetchRolesData, fetchMembers, fetchAdvancedStats, applications.length, members, advancedStats]);
 
 
   const [announcementText, setAnnouncementText] = useState("");
@@ -184,7 +291,7 @@ const ClubDashboard = () => {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`${API}/api/club-leader/delete-event/${eventId}`, {
+      await axios.delete(`${API}/api/club-leader/delete-event/${eventId}${clubId ? `?clubId=${clubId}` : ''}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       showToast('Event deleted successfully');
@@ -200,7 +307,8 @@ const ClubDashboard = () => {
       const token = localStorage.getItem("token");
       await axios.post(`${API}/api/club-leader/notify`, {
         message: announcementText,
-        target: "members"
+        target: "members",
+        clubId
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -224,10 +332,10 @@ const ClubDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       if (editingRole?._id) {
-        await axios.put(`${API}/api/club-leader/roles/${editingRole._id}`, editingRole, { headers: { Authorization: `Bearer ${token}` } });
+        await axios.put(`${API}/api/club-leader/roles/${editingRole._id}`, { ...editingRole, clubId }, { headers: { Authorization: `Bearer ${token}` } });
         showToast('Role updated successfully');
       } else {
-        await axios.post(`${API}/api/club-leader/roles`, editingRole, { headers: { Authorization: `Bearer ${token}` } });
+        await axios.post(`${API}/api/club-leader/roles`, { ...editingRole, clubId }, { headers: { Authorization: `Bearer ${token}` } });
         showToast('Role created successfully');
       }
       setShowRoleModal(false);
@@ -243,7 +351,8 @@ const ClubDashboard = () => {
       const token = localStorage.getItem("token");
       await axios.put(`${API}/api/club-leader/members/${memberToEdit._id}/promote`, {
         roleId: memberToEdit.assignedRoleId || null,
-        customTitle: memberToEdit.customTitle || ""
+        customTitle: memberToEdit.customTitle || "",
+        clubId
       }, { headers: { Authorization: `Bearer ${token}` } });
       showToast('Member assigned to team successfully');
       setShowMemberModal(false);
@@ -258,7 +367,7 @@ const ClubDashboard = () => {
     if (!window.confirm("Remove this moment from the gallery?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`${API}/api/club-leader/gallery/photo/${photoId}`, {
+      await axios.delete(`${API}/api/club-leader/gallery/photo/${photoId}${clubId ? `?clubId=${clubId}` : ''}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       showToast('Moment removed');
@@ -268,46 +377,35 @@ const ClubDashboard = () => {
     }
   };
 
-  if (loading) return (
-    <div className="loading-screen">
-      <div className="custom-spinner"></div>
-    </div>
-  );
-  const stats = data?.stats || {};
-  const charts = data?.charts || {};
-  const events = data?.events || [];
-  const club = data?.club;
-  const permissions = data?.permissions || {}; // From our new backend logic
-
-  // Dynamic permissions
-  const user = JSON.parse(localStorage.getItem("user"));
-  const isDirectLeader = userRole === 'leader' || club?.leaderId?.email === user?.email || club?.leader?.email === user?.email || club?.email === user?.email;
-  
-  const canManageMembers = isDirectLeader || permissions.canManageMembers;
-  const canManageEvents = isDirectLeader || permissions.canCreateEvents;
-  const canViewAnalytics = isDirectLeader || permissions.canViewAnalytics;
-  const canSendNotifs = isDirectLeader || permissions.canSendNotifications;
-  const canUploadPhotos = isDirectLeader || permissions.canUploadPhotos;
 
   const mainLinks = [
     { id: "overview", label: "Overview", icon: LayoutDashboard, roles: ["leader", "core", "subcore", "member"] },
     { id: "events", label: "Events", icon: Calendar, roles: ["leader", "core", "subcore", "member"] },
+    { id: "results", label: "Results", icon: Trophy, roles: ["leader", "core"] },
     { id: "analytics", label: "Analytics", icon: BarChart3, roles: ["leader", "core"] },
     { id: "announcements", label: "Broadcast", icon: Megaphone, roles: ["leader", "core", "subcore", "member"] },
     { id: "gallery", label: "Gallery", icon: ImageIcon, roles: ["leader", "core", "subcore", "member"] },
   ];
 
   const adminLinks = [
-    { id: "members", label: "Members", icon: Users },
-    { id: "roles-core", label: "Add Core Team", icon: ShieldAlert },
-    { id: "roles-subcore", label: "Add Subcore Team", icon: Layers },
-    { id: "club-profile", label: "Club Profile", icon: Settings },
+    { id: "members", label: "Members", icon: Users, reqPerm: "canManageMembers" },
+    { id: "roles-core", label: "Add Core Team", icon: ShieldAlert, reqPerm: "isDirectLeader" },
+    { id: "roles-subcore", label: "Add Subcore Team", icon: Layers, reqPerm: "isDirectLeader" },
+    { id: "club-profile", label: "Club Profile", icon: Settings, reqPerm: "canEditClubProfile" },
   ];
 
   const isAnyStaff = ["leader", "core", "subcore"].includes(userRole) || isDirectLeader;
   const filteredMainLinks = mainLinks.filter(link => {
     if (link.id === "analytics") return canViewAnalytics;
+    if (link.id === "results") return canManageResults;
     return isAnyStaff || link.roles.includes(userRole);
+  });
+
+  const filteredAdminLinks = adminLinks.filter(link => {
+     if (link.reqPerm === "isDirectLeader") return isDirectLeader;
+     if (link.reqPerm === "canManageMembers") return canManageMembers;
+     if (link.reqPerm === "canEditClubProfile") return isDirectLeader || permissions.canEditClubProfile;
+     return false;
   });
 
   // ── Application row component (inline) ──────────────────────
@@ -411,10 +509,10 @@ const ClubDashboard = () => {
           ))}
         </div>
 
-        {canManageMembers && (
+        {filteredAdminLinks.length > 0 && (
           <div className="nav-section" style={{ marginTop: '2rem' }}>
             <h4 className="nav-label">Leader Settings</h4>
-            {adminLinks.map(link => (
+            {filteredAdminLinks.map(link => (
               <button
                 key={link.id}
                 onClick={() => {
@@ -454,7 +552,12 @@ const ClubDashboard = () => {
 
       {/* Main Content */}
       <main className="club-main">
-        {!club ? (
+        {loading ? 
+           <div className="loading-screen-inline" style={{ padding: '8rem 2rem', textAlign: 'center' }}>
+              <div className="custom-spinner" style={{ margin: '0 auto' }}></div>
+              <p style={{ marginTop: '1.5rem', color: '#64748b', fontWeight: 500 }}>Initializing Club Dashboard...</p>
+           </div>
+        : !club ? (
           <div className="empty-dashboard-container">
             <div className="empty-state-card">
               <div className="empty-state-icon"><ShieldAlert size={60} /></div>
@@ -495,12 +598,15 @@ const ClubDashboard = () => {
                     <PlusCircle size={18} /> New Event
                   </button>
                 )}
-                <button className="btn-icon"><Mail size={18} /></button>
               </div>
             </header>
 
-            <div className="tab-content">
-              {activeTab === 'overview' && (
+            <div className="tab-content" style={{ minHeight: '400px' }}>
+              {(() => {
+                try {
+                  return (
+                    <>
+                      {activeTab === 'overview' && (
                 <div className="overview-tab">
                   <div className="stats-grid">
                     <div className="stat-card">
@@ -522,14 +628,14 @@ const ClubDashboard = () => {
                         <TrendingUp size={20} className="text-purple" />
                       </div>
                       <div className="stat-value">{stats.engagementScore}</div>
-                      <div className="stat-label">Engagement Score</div>
+                      <div className="stat-label">Community Pulse</div>
                     </div>
                     <div className="stat-card">
                       <div className="stat-header">
                         <ShieldAlert size={20} className="text-orange" />
                       </div>
                       <div className="stat-value">{applications.filter(a => a.status === 'pending').length}</div>
-                      <div className="stat-label">Pending Apps</div>
+                      <div className="stat-label">Aspiring Members</div>
                     </div>
                   </div>
 
@@ -553,7 +659,7 @@ const ClubDashboard = () => {
                           <h3>Upcoming Events</h3>
                         </div>
                         <div className="event-mini-list">
-                          {events.slice(0, 3).map((event, i) => (
+                          {events.filter(e => !e.isPast && new Date(e.date).getTime() >= new Date().setHours(0,0,0,0)).slice(0, 3).map((event, i) => (
                             <div key={i} className="event-mini-card">
                               <div className="event-date">
                                 <span className="day">{new Date(event.date).getDate()}</span>
@@ -679,7 +785,7 @@ const ClubDashboard = () => {
                                   if(!window.confirm("Delete this role?")) return;
                                   try {
                                     const token = localStorage.getItem("token");
-                                    await axios.delete(`${API}/api/club-leader/roles/${role._id}`, { headers: { Authorization: `Bearer ${token}` } });
+                                    await axios.delete(`${API}/api/club-leader/roles/${role._id}${clubId ? `?clubId=${clubId}` : ''}`, { headers: { Authorization: `Bearer ${token}` } });
                                     fetchRolesData();
                                     showToast("Role removed");
                                   } catch (e) { showToast("Failed to delete", "error"); }
@@ -696,8 +802,8 @@ const ClubDashboard = () => {
 
               {activeTab === 'events' && (
                 <div className="events-tab">
-                  <div className="filter-bar-premium">
-                    <div className="search-group-modern">
+                  <div className="filter-bar-premium" style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
+                    <div className="search-group-modern" style={{ flex: '1 1 300px' }}>
                       <div className="search-icon-wrapper">
                         <Search size={18} />
                       </div>
@@ -710,43 +816,103 @@ const ClubDashboard = () => {
                       />
                       {eventSearch && <button onClick={() => setEventSearch('')} className="clear-search"><X size={14} /></button>}
                     </div>
-                    <div className="filter-actions-group">
-                      <div className="filter-chip-select">
-                         <Filter size={14} /> <span>All Categories</span>
+                    <div className="filter-actions-group" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                      <div className="filter-chip-select" style={{ background: '#fff', border: '1px solid #e2e8f0', padding: '0.5rem 1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                         <Filter size={14} color="#64748b" /> 
+                         <select 
+                            value={eventCategory} 
+                            onChange={(e) => setEventCategory(e.target.value)}
+                            style={{ background: 'transparent', border: 'none', outline: 'none', color: '#1e293b', fontWeight: 500, cursor: 'pointer' }}
+                         >
+                            <option value="All Categories">All Categories</option>
+                            <option value="Technical">Technical</option>
+                            <option value="Workshop">Workshop</option>
+                            <option value="Cultural">Cultural</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Seminar">Seminar</option>
+                            <option value="Hackathon">Hackathon</option>
+                            <option value="Entrepreneurship">Entrepreneurship</option>
+                         </select>
                       </div>
                       {canManageEvents && (
-                        <button onClick={() => openModal('createEvent')} className="btn-create-modern pulse-on-hover">
+                        <button onClick={() => openModal('createEvent')} className="btn-create-modern pulse-on-hover" style={{ display: 'flex', gap: '8px', alignItems: 'center', padding: '0.5rem 1.2rem', borderRadius: '8px', background: '#6366f1', color: '#fff', fontWeight: 600, border: 'none', cursor: 'pointer' }}>
                            <PlusCircle size={18} /> <span>New Event</span>
                         </button>
                       )}
                     </div>
                   </div>
 
-                  <div className="events-grid">
-                    {events.filter(e => e.title.toLowerCase().includes(eventSearch.toLowerCase())).map((event, i) => (
-                      <div key={i} className="event-card-premium">
-                        <div className="event-image">
-                          <img src={event.poster || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800"} alt="Poster" />
-                          <div className="event-badge">{event.category}</div>
-                        </div>
-                        <div className="event-body">
-                          <h3>{event.title}</h3>
-                          <div className="event-info">
-                            <span><Calendar size={14} /> {new Date(event.date).toLocaleDateString()}</span>
-                            <span><Users size={14} /> {event.participants.length} Joined</span>
-                          </div>
-                          <div className="event-footer">
-                            <button className="btn-view" onClick={() => navigate(`/viewpost/${event._id}`)}>Details</button>
-                            {canManageEvents && (
-                              <div className="admin-actions">
-                                <button className="icon-btn" onClick={() => navigate("/createpost", { state: { editEvent: event } })}><Edit3 size={16} /></button>
-                                <button className="icon-btn danger" onClick={() => handleDeleteEvent(event._id)}><Trash2 size={16} /></button>
+                  <div className="events-stacked-layout" style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+                    <div className="events-section">
+                      <h3 style={{ marginBottom: '1.25rem', borderBottom: '3px solid #6366f1', paddingBottom: '0.5rem', display: 'inline-block', fontSize: '1.1rem', color: '#1e293b' }}>Latest & Upcoming Events</h3>
+                      <div className="events-grid-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                        {events.filter(e => (!e.isPast && new Date(e.date).getTime() >= new Date().setHours(0,0,0,0))).filter(e => eventCategory === "All Categories" || e.category === eventCategory).filter(e => e.title.toLowerCase().includes(eventSearch.toLowerCase())).map((event, i) => (
+                          <div key={i} className="event-card-premium" style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
+                            <div className="event-image" style={{ position: 'relative', height: '160px', overflow: 'hidden' }}>
+                              <img src={event.poster || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800"} alt="Poster" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              <div className="event-badge" style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(255,255,255,0.9)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, color: '#6366f1' }}>{event.category || "General"}</div>
+                            </div>
+                            <div className="event-body" style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                              <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', color: '#1e293b' }}>{event.title}</h3>
+                              <div className="event-info" style={{ display: 'flex', gap: '1rem', fontSize: '0.85rem', color: '#64748b', marginBottom: '1rem' }}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} /> {new Date(event.date).toLocaleDateString()}</span>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Users size={14} /> {event.participants?.length || 0} Joined</span>
                               </div>
-                            )}
+                              <div className="event-footer" style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <button className="btn-secondary" style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', padding: '6px 12px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate(`/viewpost/${event._id}`)}>View Details</button>
+                                {canManageEvents && (
+                                  <div className="admin-actions" style={{ display: 'flex', gap: '8px' }}>
+                                    <button className="icon-btn" style={{ background: '#e0e7ff', color: '#4f46e5', border: 'none', borderRadius: '6px', padding: '6px', cursor: 'pointer', display: 'flex' }} onClick={() => navigate("/createpost", { state: { editEvent: event } })} title="Edit Event"><Edit3 size={16} /></button>
+                                    <button className="icon-btn danger" style={{ background: '#fee2e2', color: '#ef4444', border: 'none', borderRadius: '6px', padding: '6px', cursor: 'pointer', display: 'flex' }} onClick={() => handleDeleteEvent(event._id)} title="Delete Event"><Trash2 size={16} /></button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                        </div>
+                        ))}
+                        {events.filter(e => (!e.isPast && new Date(e.date).getTime() >= new Date().setHours(0,0,0,0))).filter(e => eventCategory === "All Categories" || e.category === eventCategory).filter(e => e.title.toLowerCase().includes(eventSearch.toLowerCase())).length === 0 && (
+                          <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8', border: '2px dashed #e2e8f0', borderRadius: '12px', gridColumn: '1 / -1' }}>
+                            <Calendar size={24} style={{ opacity: 0.5, marginBottom: '8px' }} />
+                            <p>No upcoming events found.</p>
+                          </div>
+                        )}
                       </div>
-                    ))}
+                    </div>
+                    
+                    <div className="events-section">
+                      <h3 style={{ marginBottom: '1.25rem', borderBottom: '3px solid #94a3b8', paddingBottom: '0.5rem', display: 'inline-block', fontSize: '1.1rem', color: '#64748b' }}>Past Events</h3>
+                      <div className="events-grid-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', opacity: 0.85 }}>
+                        {events.filter(e => (e.isPast || new Date(e.date).getTime() < new Date().setHours(0,0,0,0))).filter(e => eventCategory === "All Categories" || e.category === eventCategory).filter(e => e.title.toLowerCase().includes(eventSearch.toLowerCase())).map((event, i) => (
+                          <div key={i} className="event-card-premium" style={{ background: '#f8fafc', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
+                            <div className="event-image" style={{ position: 'relative', height: '140px', overflow: 'hidden', filter: 'grayscale(30%)' }}>
+                              <img src={event.poster || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800"} alt="Poster" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              <div className="event-badge" style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(255,255,255,0.9)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, color: '#64748b' }}>{event.category || "General"}</div>
+                            </div>
+                            <div className="event-body" style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                              <h3 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: '#475569' }}>{event.title}</h3>
+                              <div className="event-info" style={{ display: 'flex', gap: '1rem', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '1rem' }}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} /> {new Date(event.date).toLocaleDateString()}</span>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Users size={14} /> {event.participants?.length || 0} Joined</span>
+                              </div>
+                              <div className="event-footer" style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <button className="btn-secondary" style={{ background: 'transparent', color: '#64748b', border: '1px solid #cbd5e1', padding: '4px 10px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate(`/viewpost/${event._id}`)}>View Log</button>
+                                {canManageEvents && (
+                                  <div className="admin-actions" style={{ display: 'flex', gap: '8px' }}>
+                                    <button className="icon-btn" style={{ background: 'transparent', color: '#64748b', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '4px', cursor: 'pointer', display: 'flex' }} onClick={() => navigate("/createpost", { state: { editEvent: event } })} title="Edit Data"><Edit3 size={14} /></button>
+                                    <button className="icon-btn danger" style={{ background: 'transparent', color: '#ef4444', border: '1px solid #fca5a5', borderRadius: '4px', padding: '4px', cursor: 'pointer', display: 'flex' }} onClick={() => handleDeleteEvent(event._id)} title="Delete Event"><Trash2 size={14} /></button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        {events.filter(e => (e.isPast || new Date(e.date).getTime() < new Date().setHours(0,0,0,0))).filter(e => eventCategory === "All Categories" || e.category === eventCategory).filter(e => e.title.toLowerCase().includes(eventSearch.toLowerCase())).length === 0 && (
+                          <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8', border: '2px dashed #e2e8f0', borderRadius: '12px', gridColumn: '1 / -1' }}>
+                            <p>No past events found.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -886,7 +1052,7 @@ const ClubDashboard = () => {
                                           if(!window.confirm('Remove member from club?')) return;
                                           try {
                                             const token = localStorage.getItem('token');
-                                            await axios.delete(`${API}/api/club-leader/members/${m._id}`, { headers: { Authorization: `Bearer ${token}` } });
+                                            await axios.delete(`${API}/api/club-leader/members/${m._id}${clubId ? `?clubId=${clubId}` : ''}`, { headers: { Authorization: `Bearer ${token}` } });
                                             fetchClubData(); showToast('Member removed');
                                           } catch(e) { showToast('Failed','error'); }
                                         }}><Trash2 size={14} /></button>
@@ -904,6 +1070,122 @@ const ClubDashboard = () => {
                             )}
                           </tbody>
                         </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'results' && (
+                <div className="results-tab">
+                  <div className="welcome-card" style={{ background: '#1e293b', color: 'white', marginBottom: '1.5rem' }}>
+                    <div className="welcome-text">
+                      <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Result Center 🏆</h2>
+                      <p>Finalize event participants and reward the top performers with digital certificates.</p>
+                    </div>
+                  </div>
+
+                  {!resultEvent ? (
+                    <div className="dash-card">
+                      <div className="card-header">
+                        <h3>Select Event to Finalize</h3>
+                      </div>
+                      <div className="events-grid-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', padding: '1.5rem' }}>
+                        {(data?.events || []).filter(e => e.isPast || new Date(e.date) < new Date()).map(event => (
+                          <div key={event._id} className="event-card-compact" style={{ padding: '1.5rem', border: '1px solid #e2e8f0', borderRadius: '12px', background: '#f8fafc' }}>
+                             <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '8px' }}>{event.title}</h4>
+                             <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>{new Date(event.date).toLocaleDateString()} • {event.participants?.length || 0} Registered</p>
+                             <button className="btn-primary" style={{ width: '100%', padding: '8px' }} onClick={() => setResultEvent(event)}>Select Event</button>
+                          </div>
+                        ))}
+                        {(data?.events || []).filter(e => e.isPast || new Date(e.date) < new Date()).length === 0 && (
+                          <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '40px', color: '#94a3b8' }}>No concluded events found to publish results.</div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="dash-card result-editor" style={{ padding: '2rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', paddingBottom: '1rem', marginBottom: '2rem' }}>
+                        <div>
+                          <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Publishing: {resultEvent.title}</h2>
+                          <p style={{ fontSize: '13px', color: '#64748b' }}>Select the winners from all registered participants.</p>
+                        </div>
+                        <button className="text-btn" onClick={() => setResultEvent(null)}><X size={18} /> Cancel</button>
+                      </div>
+
+                      <div className="winners-form" style={{ maxWidth: '600px' }}>
+                        {winners.map((winner, idx) => (
+                          <div key={idx} style={{ display: 'flex', gap: '12px', marginBottom: '1rem', alignItems: 'flex-end' }}>
+                            <div style={{ flex: 2 }}>
+                               <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '4px' }}>Participant</label>
+                               <select 
+                                 value={winner.userId} 
+                                 onChange={(e) => updateWinner(idx, 'userId', e.target.value)}
+                                 style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                               >
+                                 <option value="">-- Choose Participant --</option>
+                                 {(resultEvent.participants || []).map(p => (
+                                   <option key={p._id || p} value={p._id || p}>{p.fullName || p}</option>
+                                 ))}
+                               </select>
+                            </div>
+                            <div style={{ flex: 1 }}>
+                               <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '4px' }}>Rank / Position</label>
+                               <input 
+                                 type="text" 
+                                 placeholder="e.g. 1st, 2nd, Winner" 
+                                 value={winner.position} 
+                                 onChange={(e) => updateWinner(idx, 'position', e.target.value)}
+                                 style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                               />
+                            </div>
+                            {winners.length > 1 && (
+                              <button onClick={() => removeWinnerField(idx)} style={{ padding: '10px', background: '#fee2e2', color: '#ef4444', border: 'none', borderRadius: '8px', cursor: 'pointer' }}><Trash2 size={18} /></button>
+                            )}
+                          </div>
+                        ))}
+                        
+                        <div className="certificate-config" style={{ margin: '2rem 0', padding: '1.5rem', background: 'rgba(99, 102, 241, 0.03)', borderRadius: '16px', border: '1px dashed #6366f1' }}>
+                          <h4 style={{ margin: '0 0 1rem 0', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Award size={18} color="#6366f1" /> Upload Official Certificates
+                          </h4>
+                          
+                          <div className="upload-notice" style={{ padding: '1rem', background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                            <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#475569' }}>Please upload the custom certificate files for each winner below:</p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                              {winners.map((w, idx) => (
+                                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+                                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <span style={{ fontSize: '12px', fontWeight: 600 }}>{idx + 1}. {w.position || 'Winner'} Slot</span>
+                                    <span style={{ fontSize: '10px', color: w.certificateFile ? '#10b981' : '#ef4444' }}>
+                                      {w.certificateFile ? '✅ File Ready' : '⚠️ Upload Required'}
+                                    </span>
+                                  </div>
+                                  <input 
+                                    type="file" 
+                                    accept="image/*,application/pdf" 
+                                    onChange={(e) => handleWinnerFileChange(idx, e.target.files[0])}
+                                    style={{ fontSize: '11px', color: '#64748b', maxWidth: '200px' }} 
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <button className="text-btn" onClick={addWinnerField} style={{ marginBottom: '2rem', fontSize: '13px', display: 'block' }}>
+                          + Add Another Winner / Position
+                        </button>
+
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                          <button className="btn-primary" style={{ padding: '12px 30px', minWidth: '200px' }} onClick={handlePublishResults}>
+                            Confirm & Publish To Platform
+                          </button>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#475569', fontSize: '13px' }}>
+                            <ShieldCheck size={14} color="#10b981" /> 
+                            {certMode === 'auto' ? "Official dynamic certificates will be issued." : "Your uploaded certificates will be stored."}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -975,9 +1257,11 @@ const ClubDashboard = () => {
                       </div>
                       
                       <div className="insights-cluster-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', padding: '1.5rem' }}>
-                        <div className="cluster-item" style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                        <div className="cluster-item" style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', minHeight: '100px' }}>
                           <h4 className="cluster-label" style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Success Highlight</h4>
-                          {advancedStats?.bestEvents?.[0] ? (
+                          {analyticsLoading ? (
+                             <div className="shimmer" style={{ height: '20px', width: '80%', background: '#eee', borderRadius: '4px' }}></div>
+                          ) : advancedStats?.bestEvents?.[0] ? (
                             <div className="best-event-highlight">
                               <span className="event-name" style={{ fontWeight: '700', color: '#1e293b', fontSize: '1rem' }}>{advancedStats.bestEvents[0].title}</span>
                               <p className="event-reason" style={{ fontSize: '0.85rem', color: '#10b981', marginTop: '6px', fontWeight: '500' }}>{advancedStats.bestEvents[0].reason}</p>
@@ -985,13 +1269,19 @@ const ClubDashboard = () => {
                           ) : <p style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Complete more events to see success metrics.</p>}
                         </div>
                         
-                        <div className="cluster-item" style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                        <div className="cluster-item" style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', minHeight: '100px' }}>
                           <h4 className="cluster-label" style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Peak Engagement Time</h4>
-                          <div className="time-highlight" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#1e293b', fontWeight: '700', fontSize: '1rem' }}>
-                            <Clock size={18} color="#6366f1" />
-                            <span>{advancedStats?.bestTime || "Analyzing..."}</span>
-                          </div>
-                          <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '8px' }}>Based on registration patterns across previous events.</p>
+                          {analyticsLoading ? (
+                              <div className="shimmer" style={{ height: '20px', width: '60%', background: '#eee', borderRadius: '4px' }}></div>
+                          ) : (
+                            <>
+                              <div className="time-highlight" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#1e293b', fontWeight: '700', fontSize: '1rem' }}>
+                                <Clock size={18} color="#6366f1" />
+                                <span>{advancedStats?.bestTime || "N/A"}</span>
+                              </div>
+                              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '8px' }}>Based on registration patterns across previous events.</p>
+                            </>
+                          )}
                         </div>
                       </div>
 
@@ -1001,7 +1291,9 @@ const ClubDashboard = () => {
                           <h4 style={{ fontSize: '0.875rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>Actionable Recommendations</h4>
                         </div>
                         <div className="rec-stack" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                          {(advancedStats?.recommendations || []).map((rec, i) => (
+                          {analyticsLoading ? (
+                             [1,2,3].map(i => <div key={i} className="shimmer" style={{ height: '45px', width: '100%', background: '#f8fafc', borderRadius: '12px' }}></div>)
+                          ) : (advancedStats?.recommendations || []).map((rec, i) => (
                             <div key={i} className="rec-tile" style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px 16px', background: 'white', borderRadius: '12px', border: '1px solid #f1f5f9', boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
                               <div style={{ marginTop: '2px', color: '#6366f1' }}>
                                 <ArrowUpRight size={14} />
@@ -1009,7 +1301,7 @@ const ClubDashboard = () => {
                               <span style={{ fontSize: '0.85rem', color: '#444', lineHeight: '1.4' }}>{rec}</span>
                             </div>
                           ))}
-                          {(advancedStats?.recommendations || []).length === 0 && (
+                          {!analyticsLoading && (advancedStats?.recommendations || []).length === 0 && (
                             <p style={{ fontSize: '0.85rem', color: '#94a3b8', fontStyle: 'italic', padding: '1rem', textAlign: 'center' }}>No recommendations yet. Keep hosting events to gather insights!</p>
                           )}
                         </div>
@@ -1111,10 +1403,30 @@ const ClubDashboard = () => {
                         <h3>Broadcast Center</h3>
                         <p style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '4px' }}>Maintain professional communication with your club members</p>
                       </div>
-                      {canSendNotifs && (
-                        <button className="btn-primary" onClick={() => openModal('notify')}>Broadcast Update</button>
-                      )}
                     </div>
+                    {canSendNotifs && (
+                      <div style={{ padding: '1.5rem', borderBottom: '1px solid #f1f5f9', background: '#fafafa' }}>
+                         <textarea 
+                            value={announcementText}
+                            onChange={(e) => setAnnouncementText(e.target.value)}
+                            placeholder="Draft a new announcement, milestone, or urgent update..."
+                            style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1px solid #cad5e2', minHeight: '120px', resize: 'vertical', fontFamily: 'inherit', fontSize: '1rem', color: '#0f172a', fontWeight: 500, backgroundColor: '#ffffff', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)' }}
+                         />
+                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+                            <span style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 500 }}>
+                              Announcements will be visible to all members and push notifications will be sent (if enabled).
+                            </span>
+                            <button 
+                                className="btn-primary" 
+                                onClick={handlePostAnnouncement} 
+                                disabled={!announcementText.trim()}
+                                style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: !announcementText.trim() ? 0.6 : 1 }}
+                            >
+                               <Megaphone size={16} /> Broadcast
+                            </button>
+                         </div>
+                      </div>
+                    )}
                     <div className="announcement-list">
                       {announcements.length > 0 ? announcements.map((ann, i) => (
                         <div key={i} className="compact-announcement">
@@ -1170,7 +1482,7 @@ const ClubDashboard = () => {
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
                                 <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{new Date(photo.uploadedAt).toLocaleDateString()}</span>
                                 <div style={{ display: 'flex', gap: '8px' }}>
-                                  {canManageMembers && (
+                                  {canUploadPhotos && (
                                     <button className="btn-icon-xs-danger" onClick={() => handleDeletePhoto(photo._id)}>
                                       <Trash2 size={13} />
                                     </button>
@@ -1192,6 +1504,20 @@ const ClubDashboard = () => {
                   </div>
                 </div>
               )}
+                    </>
+                  );
+                } catch (err) {
+                  console.error("Dashboard Render Error:", err);
+                  return (
+                    <div style={{ padding: '40px', textAlign: 'center', minHeight: '300px' }}>
+                      <ShieldAlert size={48} style={{ color: '#ef4444', marginBottom: '1rem' }} />
+                      <h3>⚠️ Component Failure</h3>
+                      <p>We encountered a rendering problematic in this section.</p>
+                      <button onClick={() => window.location.reload()} className="btn-primary">Fix & Reload</button>
+                    </div>
+                  );
+                }
+              })()}
             </div>
           </>
         )}
@@ -1232,7 +1558,7 @@ const ClubDashboard = () => {
                        if (!modalData?.image) return showToast('Please select a photo', 'error');
                        try {
                          const token = localStorage.getItem('token');
-                         await axios.post(`${API}/api/club-leader/gallery/upload`, modalData, { headers: { Authorization: `Bearer ${token}` } });
+                         await axios.post(`${API}/api/club-leader/gallery/upload`, { ...modalData, clubId }, { headers: { Authorization: `Bearer ${token}` } });
                          showToast('Moment added to gallery!');
                          setShowModal(false);
                          fetchClubData();
@@ -1300,6 +1626,9 @@ const ClubDashboard = () => {
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input type="checkbox" checked={editingRole?.permissions?.canUploadPhotos || false} onChange={e => setEditingRole({...editingRole, permissions: {...editingRole?.permissions, canUploadPhotos: e.target.checked}})} /> Can Upload to Gallery
                 </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input type="checkbox" checked={editingRole?.permissions?.canManageResults || false} onChange={e => setEditingRole({...editingRole, permissions: {...editingRole?.permissions, canManageResults: e.target.checked}})} /> Can Publish Event Results
+                </label>
               </div>
               <div className="form-actions" style={{ marginTop: '1.5rem' }}>
                 <button type="button" className="btn-secondary" onClick={() => setShowRoleModal(false)}>Discard</button>
@@ -1348,7 +1677,7 @@ const ClubDashboard = () => {
         </div>
       )}
 
-    </div>
+      </div>
   );
 };
 

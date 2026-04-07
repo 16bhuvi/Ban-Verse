@@ -30,7 +30,7 @@ console.log("🛣️ Routes imported");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS Configuration
+// CORS Configuration with Environment Support for VM Deployment
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
@@ -39,7 +39,8 @@ const allowedOrigins = [
   "http://127.0.0.1:3001",
   "http://127.0.0.1:5001",
   "http://172.18.130.105:3000",
-];
+  process.env.CLIENT_URL // Allow dynamically from .env for VM deployment
+].filter(Boolean);
 
 console.log("🌐 Configuring CORS...");
 const corsOptions = {

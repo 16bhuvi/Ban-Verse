@@ -9,7 +9,8 @@ import {
   ExternalLink, MapPin
 } from "lucide-react";
 
-const API = "http://localhost:5001";
+import config from "./config";
+const API = config.API_BASE_URL;
 
 export default function ViewClub() {
   const navigate = useNavigate();

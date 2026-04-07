@@ -13,22 +13,16 @@ load_dotenv()
 
 app = FastAPI(title="Banverse AI Engine")
 
-# MongoDB Configuration - Ensure we match the Node.js backend exactly
+# MongoDB Configuration - must match Node.js/Mongoose default ("test" when no DB in URI)
 MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://banverseUser:Base206%4028@banversecluster.yph1gnu.mongodb.net/?appName=BanverseCluster")
-# We will dynamically find the database name if event_management is empty
-DB_NAME = "test" 
+DB_NAME = os.getenv("DB_NAME", "test")  # Mongoose uses "test" by default when no DB in URI
 
 client = AsyncIOMotorClient(MONGO_URI)
-try:
-    db = client.get_default_database()
-    if db is None:
-        db = client["test"]
-except Exception as e:
-    db = client["test"]
+db = client[DB_NAME]  # Explicit — never accidentally connects to wrong database
 
 # Use the asynchronous db for everything
 chatbot_engine = ChatbotEngine()
-print(f"📡 AI Backend connected to database: {db.name}")
+print(f"✅ AI Backend connected to database: '{DB_NAME}'")
 
 # Enable CORS for frontend communication
 app.add_middleware(
