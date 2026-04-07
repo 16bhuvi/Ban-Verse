@@ -203,9 +203,9 @@ const StudentDashboard = () => {
       const studentId = data?.user?._id || data?.user?.id;
       if (!studentId) return;
       try {
-        // 8-second timeout: if AI server is slow/down, don't block the dashboard
+        // 15-second timeout to allow the AI server enough time to process on cold starts
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         const res = await axios.get(`${AI_API}/recommendations/${studentId}`, {
           signal: controller.signal
         });
@@ -215,7 +215,8 @@ const StudentDashboard = () => {
         if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') {
           console.error("AI Recommendations error:", err);
         }
-        // Silently fail — AI is non-critical, dashboard should still work
+        // If an error occurs, set empty so the spinner resolves into the standard fallback prompt
+        setAiRecommendations({});
       }
     };
     if (data?.user?._id) fetchAIRecommendations();
@@ -227,7 +228,7 @@ const StudentDashboard = () => {
     setIsRefreshingAI(true);
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
       const res = await axios.get(`${AI_API}/recommendations/${studentId}`, {
         signal: controller.signal
       });
@@ -328,7 +329,12 @@ const StudentDashboard = () => {
               <button className="text-btn" onClick={() => setActiveTab("events")}>Full List</button>
             </div>
             <div className="event-list">
-              {aiRecommendations?.recommended_events?.length > 0 ? (
+              {aiRecommendations === null ? (
+                 <div className="empty-ai-box" style={{textAlign: 'center', padding: '20px'}}>
+                   <RefreshCw className="spin" size={24} color="#6366f1" />
+                   <p style={{marginTop: '10px', fontSize: '14px'}}>✨ Generating AI matches tailored to you...</p>
+                 </div>
+              ) : aiRecommendations?.recommended_events?.length > 0 ? (
                 aiRecommendations.recommended_events.map((event, index) => (
                   <div className="event-item-modern" key={event._id || event.name} onClick={() => { logActivity("click", event._id || event.name, "event"); navigate(`/viewpost/${event._id || event.name}`); }}>
                     <div className="event-info">
@@ -394,7 +400,12 @@ const StudentDashboard = () => {
               <h3 className="section-title">🛡️ Discover Clubs <RefreshCw size={14} className={isRefreshingAI ? "spin" : ""} style={{ marginLeft: '10px', cursor: 'pointer', color: '#6366f1' }} onClick={handleRefreshAI} /></h3>
             </div>
             <div className="club-list">
-              {aiRecommendations?.recommended_clubs?.length > 0 ? (
+              {aiRecommendations === null ? (
+                 <div className="empty-ai-box" style={{textAlign: 'center', padding: '20px'}}>
+                   <RefreshCw className="spin" size={24} color="#6366f1" />
+                   <p style={{marginTop: '10px', fontSize: '14px'}}>✨ Finding the best clubs for your profile...</p>
+                 </div>
+              ) : aiRecommendations?.recommended_clubs?.length > 0 ? (
                 aiRecommendations.recommended_clubs.map(club => (
                   <div className="club-item-modern" key={club.name} onClick={() => logActivity("view", club.name, "club")}>
                     <div className="club-logo-modern">{club.name.charAt(0)}</div>

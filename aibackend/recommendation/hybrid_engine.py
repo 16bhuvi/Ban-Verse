@@ -8,11 +8,10 @@ def log_to_file(msg):
 async def get_hybrid_recommendations(db, studentId):
     log_to_file(f"\n--- BANVERSE HYBRID ENGINE: {studentId} ---")
 
-    collection_names = await db.list_collection_names()
-    user_coll = "users" if "users" in collection_names else "Users"
-    event_coll = "events" if "events" in collection_names else "Events"
-    club_coll = "clubs" if "clubs" in collection_names else "Clubs"
-    log_to_file(f"Collections found: {collection_names}")
+    user_coll = "users"
+    event_coll = "events"
+    club_coll = "clubs"
+    log_to_file(f"Using collections: {user_coll}, {event_coll}, {club_coll}")
 
     # 1. FETCH STUDENT
     try:
