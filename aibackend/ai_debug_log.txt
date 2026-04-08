@@ -3285,6 +3285,271 @@ Active clubs: 2
 Returning 1 events, 1 clubs
 ✅ Banverse AI Assistant (Stability Mode) Active
 ✅ Banverse AI Assistant (Stability Mode) Active
+<<<<<<< HEAD
+=======
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 0
+Fallback recent events: 7
+Scored events: 7
+Active clubs: 2
+Returning 5 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 0
+Fallback recent events: 7
+Scored events: 7
+Active clubs: 2
+Returning 5 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 0
+Fallback recent events: 7
+Scored events: 7
+Active clubs: 2
+Returning 5 events, 1 clubs
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events found: 0
+Scored events: 0
+Active clubs: 2
+Returning 0 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events found: 0
+Scored events: 0
+Active clubs: 2
+Returning 0 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events found: 0
+Scored events: 0
+Active clubs: 2
+Returning 0 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events found: 0
+Scored events: 0
+Active clubs: 2
+Returning 0 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events found: 0
+Scored events: 0
+Active clubs: 2
+Returning 0 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events found: 0
+Scored events: 0
+Active clubs: 2
+Returning 0 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events found: 0
+Scored events: 0
+Active clubs: 2
+Returning 0 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events found: 0
+Scored events: 0
+Active clubs: 2
+Returning 0 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events found: 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events found: 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events found: 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events found: 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai', 'c']
+Upcoming events found: 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai', 'c']
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events found: 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai', 'c']
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai', 'c']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai', 'c']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai', 'c']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+>>>>>>> e0daeeba4f3d30afb4522f11b94df34242845fd0
 ✅ Banverse AI Assistant (Stability Mode) Active
 ✅ Banverse AI Assistant (Stability Mode) Active
 ✅ Banverse AI Assistant (Stability Mode) Active
@@ -3298,6 +3563,19 @@ Scored events: 1
 --- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
 Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
 Student: Bhuvi vishwkarma, interests: []
+<<<<<<< HEAD
+=======
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+>>>>>>> e0daeeba4f3d30afb4522f11b94df34242845fd0
 Upcoming events (naive UTC compare): 1
 Scored events: 1
 Active clubs: 2
@@ -3306,6 +3584,7 @@ Returning 1 events, 1 clubs
 --- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
 Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
 Student: Bhuvi vishwkarma, interests: []
+<<<<<<< HEAD
 Active clubs: 2
 Returning 1 events, 1 clubs
 
@@ -3334,6 +3613,10 @@ Upcoming events (naive UTC compare): 1
 Scored events: 1
 Active clubs: 2
 Returning 1 events, 1 clubs
+=======
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+>>>>>>> e0daeeba4f3d30afb4522f11b94df34242845fd0
 Active clubs: 2
 Returning 1 events, 1 clubs
 
@@ -3345,6 +3628,7 @@ Scored events: 1
 Active clubs: 2
 Returning 1 events, 1 clubs
 
+<<<<<<< HEAD
 --- BANVERSE HYBRID ENGINE: 12345 ---
 Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
 Student not found
@@ -3374,6 +3658,13 @@ Active clubs: 2
 Returning 1 events, 1 clubs
 Active clubs: 2
 Returning 1 events, 1 clubs
+=======
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+>>>>>>> e0daeeba4f3d30afb4522f11b94df34242845fd0
 ✅ Banverse AI Assistant (Stability Mode) Active
 ✅ Banverse AI Assistant (Stability Mode) Active
 ✅ Banverse AI Assistant (Stability Mode) Active
@@ -3393,15 +3684,63 @@ Active clubs: 2
 Returning 1 events, 1 clubs
 Active clubs: 2
 Returning 1 events, 1 clubs
+<<<<<<< HEAD
 ✅ Banverse AI Assistant (Stability Mode) Active
 ✅ Banverse AI Assistant (Stability Mode) Active
+=======
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Student: suprabha sah, interests: ['technical', 'ai']
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+>>>>>>> e0daeeba4f3d30afb4522f11b94df34242845fd0
 ✅ Banverse AI Assistant (Stability Mode) Active
 ✅ Banverse AI Assistant (Stability Mode) Active
 ✅ Banverse AI Assistant (Stability Mode) Active
 
+<<<<<<< HEAD
 --- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
 Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
 Student: Bhuvi vishwkarma, interests: []
+=======
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Student: suprabha sah, interests: ['technical', 'ai']
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+>>>>>>> e0daeeba4f3d30afb4522f11b94df34242845fd0
 
 --- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
 Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
@@ -3410,6 +3749,37 @@ Upcoming events (naive UTC compare): 1
 Scored events: 1
 Active clubs: 2
 Returning 1 events, 1 clubs
+<<<<<<< HEAD
+=======
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Student: suprabha sah, interests: ['technical', 'ai']
+Active clubs: 2
+Returning 1 events, 1 clubs
+>>>>>>> e0daeeba4f3d30afb4522f11b94df34242845fd0
 Upcoming events (naive UTC compare): 1
 Scored events: 1
 Active clubs: 2
@@ -3420,9 +3790,134 @@ Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events
 Student: Bhuvi vishwkarma, interests: []
 Upcoming events (naive UTC compare): 1
 Scored events: 1
+<<<<<<< HEAD
 ✅ Banverse AI Assistant (Stability Mode) Active
 ✅ Banverse AI Assistant (Stability Mode) Active
 ✅ Banverse AI Assistant (Stability Mode) Active
+=======
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Student: suprabha sah, interests: ['technical', 'ai']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69a508e2a65131d65a8082f7 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: suprabha sah, interests: ['technical', 'ai']
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+>>>>>>> e0daeeba4f3d30afb4522f11b94df34242845fd0
 Active clubs: 2
 Returning 1 events, 1 clubs
 
@@ -3447,5 +3942,323 @@ Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events
 Student: Bhuvi vishwkarma, interests: []
 Upcoming events (naive UTC compare): 1
 Scored events: 1
+<<<<<<< HEAD
+=======
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Anisha varshney, interests: []
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Anisha varshney, interests: []
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Anisha varshney, interests: []
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Anisha varshney, interests: []
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Collections found: ['eventmembers', 'clubmembers', 'behaviors', 'clubs', 'events', 'activities', 'users', 'clubroles', 'notifications', 'clubapplications', 'chats']
+Student: Anisha varshney, interests: []
+Active clubs: 2
+Returning 1 events, 1 clubs
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Using collections: users, events, clubs
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Using collections: users, events, clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+Student: Bhuvi vishwkarma, interests: []
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Using collections: users, events, clubs
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Using collections: users, events, clubs
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Using collections: users, events, clubs
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Using collections: users, events, clubs
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+✅ Banverse AI Assistant (Stability Mode) Active
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Using collections: users, events, clubs
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Using collections: users, events, clubs
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Using collections: users, events, clubs
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Using collections: users, events, clubs
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Using collections: users, events, clubs
+Student: Bhuvi vishwkarma, interests: []
+
+--- BANVERSE HYBRID ENGINE: 69cb9a5e84133600d99d84be ---
+Using collections: users, events, clubs
+Student: Anisha varshney, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+Active clubs: 2
+Returning 1 events, 1 clubs
+Active clubs: 2
+Returning 1 events, 1 clubs
+
+--- BANVERSE HYBRID ENGINE: 69d505b0fe3b72bbfb810549 ---
+Using collections: users, events, clubs
+Student: Bhuvi vishwkarma, interests: []
+Upcoming events (naive UTC compare): 1
+Scored events: 1
+>>>>>>> e0daeeba4f3d30afb4522f11b94df34242845fd0
 Active clubs: 2
 Returning 1 events, 1 clubs
