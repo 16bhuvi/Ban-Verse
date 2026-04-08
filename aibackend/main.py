@@ -4,10 +4,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from chatbot.chatbot_engine import ChatbotEngine
 from database.mongodb_connector import MongoDBConnector
 from recommendation.hybrid_engine import get_hybrid_recommendations
-from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo import MongoClient
 import uvicorn
 import os
 from dotenv import load_dotenv
+import sys
+import asyncio
+
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 load_dotenv()
 
@@ -17,7 +22,7 @@ app = FastAPI(title="Banverse AI Engine")
 MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://banverseUser:Banverse26%4002@banversecluster.yph1gnu.mongodb.net/?appName=BanverseCluster")
 DB_NAME = os.getenv("DB_NAME", "test")  # Mongoose uses "test" by default when no DB in URI
 
-client = AsyncIOMotorClient(MONGO_URI)
+client = MongoClient(MONGO_URI, tlsAllowInvalidCertificates=True, serverSelectionTimeoutMS=5000)
 db = client[DB_NAME]  # Explicit — never accidentally connects to wrong database
 
 # Use the asynchronous db for everything
@@ -34,7 +39,7 @@ app.add_middleware(
 )
 
 @app.get("/")
-async def root():
+def root():
     return {"message": "Welcome to Banverse AI Backend (FastAPI)"}
 
 @app.post("/chat")
@@ -46,11 +51,10 @@ async def chat(request: Request):
         raise HTTPException(status_code=400, detail="User input is required")
     
     # Dynamic Database-Driven AI Logic
-    bot_response = await chatbot_engine.get_response(user_input, db)
+    bot_response = chatbot_engine.get_response(user_input, db)
 
-    # Save to history (Asynchronous)
     try:
-        await db.chats.insert_one({
+        db.chats.insert_one({
             "user_input": user_input, 
             "bot_response": bot_response
         })
@@ -59,12 +63,12 @@ async def chat(request: Request):
     return {"bot_response": bot_response}
 
 @app.get("/recommendations/{student_id}")
-async def recommendations(student_id: str):
-    recs = await get_hybrid_recommendations(db, student_id)
+def recommendations(student_id: str):
+    recs = get_hybrid_recommendations(db, student_id)
     return recs
 
 @app.post("/log-activity")
-async def log_activity(studentId: str, action_type: str, item_id: str, item_type: str):
+def log_activity(studentId: str, action_type: str, item_id: str, item_type: str):
     if not studentId:
         raise HTTPException(status_code=400, detail="Student ID required")
     
@@ -74,7 +78,7 @@ async def log_activity(studentId: str, action_type: str, item_id: str, item_type
         "itemId": item_id,
         "itemType": item_type
     }
-    await db.activities.insert_one(activity)
+    db.activities.insert_one(activity)
     return {"status": "Activity logged"}
 
 if __name__ == "__main__":

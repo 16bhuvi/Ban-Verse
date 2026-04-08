@@ -5,10 +5,10 @@ def log_to_file(msg):
     with open("ai_debug_log.txt", "a", encoding="utf-8") as f:
         f.write(msg + "\n")
 
-async def get_hybrid_recommendations(db, studentId):
+def get_hybrid_recommendations(db, studentId):
     log_to_file(f"\n--- BANVERSE HYBRID ENGINE: {studentId} ---")
 
-    collection_names = await db.list_collection_names()
+    collection_names = db.list_collection_names()
     user_coll = "users" if "users" in collection_names else "Users"
     event_coll = "events" if "events" in collection_names else "Events"
     club_coll = "clubs" if "clubs" in collection_names else "Clubs"
@@ -17,10 +17,10 @@ async def get_hybrid_recommendations(db, studentId):
     # 1. FETCH STUDENT
     try:
         oid = ObjectId(studentId) if len(str(studentId)) == 24 else studentId
-        student = await db[user_coll].find_one({"_id": oid})
+        student = db[user_coll].find_one({"_id": oid})
     except Exception as e:
         log_to_file(f"ObjectId error: {e}")
-        student = await db[user_coll].find_one({"_id": studentId})
+        student = db[user_coll].find_one({"_id": studentId})
 
     if not student:
         log_to_file("Student not found")
@@ -36,12 +36,12 @@ async def get_hybrid_recommendations(db, studentId):
     # Must use datetime.utcnow() (naive) for MongoDB date comparisons.
     today_naive = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
 
-    upcoming_events = await db[event_coll].find({"date": {"$gte": today_naive}}).to_list(100)
+    upcoming_events = list(db[event_coll].find({"date": {"$gte": today_naive}}).limit(100))
     log_to_file(f"Upcoming events (naive UTC compare): {len(upcoming_events)}")
 
     # Fallback: if no upcoming events, show most recent events anyway
     if not upcoming_events:
-        upcoming_events = await db[event_coll].find({}).sort("date", -1).limit(20).to_list(20)
+        upcoming_events = list(db[event_coll].find({}).sort("date", -1).limit(20))
         log_to_file(f"Fallback recent events: {len(upcoming_events)}")
 
     # Popularity ranking
@@ -153,7 +153,7 @@ async def get_hybrid_recommendations(db, studentId):
 
     # Club Recommendations
     user_dept = (student.get('department', '') or student.get('domain', '') or '').lower()
-    all_clubs = await db[club_coll].find({"isActive": True}).to_list(100)
+    all_clubs = list(db[club_coll].find({"isActive": True}).limit(100))
     log_to_file(f"Active clubs: {len(all_clubs)}")
 
     club_recs = []

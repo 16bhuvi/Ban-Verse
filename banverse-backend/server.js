@@ -44,13 +44,7 @@ const allowedOrigins = [
 
 console.log("🌐 Configuring CORS...");
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: true, // Reflects the request origin back (allows all)
   credentials: true,
   optionsSuccessStatus: 200,
 };

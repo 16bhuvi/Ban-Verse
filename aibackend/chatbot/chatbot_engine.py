@@ -22,16 +22,16 @@ class ChatbotEngine:
         log_to_file("✅ Banverse AI Assistant (Stability Mode) Active")
         self.chatbot = None 
 
-    async def get_response(self, user_input, db):
+    def get_response(self, user_input, db):
         try:
             inp = user_input.lower().strip()
-            collection_names = await db.list_collection_names()
+            collection_names = db.list_collection_names()
             club_coll = "clubs" if "clubs" in collection_names else "Clubs"
             event_coll = "events" if "events" in collection_names else "Events"
             
             # Fetch data for dynamic answers
-            events = await db[event_coll].find().to_list(100)
-            clubs = await db[club_coll].find().to_list(100)
+            events = list(db[event_coll].find().limit(100))
+            clubs = list(db[club_coll].find().limit(100))
 
             # --- INTENT: PAST EVENTS ---
             if "past" in inp:
